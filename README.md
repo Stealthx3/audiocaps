@@ -68,7 +68,8 @@ or divergences to list. First consumers: Icefin Player (via mpv) and Argosy Desk
 | Path | Contents |
 | --- | --- |
 | `docs/` | Project documentation, including the decision and action log |
-| `docs/plan/` | Local review copies of the development plan (git-ignored) |
+| `docs/plan/` | Local review copies of the development plan and local notes (git-ignored) |
+| `CLAUDE.md` | Standing instructions for Claude Code |
 | `LICENSE`, `NOTICE` | LGPL-2.1-or-later license text and notices |
 | `CHANGELOG.md` | Release notes (Keep a Changelog format) |
 
