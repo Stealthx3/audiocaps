@@ -322,7 +322,7 @@ fn servers(root: &SystemRoot, now: u64) -> Vec<ServerPresence> {
                     Value::measured(ServerInfo { name, version }, src("pw-dump"))
                 })
                 .unwrap_or_else(|| Value::unknown(UnknownReason::ParseError, None)),
-            _ => Value::unknown(UnknownReason::ServiceNotRunning, cmd.skipped.clone()),
+            _ => Value::unknown(skip_reason(cmd.skipped.as_deref()), cmd.skipped.clone()),
         };
         out.push(ServerPresence {
             server: SoundServer::PipeWire,
@@ -336,7 +336,7 @@ fn servers(root: &SystemRoot, now: u64) -> Vec<ServerPresence> {
                     Value::measured(ServerInfo { name, version }, src("pactl-info"))
                 })
                 .unwrap_or_else(|| Value::unknown(UnknownReason::ParseError, None)),
-            _ => Value::unknown(UnknownReason::ServiceNotRunning, cmd.skipped.clone()),
+            _ => Value::unknown(skip_reason(cmd.skipped.as_deref()), cmd.skipped.clone()),
         };
         out.push(ServerPresence {
             server: SoundServer::PulseAudio,
@@ -344,6 +344,15 @@ fn servers(root: &SystemRoot, now: u64) -> Vec<ServerPresence> {
         });
     }
     out
+}
+
+/// Maps a capture skip note to an unknown reason.
+fn skip_reason(skipped: Option<&str>) -> UnknownReason {
+    match skipped {
+        Some(s) if s.contains("not installed") => UnknownReason::LibraryMissing,
+        Some(s) if s.contains("timed out") => UnknownReason::Timeout,
+        _ => UnknownReason::ServiceNotRunning,
+    }
 }
 
 fn pipewire_core(bytes: &[u8]) -> Option<(String, Option<String>)> {

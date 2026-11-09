@@ -136,7 +136,7 @@
         "server": "pipe_wire",
         "info": {
           "state": "unknown",
-          "reason": "service_not_running",
+          "reason": "library_missing",
           "detail": "pw-dump not installed"
         }
       },

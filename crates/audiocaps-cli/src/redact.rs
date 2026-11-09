@@ -188,9 +188,9 @@ mod tests {
     #[test]
     fn macs_are_stable_pseudo_addresses() {
         let r = Redactor::default();
-        let a = r.text("dev 00:1A:7D:DA:71:13 and bluez_card.00_1A_7D_DA_71_13");
-        assert!(!a.contains("00:1A:7D"));
-        assert!(!a.contains("00_1A_7D"));
+        let a = r.text("dev 00:00:5E:00:53:13 and bluez_card.00_00_5E_00_53_13");
+        assert!(!a.contains("00:00:5E"));
+        assert!(!a.contains("00_00_5E"));
         let colon = a.split_whitespace().nth(1).unwrap();
         assert!(colon.starts_with("02:"));
         // Same address, different separators, same pseudo address.
@@ -202,7 +202,7 @@ mod tests {
     fn ips_host_user() {
         let r = Redactor::new(Some("micah-desk"), Some("alex"));
         let t =
-            r.text("raop 10.0.0.12 on micah-desk by alex; lo 127.0.0.1; fe80::1c2b:3aff:fe4d:1");
+            r.text("raop 192.0.2.12 on micah-desk by alex; lo 127.0.0.1; fe80::1c2b:3aff:fe4d:1");
         assert_eq!(
             t,
             "raop redacted-ipv4 on redacted-host by redacted-user; lo 127.0.0.1; redacted-ipv6"
@@ -214,8 +214,8 @@ mod tests {
         let r = Redactor::default();
         let mut v: Json = serde_json::json!([
             {"info": {"props": {"device.serial": "ABC123", "device.name": "alsa_card.pci"}}},
-            {"info": {"props": {"api.bluez5.address": "00:1A:7D:DA:71:13", "device.description": "Alex's WH-1000XM4"}}},
-            {"/org/bluez/hci0/dev_00_1A_7D_DA_71_13": {"org.bluez.Device1": {"Name": {"type": "s", "data": "Alex phone"}}}}
+            {"info": {"props": {"api.bluez5.address": "00:00:5E:00:53:13", "device.description": "Alex's WH-1000XM4"}}},
+            {"/org/bluez/hci0/dev_00_00_5E_00_53_13": {"org.bluez.Device1": {"Name": {"type": "s", "data": "Alex phone"}}}}
         ]);
         r.json(&mut v);
         let s = v.to_string();
@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     fn leak_scan_flags_real_addresses() {
-        assert_eq!(leaks("x 00:1a:7d:da:71:13 y 192.168.1.4").len(), 2);
+        assert_eq!(leaks("x 00:00:5e:00:53:13 y 198.51.100.4").len(), 2);
         assert!(leaks("version 0000:00:1f.3 1.4.2").is_empty());
     }
 }

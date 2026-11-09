@@ -170,7 +170,7 @@ mod tests {
     fn default_policy_hashes_and_masks() {
         let p = RedactionPolicy::default();
         let mut serial = Sensitive::new(SensitiveKind::Serial, "ABC123");
-        let mut addr = Sensitive::new(SensitiveKind::BluetoothAddress, "00:11:22:33:44:55");
+        let mut addr = Sensitive::new(SensitiveKind::BluetoothAddress, "00:00:5E:00:53:55");
         let mut name = Sensitive::new(SensitiveKind::DeviceName, "Alex's headphones");
         serial.redact(&p);
         addr.redact(&p);

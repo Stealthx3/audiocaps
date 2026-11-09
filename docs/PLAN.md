@@ -18,7 +18,7 @@ Open items (not phase tasks):
 - [x] **1.4** Data model in `audiocaps-model`: endpoints, layers, capability sets, access paths, path reports, findings, provenance, unknowns, probe scope
 - [x] **1.5** JSON schema v1 generated from the model, committed under `schema/`, with redaction rules
 - [x] **1.6** `SystemRoot` abstraction: every reader works on `/` or on a captured fixture tree
-- [ ] **1.7** Capture tool `audiocaps capture`: passive, read-only, redacted tarball
+- [x] **1.7** Capture tool `audiocaps capture`: passive, read-only, redacted tarball
 - [x] **1.8** Fixture replay and golden snapshots
 - [ ] **1.9** Five captures replayed: three lab VMs (PipeWire, PulseAudio, ALSA-only), workstation, HTPC
 - [ ] **1.10** Docs: README, changelog, decision log, `docs/architecture.md`
