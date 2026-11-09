@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# cargo-fuzz needs nightly (sanitizer flags). Installed in the lab VM only.
+[toolchain]
+channel = "nightly-2026-11-01"
+profile = "minimal"

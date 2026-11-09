@@ -26,11 +26,11 @@ Open items (not phase tasks):
 
 ## Phase 2 — Parsers and fuzzing
 
-- [ ] **2.1** ELD parser (raw bytes, extra SAD flags kept)
-- [ ] **2.2** EDID / CTA-861 parser
-- [ ] **2.3** HDA codec dump and procfs parsers
-- [ ] **2.4** USB Audio Class descriptor parser
-- [ ] **2.5** Fuzz targets for every parser
+- [x] **2.1** ELD parser (raw bytes, extra SAD flags kept)
+- [x] **2.2** EDID / CTA-861 parser
+- [x] **2.3** HDA codec dump and procfs parsers
+- [x] **2.4** USB Audio Class descriptor parser
+- [x] **2.5** Fuzz targets for every parser
 - [ ] **2.6** Gate: 24 h fuzz runs clean; parser output matches the captures
 
 ## Phase 3 — Runtime, ALSA, capture, MIDI

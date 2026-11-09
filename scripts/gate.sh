@@ -15,6 +15,9 @@ check "cargo fmt --check" cargo fmt --all --check
 check "cargo clippy -D warnings" cargo clippy --workspace --all-targets -- -D warnings
 check "cargo test" cargo test --workspace --no-fail-fast -q
 check "cargo deny check" cargo deny check
+# Fuzz harness: separate workspace on a pinned nightly; every parser target must build.
+check "fuzz targets build" bash -c 'cd fuzz && cargo fuzz build -O'
+check "cargo deny check (fuzz)" bash -c 'cd fuzz && cargo deny check'
 # Verbatim copies of shared ai-assets scripts are exempt (they must not be edited per project).
 VERBATIM='scripts/(lab\.sh|progress\.mjs|repo-check\.mjs|phone-alerts\.mjs|postmortem\.mjs)$'
 spdx_missing="$(find crates scripts -type f \( -name '*.rs' -o -name '*.sh' -o -name '*.mjs' -o -name '*.toml' \) -print | grep -Ev "$VERBATIM" | xargs grep -L 'SPDX-License-Identifier: LGPL-2.1-or-later' || true)"
