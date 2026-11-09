@@ -1,0 +1,9 @@
+# Normalize line endings; keep binaries untouched.
+* text=auto eol=lf
+
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.bin   binary
+*.edid  binary
+*.eld   binary

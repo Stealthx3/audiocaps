@@ -1,0 +1,59 @@
+# ---------------------------------------------------------------
+# Plan documents (local review copies only; the live plan is the
+# Claude Docs "AudioCaps — Development Plan"). Never commit these.
+# ---------------------------------------------------------------
+docs/plan/
+AudioCaps-Development-Plan*.pdf
+AudioCaps-Development-Plan*.md
+AudioCaps-Development-Plan*.docx
+*Three Development Plans*
+
+# ---------------------------------------------------------------
+# Rust / Cargo
+# ---------------------------------------------------------------
+/target/
+**/*.rs.bk
+*.pdb
+
+# Fuzzing output
+/fuzz/target/
+/fuzz/corpus/
+/fuzz/artifacts/
+/fuzz/coverage/
+
+# ---------------------------------------------------------------
+# Raw system captures (may contain serials, MAC addresses, EDIDs).
+# Only redacted fixtures under tests/fixtures/ are committed.
+# ---------------------------------------------------------------
+/captures/
+*.capture.tar*
+
+# ---------------------------------------------------------------
+# Build and packaging output
+# ---------------------------------------------------------------
+/build/
+/dist/
+/.flatpak-builder/
+/flatpak-build/
+/repo/
+/parts/
+/stage/
+/prime/
+*.snap
+*.flatpak
+
+# ---------------------------------------------------------------
+# Editors and OS clutter
+# ---------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local environment and secrets
+.env
+.env.*
+*.local
