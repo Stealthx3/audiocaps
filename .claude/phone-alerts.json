@@ -1,0 +1,12 @@
+{
+  "standard": "PHONE-ALERTS-STANDARD v1",
+  "remind": "every-session",
+  "events": [
+    "permission_prompt",
+    "elicitation_dialog",
+    "elicitation_url_dialog",
+    "agent_needs_input",
+    "quota_auto_resume_stale",
+    "quota_auto_resume_disabled"
+  ]
+}

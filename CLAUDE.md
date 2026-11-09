@@ -1,7 +1,7 @@
 # CLAUDE.md — AudioCaps
 
 Standing instructions for Claude Code working in this repository. Read this
-file, `docs/decision-and-action-log.md` and the full plan in
+file, `docs/DECISIONS.md`, `docs/USAGE-PLAN.md` and the full plan in
 `docs/plan/AudioCaps-Development-Plan.pdf` before changing anything.
 
 ## What this is
@@ -60,19 +60,33 @@ OS-neutral core.
   containers on this machine (visible in Virtual Machine Manager). Hardware
   reaches them by USB/PCI passthrough or `/dev/snd` bind-mounts. Never test by
   reconfiguring the host's live audio stack.
-- **Standards folder:** Micaiah keeps shared Claude working standards in
-  `/mnt/FileDrive/Business/Development/ai-assets`. Read them at the start of a
-  session and follow them; if they conflict with this file, ask.
+- **Standards:** copies of the shared ai-assets standards live in
+  `docs/standards/` and apply to this project: REPO-STRUCTURE-STANDARD.md,
+  PROGRESS-BAR-STANDARD.md, PHONE-ALERTS-STANDARD.md, VM-LAB-STANDARD.md,
+  TOKEN-USAGE-OPTIMIZATION-STANDARD.md, POST-MORTEM-STANDARD.md (masters in
+  `/mnt/FileDrive/Business/Development/ai-assets`). If one conflicts with this
+  file, ask.
+- Build/test only via `scripts/lab.sh` (see `docs/LAB.md`). Guests are
+  watchable in virt-manager. Real-hardware tests on the host need a one-time
+  exception from Micaiah per test.
+- Phone alerts: see PHONE-ALERTS-STANDARD; hooks installed, check with
+  `node scripts/phone-alerts.mjs check`.
+- Progress: tick `docs/PLAN.md` in the same commit as the work, then run
+  `node scripts/progress.mjs` and `node scripts/repo-check.mjs progress`. The
+  page is published by GitHub Pages: https://stealthx3.github.io/audiocaps/
+- Usage plan: `docs/USAGE-PLAN.md` (read the handoff note first). Append one
+  line per session to `docs/postmortem/JOURNAL.md`.
 
 ## Repository conventions
 
-- Branches: `main` is always releasable; work on `phase-N/<short-topic>` or
-  `fix/<topic>` branches. Conventional Commit messages
+- Branches: `main` is always releasable; work on `<type>/<kebab-case>`
+  branches (phase work: `feat/phase-N-<topic>`; also `fix/`, `docs/`, `chore/`). Conventional Commit messages
   (`feat:`, `fix:`, `docs:`, `test:`, `chore:`, `refactor:`).
-- Every change that records a choice updates `docs/decision-and-action-log.md`
-  (newest first). User-facing changes update `CHANGELOG.md` under Unreleased.
-- Auxiliary docs live in `docs/`. The README keeps: progress page link at the
-  top, goals, screenshots/mockups, feature list, origin (not a fork).
+- Every user decision or action goes in `docs/DECISIONS.md` (oldest first,
+  via `node scripts/repo-check.mjs log`). User-facing changes update
+  `docs/CHANGELOG.md` under Unreleased.
+- Auxiliary docs live in `docs/`. The README follows REPO-STRUCTURE-STANDARD §5
+  (generated progress block, goals, screenshots/mockups, features, docs).
 - **Never commit** anything under `docs/plan/` (plan documents and local notes),
   raw captures (`/captures/`), secrets, passwords, IP addresses or MAC addresses.
   Only redacted fixtures go into `tests/fixtures/`.
@@ -85,5 +99,7 @@ OS-neutral core.
 | --- | --- |
 | `docs/plan/AudioCaps-Development-Plan.pdf` | Full plan: goals, architecture, data model, rule catalogue, API, sandbox matrix, roadmap, testing (git-ignored) |
 | `docs/plan/local-environment.md` | Home network and test rig details (git-ignored) |
-| `docs/decision-and-action-log.md` | Decisions, actions, open items |
+| `docs/DECISIONS.md` | Decision & action log |
+| `docs/PLAN.md` | Roadmap checkboxes and open items (drives the progress page) |
+| `docs/architecture.md` | Crate boundaries as built |
 | `README.md` | Public-facing summary |

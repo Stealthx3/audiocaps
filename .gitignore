@@ -56,8 +56,10 @@ Thumbs.db
 # Claude Code personal files (CLAUDE.md itself is committed)
 CLAUDE.local.md
 .claude/settings.local.json
+.claude/*.local.json
 
 # Local environment and secrets
 .env
 .env.*
 *.local
+.claude/phone-alerts.local.json
