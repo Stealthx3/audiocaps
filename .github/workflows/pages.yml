@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Publishes the progress page (PROGRESS-BAR-STANDARD) from docs/PLAN.md to GitHub Pages.
+name: Progress page
+on:
+  push:
+    branches: [main]
+    paths: [docs/PLAN.md, progress.config.json, scripts/progress.mjs, .github/workflows/pages.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/progress.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/progress
+      - id: deployment
+        uses: actions/deploy-pages@v4

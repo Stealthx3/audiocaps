@@ -1,0 +1,10 @@
+{
+  "pageTitle": "AudioCaps Progress",
+  "eyebrow": "AudioCaps \u00b7 Linux 1.0 roadmap",
+  "heading": "Road to Linux 1.0",
+  "plan": "docs/PLAN.md",
+  "out": "docs/progress/index.html",
+  "timezone": "America/Los_Angeles",
+  "artifactUrl": "https://stealthx3.github.io/audiocaps/",
+  "artifactPublic": true
+}

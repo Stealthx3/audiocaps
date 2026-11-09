@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="470" viewBox="0 0 860 470" role="img" aria-label="Mockup: terminal running audiocaps path report for an HDMI endpoint">
+<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
+<!-- Mockup of the planned CLI output; not real data. -->
+<style>
+.bg{fill:#1b1d23}.bar{fill:#2a2d35}.t{font:13px ui-monospace,Menlo,Consolas,monospace;fill:#d7dae0}
+.p{fill:#7fd17f}.h{fill:#8ab4f8;font-weight:bold}.w{fill:#f0c674}.e{fill:#ff8a80}.m{fill:#8b909a}.ok{fill:#7fd17f}
+</style>
+<rect class="bg" width="860" height="470" rx="10"/>
+<rect class="bar" width="860" height="30" rx="10"/><rect class="bar" y="20" width="860" height="10"/>
+<circle cx="20" cy="15" r="6" fill="#ff5f56"/><circle cx="40" cy="15" r="6" fill="#ffbd2e"/><circle cx="60" cy="15" r="6" fill="#27c93f"/>
+<text class="t m" x="330" y="20">audiocaps — mockup</text>
+<text class="t" x="20" y="58"><tspan class="p">$ </tspan>audiocaps report --endpoint hdmi:card1/pcm3 --path pipewire</text>
+<text class="t h" x="20" y="88">Endpoint  HDMI 1 · Denon AVR-S660H (via ARC/eARC on TV)        sink key 7f3a…</text>
+<text class="t" x="20" y="112">Sink      PCM 8ch 32–192 kHz 16/20/24-bit · AC-3 · E-AC-3 · DTS · DTS-HD MA · TrueHD</text>
+<text class="t h" x="20" y="142">Hop                 Format / budget                 Status</text>
+<text class="t" x="20" y="166">application         TrueHD (requested)              <tspan class="ok">ok</tspan></text>
+<text class="t" x="20" y="188">pipewire            PCM 2ch 48 kHz, iec958 PCM only  <tspan class="e">LOSS</tspan></text>
+<text class="t" x="20" y="210">alsa hw:1,3         IEC958 HBR 8ch 192 kHz 24.6 Mb/s <tspan class="ok">ok</tspan></text>
+<text class="t" x="20" y="232">amdgpu HDA pin      HBR capable                     <tspan class="ok">ok</tspan></text>
+<text class="t" x="20" y="254">HDMI link (TMDS)    4K60 · audio room ok            <tspan class="ok">ok</tspan></text>
+<text class="t" x="20" y="276">TV → receiver       ARC/eARC unknown (no CEC)       <tspan class="w">unknown</tspan></text>
+<text class="t h" x="20" y="306">Bottleneck  pipewire · latency estimate 42 ms</text>
+<text class="t e" x="20" y="336">error   PASSTHROUGH_NOT_ENABLED  sink lists TrueHD, node allows PCM only</text>
+<text class="t m" x="20" y="356">        hint: enable iec958 codecs for this node in WirePlumber (Debian: ~/.config/wireplumber/…)</text>
+<text class="t w" x="20" y="382">warning SINK_DOWNSTREAM_UNKNOWN  ARC/eARC likely; no CEC access to confirm the receiver</text>
+<text class="t m" x="20" y="402">        hint: confirm eARC on the TV, or opt in to CEC with an adapter</text>
+<text class="t m" x="20" y="440">provenance: ELD /proc/asound/card1/eld#0.3 (measured) · pw node 58 params (measured)</text>
+</svg>
