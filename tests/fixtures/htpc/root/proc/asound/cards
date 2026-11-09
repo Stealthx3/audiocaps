@@ -1,0 +1,6 @@
+ 0 [Device         ]: USB-Audio - USB Composite Device
+                      USB Composite Device USB Composite Device at usb-0000:02:00.0-3, full speed
+ 1 [HDMI           ]: HDA-Intel - HDA ATI HDMI
+                      HDA ATI HDMI at 0xfcda0000 irq 85
+ 2 [Generic        ]: HDA-Intel - HD-Audio Generic
+                      HD-Audio Generic at 0xfcc00000 irq 86

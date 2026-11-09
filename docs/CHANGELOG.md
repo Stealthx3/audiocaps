@@ -20,7 +20,9 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   scoped probing, explicit unknowns, provenance, confidence and redaction.
 - `audiocaps capture`, `import`, `check-redaction`, `replay`, `probe` and `schema`
   commands.
-- Fixture replay with golden snapshots.
+- Fixture replay with golden snapshots; five captured fixtures (workstation, HTPC,
+  and PipeWire, PulseAudio and ALSA-only lab VMs) plus a synthetic one.
+- `audiocaps redact-fixture` to re-apply redaction rules to an existing fixture.
 
 ### Changed
 

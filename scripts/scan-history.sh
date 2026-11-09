@@ -25,6 +25,6 @@ ips="$(git grep -IhoE '\b(25[0-5]|2[0-4][0-9]|1?[0-9]?[0-9])(\.(25[0-5]|2[0-4][0
 for ip in $ips; do allowed "$ip" && continue; report "IPv4 address in history: $ip"; done
 macs="$(git grep -IhoiE '\b[0-9a-f]{2}([:_-])[0-9a-f]{2}(\1[0-9a-f]{2}){4}\b' $revs 2>/dev/null | sort -u | grep -viE '^02' || true)"
 for m in $macs; do allowed "$m" && continue; report "MAC address in history: $m"; done
-keys="$(git grep -Il 'PRIVATE KEY-----' $revs -- . ':!docs/standards/*' 2>/dev/null | head -5 || true)"
+keys="$(git grep -Il 'PRIVATE KEY-----' $revs -- . ':!docs/standards/*' ':!scripts/scan-history.sh' 2>/dev/null | head -5 || true)"
 [ -n "$keys" ] && report "private key material in: $keys"
 [ $problems -eq 0 ] && echo "history: clean" || { echo "history: $problems problem(s)"; exit 1; }

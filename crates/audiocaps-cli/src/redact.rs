@@ -16,7 +16,9 @@ use serde_json::Value as Json;
 use sha2::{Digest, Sha256};
 
 static MAC: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)\b[0-9a-f]{2}([:_-])[0-9a-f]{2}(?:[:_-][0-9a-f]{2}){4}\b").expect("regex")
+    // No \b: addresses often follow `_` (BlueZ `dev_AA_BB_…`), which is a word character.
+    // Boundaries are checked by hand in `mac_spans`.
+    Regex::new(r"(?i)[0-9a-f]{2}([:_-])[0-9a-f]{2}(?:[:_-][0-9a-f]{2}){4}").expect("regex")
 });
 static IPV4: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"\b(?:25[0-5]|2[0-4]\d|1?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|1?\d?\d)){3}\b")
@@ -27,11 +29,27 @@ static IPV6: LazyLock<Regex> = LazyLock::new(|| {
         .expect("regex")
 });
 
+/// Byte spans of MAC-like addresses that are not part of a longer hex/colon run.
+fn mac_spans(s: &str) -> Vec<(usize, usize)> {
+    let b = s.as_bytes();
+    let edge = |c: u8| c.is_ascii_hexdigit() || c == b':';
+    MAC.find_iter(s)
+        .filter(|m| {
+            let before = m.start().checked_sub(1).map(|i| b[i]);
+            let after = b.get(m.end()).copied();
+            !before.is_some_and(edge) && !after.is_some_and(edge)
+        })
+        .map(|m| (m.start(), m.end()))
+        .collect()
+}
+
 /// Identity of the capturing machine, replaced wherever it appears.
 #[derive(Debug, Clone, Default)]
 pub struct Redactor {
     host: Option<Regex>,
     user: Option<Regex>,
+    /// Leave `02:…` pseudo addresses alone (when re-redacting an already redacted fixture).
+    keep_pseudo: bool,
 }
 
 fn word(s: &str) -> Option<Regex> {
@@ -61,25 +79,43 @@ impl Redactor {
         Self {
             host: host.and_then(word),
             user: user.and_then(word),
+            keep_pseudo: false,
         }
+    }
+
+    /// A redactor for fixtures that were already redacted: pseudo addresses stay as they are.
+    pub fn for_redacted_fixture() -> Self {
+        Self {
+            keep_pseudo: true,
+            ..Self::default()
+        }
+    }
+
+    fn macs(&self, s: &str) -> String {
+        let mut out = String::with_capacity(s.len());
+        let mut last = 0;
+        for (a, z) in mac_spans(s) {
+            let m = &s[a..z];
+            out.push_str(&s[last..a]);
+            if self.keep_pseudo && m.starts_with("02") {
+                out.push_str(m);
+            } else {
+                let sep = &m[2..3];
+                let h = Sha256::digest(m.replace(['_', '-'], ":").to_ascii_lowercase().as_bytes());
+                let parts: Vec<String> = std::iter::once("02".to_string())
+                    .chain(h.iter().take(5).map(|b| format!("{b:02X}")))
+                    .collect();
+                out.push_str(&parts.join(sep));
+            }
+            last = z;
+        }
+        out.push_str(&s[last..]);
+        out
     }
 
     /// Redacts free text.
     pub fn text(&self, s: &str) -> String {
-        let mut out = MAC
-            .replace_all(s, |c: &regex::Captures<'_>| {
-                let sep = &c[1];
-                let h = Sha256::digest(
-                    c[0].replace(['_', '-'], ":")
-                        .to_ascii_lowercase()
-                        .as_bytes(),
-                );
-                let parts: Vec<String> = std::iter::once("02".to_string())
-                    .chain(h.iter().take(5).map(|b| format!("{b:02X}")))
-                    .collect();
-                parts.join(sep)
-            })
-            .into_owned();
+        let mut out = self.macs(s);
         out = IPV4
             .replace_all(&out, |c: &regex::Captures<'_>| match &c[0] {
                 "127.0.0.1" | "0.0.0.0" => c[0].to_string(),
@@ -115,60 +151,68 @@ impl Redactor {
                     || map
                         .keys()
                         .any(|k| k.starts_with("api.bluez5.") || k == "org.bluez.Device1");
-                for (k, val) in map.iter_mut() {
-                    let kl = k.to_ascii_lowercase();
-                    if kl.contains("serial")
-                        && let Json::String(s) = val
-                    {
-                        *s = format!("redacted-serial-{}", short_hash(s));
-                        continue;
-                    }
-                    if kl.contains("machine-id")
-                        || kl.contains("session-id")
-                        || kl == "host_name"
-                        || kl == "user_name"
-                    {
-                        *val = Json::String("redacted".into());
-                        continue;
-                    }
-                    let name_key = matches!(
-                        k.as_str(),
-                        "Name"
-                            | "Alias"
-                            | "device.description"
-                            | "device.alias"
-                            | "device.nick"
-                            | "node.description"
-                            | "node.nick"
-                            | "media.name"
-                            | "description"
-                    );
-                    if bt && name_key {
-                        if let Json::String(_) = val {
-                            *val = Json::String("redacted-name".into());
-                            continue;
-                        }
-                        if let Json::Object(o) = val {
-                            // busctl --json: {"type":"s","data":"..."}
-                            if let Some(d) = o.get_mut("data") {
-                                *d = Json::String("redacted-name".into());
-                                continue;
-                            }
-                        }
-                    }
-                    self.walk(val, bt);
+                // Keys can carry addresses too (BlueZ object paths), so the map is rebuilt.
+                let entries = std::mem::take(map);
+                for (k, mut val) in entries {
+                    self.entry(&k, &mut val, bt);
+                    map.insert(self.text(&k), val);
                 }
             }
             _ => {}
         }
     }
+
+    fn entry(&self, k: &str, val: &mut Json, bt: bool) {
+        let kl = k.to_ascii_lowercase();
+        if kl.contains("serial")
+            && let Json::String(s) = val
+        {
+            *s = format!("redacted-serial-{}", short_hash(s));
+            return;
+        }
+        if kl.contains("machine-id")
+            || kl.contains("session-id")
+            || kl == "host_name"
+            || kl == "user_name"
+        {
+            *val = Json::String("redacted".into());
+            return;
+        }
+        let name_key = matches!(
+            k,
+            "Name"
+                | "Alias"
+                | "device.description"
+                | "device.alias"
+                | "device.nick"
+                | "node.description"
+                | "node.nick"
+                | "media.name"
+                | "description"
+        );
+        if bt && name_key {
+            match val {
+                Json::String(_) => {
+                    *val = Json::String("redacted-name".into());
+                    return;
+                }
+                // busctl --json: {"type":"s","data":"..."}
+                Json::Object(o) if o.contains_key("data") => {
+                    o.insert("data".into(), Json::String("redacted-name".into()));
+                    return;
+                }
+                _ => {}
+            }
+        }
+        self.walk(val, bt);
+    }
 }
 
 /// Patterns that must never appear in a redacted capture. Returns the offending matches.
 pub fn leaks(text: &str) -> Vec<String> {
-    let mut out: Vec<String> = MAC
-        .find_iter(text)
-        .map(|m| m.as_str())
+    let mut out: Vec<String> = mac_spans(text)
+        .into_iter()
+        .map(|(a, z)| &text[a..z])
         .filter(|m| !m.starts_with("02"))
         .map(|m| format!("mac {m}"))
         .collect();
@@ -196,6 +240,26 @@ mod tests {
         // Same address, different separators, same pseudo address.
         assert!(a.contains(&colon.replace(':', "_")));
         assert!(leaks(&a).is_empty());
+    }
+
+    #[test]
+    fn addresses_after_underscores_and_in_keys() {
+        let r = Redactor::default();
+        let mut v: Json = serde_json::json!({"/org/bluez/hci0/dev_00_00_5E_00_53_13": {"x": "dev_00_00_5E_00_53_13"}});
+        r.json(&mut v);
+        let s = v.to_string();
+        assert!(!s.contains("00_00_5E"), "{s}");
+        assert!(leaks(&s).is_empty());
+        assert_eq!(leaks("path dev_00_00_5E_00_53_13").len(), 1);
+        // Not an address: part of a longer hex/colon run.
+        assert!(leaks("00:00:5e:00:53:13:77").is_empty());
+    }
+
+    #[test]
+    fn re_redaction_keeps_pseudo_addresses() {
+        let once = Redactor::default().text("a 00:00:5E:00:53:13");
+        let twice = Redactor::for_redacted_fixture().text(&once);
+        assert_eq!(once, twice);
     }
 
     #[test]
