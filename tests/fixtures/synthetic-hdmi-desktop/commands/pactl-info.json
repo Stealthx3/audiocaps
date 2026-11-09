@@ -1,0 +1,6 @@
+{
+  "server_string": "/run/user/1000/pulse/native",
+  "server_name": "pulseaudio",
+  "server_version": "17.0",
+  "host_name": "redacted"
+}
