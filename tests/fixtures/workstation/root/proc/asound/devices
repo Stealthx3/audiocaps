@@ -1,0 +1,18 @@
+  1:        : sequencer
+  2: [ 0- 3]: digital audio playback
+  3: [ 0- 7]: digital audio playback
+  4: [ 0- 8]: digital audio playback
+  5: [ 1- 0]: digital audio playback
+  6: [ 1- 0]: digital audio capture
+  7: [ 1- 1]: digital audio playback
+  8: [ 0- 9]: digital audio playback
+  9: [ 0- 0]: hardware dependent
+ 10: [ 1- 2]: digital audio capture
+ 11: [ 1- 0]: hardware dependent
+ 12: [ 0]   : control
+ 13: [ 1]   : control
+ 14: [ 2- 0]: digital audio capture
+ 15: [ 2]   : control
+ 16: [ 3- 0]: digital audio capture
+ 17: [ 3]   : control
+ 33:        : timer

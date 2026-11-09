@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "tool_version": "0.1.0",
+  "captured_at_ms": 1794190241958,
+  "sandbox": {
+    "snap": false,
+    "flatpak": false
+  },
+  "file_count": 311,
+  "commands": [
+    {
+      "name": "pw-dump",
+      "argv": [
+        "pw-dump"
+      ],
+      "exit_code": 0,
+      "output_file": "pw-dump.json"
+    },
+    {
+      "name": "pactl-info",
+      "argv": [
+        "pactl",
+        "-f",
+        "json",
+        "info"
+      ],
+      "exit_code": 0,
+      "output_file": "pactl-info.json"
+    },
+    {
+      "name": "pactl-list",
+      "argv": [
+        "pactl",
+        "-f",
+        "json",
+        "list"
+      ],
+      "exit_code": 0,
+      "output_file": "pactl-list.json"
+    },
+    {
+      "name": "bluez",
+      "argv": [
+        "busctl",
+        "--system",
+        "--json=short",
+        "call",
+        "org.bluez",
+        "/",
+        "org.freedesktop.DBus.ObjectManager",
+        "GetManagedObjects"
+      ],
+      "exit_code": 0,
+      "output_file": "bluez.json"
+    }
+  ],
+  "redaction": [
+    "MAC and Bluetooth addresses replaced by stable pseudo addresses (02:..)",
+    "IPv4 (except loopback) and IPv6 addresses replaced",
+    "host name and user name of the capturing machine replaced",
+    "JSON values under keys containing 'serial' hashed; machine and session ids removed",
+    "Bluetooth device names and aliases replaced",
+    "EDID numeric serial and serial descriptor cleared, checksum fixed",
+    "DMI serials, product UUID and USB serial attributes are never collected"
+  ],
+  "notes": []
+}

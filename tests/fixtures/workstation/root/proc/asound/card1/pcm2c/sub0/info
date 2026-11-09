@@ -1,0 +1,11 @@
+card: 1
+device: 2
+subdevice: 0
+stream: CAPTURE
+id: ALCS1200A Alt Analog
+name: ALCS1200A Alt Analog
+subname: subdevice #0
+class: 0
+subclass: 0
+subdevices_count: 1
+subdevices_avail: 1

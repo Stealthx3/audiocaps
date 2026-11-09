@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "tool_version": "0.1.0",
+  "captured_at_ms": 1794000000000,
+  "sandbox": { "snap": false, "flatpak": false },
+  "file_count": 4,
+  "commands": [
+    { "name": "pw-dump", "argv": ["pw-dump"], "skipped": "pw-dump not installed" },
+    { "name": "pactl-info", "argv": ["pactl", "-f", "json", "info"], "exit_code": 0, "output_file": "pactl-info.json" },
+    { "name": "bluez", "argv": [], "skipped": "org.bluez not running; not activating it" }
+  ],
+  "redaction": ["synthetic fixture written by hand; contains no real system data"],
+  "notes": ["Hand-written fixture covering an analog + HDMI desktop with native PulseAudio."]
+}

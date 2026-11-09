@@ -1,0 +1,4 @@
+ 0 [Intel          ]: HDA-Intel - HDA Intel
+                      HDA Intel at 0xfea10000 irq 62
+ 1 [Intel_1        ]: HDA-Intel - HDA Intel
+                      HDA Intel at 0xfca00000 irq 63

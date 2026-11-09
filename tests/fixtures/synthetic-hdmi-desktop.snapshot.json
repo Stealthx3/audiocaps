@@ -1,0 +1,701 @@
+{
+  "schema_version": "1.0.0",
+  "generation": 1,
+  "taken_at_ms": 1794000000000,
+  "source": {
+    "kind": "fixture",
+    "name": "synthetic-hdmi-desktop"
+  },
+  "scope": {
+    "endpoint_classes": {
+      "select": "all"
+    },
+    "directions": {
+      "select": "all"
+    },
+    "endpoints": {
+      "select": "all"
+    },
+    "layers": {
+      "select": "all"
+    },
+    "fields": {
+      "select": "all"
+    },
+    "access_paths": {
+      "select": "all"
+    }
+  },
+  "redaction": {
+    "serials": "hash",
+    "bluetooth_addresses": "hash",
+    "device_names": "mask"
+  },
+  "layers": [
+    {
+      "layer": "sink_chain",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 6 of the roadmap"
+      }
+    },
+    {
+      "layer": "host_hardware",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 3 of the roadmap"
+      }
+    },
+    {
+      "layer": "kernel_driver",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 3 of the roadmap"
+      }
+    },
+    {
+      "layer": "alsa_userspace",
+      "availability": {
+        "state": "partial"
+      }
+    },
+    {
+      "layer": "sound_server",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 4 of the roadmap"
+      }
+    },
+    {
+      "layer": "wireless",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 5 of the roadmap"
+      }
+    },
+    {
+      "layer": "environment",
+      "availability": {
+        "state": "partial"
+      }
+    }
+  ],
+  "environment": {
+    "os": {
+      "state": "known",
+      "value": {
+        "id": "debian",
+        "version_id": "13",
+        "family": "debian"
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/etc/os-release"
+        },
+        "read_at_ms": 1794000000000
+      }
+    },
+    "kernel": {
+      "state": "known",
+      "value": "6.12.48+deb13-amd64",
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/proc/sys/kernel/osrelease"
+        },
+        "read_at_ms": 1794000000000
+      }
+    },
+    "sandbox": {
+      "state": "known",
+      "value": {
+        "kind": "none"
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/.flatpak-info"
+        },
+        "read_at_ms": 1794000000000
+      }
+    },
+    "servers": [
+      {
+        "server": "pipe_wire",
+        "info": {
+          "state": "unknown",
+          "reason": "library_missing",
+          "detail": "pw-dump not installed"
+        }
+      },
+      {
+        "server": "pulse_audio",
+        "info": {
+          "state": "known",
+          "value": {
+            "name": "pulseaudio",
+            "version": "17.0"
+          },
+          "confidence": "measured",
+          "provenance": {
+            "layer": "sound_server",
+            "source": {
+              "kind": "command",
+              "name": "pactl-info"
+            },
+            "read_at_ms": 1794000000000
+          }
+        }
+      }
+    ]
+  },
+  "endpoints": [
+    {
+      "id": "alsa:card0/pcm0c",
+      "class": "hardware",
+      "direction": "capture",
+      "transport": {
+        "state": "known",
+        "value": "analog",
+        "confidence": "inferred",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "derived",
+            "from": "PCM name in /proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "ALC892 Analog"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 0,
+            "id": "PCH"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 0,
+            "device": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card0/pcm0p",
+      "class": "hardware",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "analog",
+        "confidence": "inferred",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "derived",
+            "from": "PCM name in /proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "ALC892 Analog"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 0,
+            "id": "PCH"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 0,
+            "device": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card0/pcm1p",
+      "class": "hardware",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "spdif",
+        "confidence": "inferred",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "derived",
+            "from": "PCM name in /proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "ALC892 Digital"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 0,
+            "id": "PCH"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 0,
+            "device": 1
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card1/pcm3p",
+      "class": "hardware",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "hdmi_dp",
+        "confidence": "inferred",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "derived",
+            "from": "PCM name in /proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "HDMI 0"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 1,
+            "id": "HDMI"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 1,
+            "device": 3
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card1/pcm7p",
+      "class": "hardware",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "hdmi_dp",
+        "confidence": "inferred",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "derived",
+            "from": "PCM name in /proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "HDMI 1"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794000000000
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 1,
+            "id": "HDMI"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 1,
+            "device": 7
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 3 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    }
+  ]
+}

@@ -12,17 +12,17 @@ Open items (not phase tasks):
 
 ## Phase 1 — Scaffold, model, schema
 
-- [ ] **1.1** Adopt the shared standards: repo layout, progress page, phone alerts, VM lab, usage plan, journal
-- [ ] **1.2** Cargo workspace with the six crates, pinned toolchain, rustfmt/clippy settings, SPDX headers
-- [ ] **1.3** License gate: `deny.toml` for cargo-deny
-- [ ] **1.4** Data model in `audiocaps-model`: endpoints, layers, capability sets, access paths, path reports, findings, provenance, unknowns, probe scope
-- [ ] **1.5** JSON schema v1 generated from the model, committed under `schema/`, with redaction rules
-- [ ] **1.6** `SystemRoot` abstraction: every reader works on `/` or on a captured fixture tree
-- [ ] **1.7** Capture tool `audiocaps capture`: passive, read-only, redacted tarball
-- [ ] **1.8** Fixture replay and golden snapshots
-- [ ] **1.9** Five captures replayed: three lab VMs (PipeWire, PulseAudio, ALSA-only), workstation, HTPC
-- [ ] **1.10** Docs: README, changelog, decision log, `docs/architecture.md`
-- [ ] **1.11** Gate: fmt, clippy, tests and cargo-deny clean; history free of plan docs, captures, IPs and MACs
+- [x] **1.1** Adopt the shared standards: repo layout, progress page, phone alerts, VM lab, usage plan, journal
+- [x] **1.2** Cargo workspace with the six crates, pinned toolchain, rustfmt/clippy settings, SPDX headers
+- [x] **1.3** License gate: `deny.toml` for cargo-deny
+- [x] **1.4** Data model in `audiocaps-model`: endpoints, layers, capability sets, access paths, path reports, findings, provenance, unknowns, probe scope
+- [x] **1.5** JSON schema v1 generated from the model, committed under `schema/`, with redaction rules
+- [x] **1.6** `SystemRoot` abstraction: every reader works on `/` or on a captured fixture tree
+- [x] **1.7** Capture tool `audiocaps capture`: passive, read-only, redacted tarball
+- [x] **1.8** Fixture replay and golden snapshots
+- [x] **1.9** Five captures replayed: three lab VMs (PipeWire, PulseAudio, ALSA-only), workstation, HTPC
+- [x] **1.10** Docs: README, changelog, decision log, `docs/architecture.md`
+- [x] **1.11** Gate: fmt, clippy, tests and cargo-deny clean; history free of plan docs, captures, IPs and MACs
 
 ## Phase 2 — Parsers and fuzzing
 

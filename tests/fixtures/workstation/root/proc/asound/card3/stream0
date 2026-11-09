@@ -1,0 +1,13 @@
+Sonix Technology Co., Ltd. Adesso CyberTrack H4 at usb-0000:07:00.1-2.1.4, high : USB Audio
+
+Capture:
+  Status: Stop
+  Interface 3
+    Altset 1
+    Format: S16_LE
+    Channels: 2
+    Endpoint: 0x84 (4 IN) (ASYNC)
+    Rates: 8000, 11025, 16000, 22050, 24000, 44100, 48000
+    Data packet interval: 1000 us
+    Bits: 16
+    Channel map: FL FR

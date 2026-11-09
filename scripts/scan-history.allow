@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Values scripts/scan-history.sh accepts, one regex per line. Each is synthetic, not a real address.
+# RFC 5737 documentation IPv4 ranges and RFC 7042 documentation MAC range (current unit tests).
+^192\.0\.2\.[0-9]+$
+^198\.51\.100\.[0-9]+$
+^203\.0\.113\.[0-9]+$
+^00[:_-]00[:_-]5[eE][:_-]00[:_-]53[:_-][0-9a-fA-F]{2}$
+# Made-up values in unit tests of commit 2bd0086 (redaction tests), replaced since; not real hosts.
+^10\.0\.0\.12$
+^192\.168\.1\.4$
+^00[:_]11[:_]22[:_]33[:_]44[:_]55$
+^00[:_]1[aA][:_]7[dD][:_][dD][aA][:_]71[:_]13$
