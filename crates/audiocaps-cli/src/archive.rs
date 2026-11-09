@@ -101,7 +101,9 @@ fn bad(msg: String) -> io::Error {
 pub fn check_redaction(dir: &Path) -> io::Result<Vec<String>> {
     let mut out = vec![];
     walk(dir, &mut |p| {
-        if p.file_name().is_some_and(|n| n == "edid") {
+        if p.file_name()
+            .is_some_and(|n| n == "edid" || n == "descriptors")
+        {
             return;
         }
         if let Ok(b) = fs::read(p)
@@ -126,7 +128,7 @@ pub fn redact_fixture(dir: &Path) -> io::Result<usize> {
     let mut err = None;
     walk(dir, &mut |p| {
         let name = p.file_name().and_then(|n| n.to_str()).unwrap_or("");
-        if name == "edid" || name == "manifest.json" {
+        if name == "edid" || name == "descriptors" || name == "manifest.json" {
             return;
         }
         let Ok(text) = fs::read_to_string(p) else {
