@@ -49,3 +49,4 @@ Entries up to the adoption line were migrated from the former `docs/decision-and
 - **2026-11-08** · approval · One-time host exception: run the static audiocaps capture on the workstation under strace (done; no /dev/snd opens)
 - **2026-11-08** · approval · One-time exception: Claude ran the capture on the HTPC over SSH with the existing key; binary in /tmp, removed afterwards (no strace on the HTPC)
 - **2026-11-08** · decision · Redaction now covers JSON object keys and addresses joined by underscores (BlueZ dev_… paths); audiocaps redact-fixture re-applies rules to existing fixtures; leak scan uses hex/colon boundaries instead of word boundaries — _why:_ a pre-commit review found real Bluetooth addresses in BlueZ object paths; caught before commit or push _(by claude)_
+- **2026-11-08** · approval · Approved phase 1 at its gate and the merge of feat/phase-1-scaffold-model-schema into main
