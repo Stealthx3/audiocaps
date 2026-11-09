@@ -14,6 +14,14 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   progress block at the top of the README.
 - Project tooling from the shared standards: repo check, lab VMs, phone alerts.
 
+- Cargo workspace with the six crates (`audiocaps-model`, `-parse`, `-backends`,
+  `-rules`, `-ffi`, `-cli`), pinned toolchain and a cargo-deny license gate.
+- Data model and JSON schema v1 (`schema/audiocaps-snapshot-v1.schema.json`) with
+  scoped probing, explicit unknowns, provenance, confidence and redaction.
+- `audiocaps capture`, `import`, `check-redaction`, `replay`, `probe` and `schema`
+  commands.
+- Fixture replay with golden snapshots.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in
