@@ -22,6 +22,8 @@ USAGE:
       Extract a capture into a fixture directory and check its redaction.
   audiocaps check-redaction <fixture-dir>
       Scan a fixture for MAC or IP addresses that should have been redacted.
+  audiocaps redact-fixture <fixture-dir>
+      Re-apply the redaction rules to an extracted fixture (after a rule change).
   audiocaps replay <fixture-dir>
       Probe a fixture with the full scope and print the snapshot as JSON.
   audiocaps probe
@@ -36,6 +38,9 @@ fn main() -> ExitCode {
         Some("capture") => cmd_capture(&args[1..]),
         Some("import") if args.len() == 3 => cmd_import(&args[1], &args[2]),
         Some("check-redaction") if args.len() == 2 => cmd_check(&args[1]),
+        Some("redact-fixture") if args.len() == 2 => archive::redact_fixture(args[1].as_ref())
+            .map_err(|e| e.to_string())
+            .map(|n| println!("{n} files re-redacted")),
         Some("replay") if args.len() == 2 => SystemRoot::fixture(&args[1])
             .map_err(|e| e.to_string())
             .map(|r| print_snapshot(&r)),

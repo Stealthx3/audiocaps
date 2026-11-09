@@ -118,6 +118,43 @@ pub fn check_redaction(dir: &Path) -> io::Result<Vec<String>> {
     Ok(out)
 }
 
+/// Re-applies the redaction rules to an extracted fixture (pseudo addresses are kept), e.g. after
+/// a rule is tightened. Returns how many files changed.
+pub fn redact_fixture(dir: &Path) -> io::Result<usize> {
+    let r = crate::redact::Redactor::for_redacted_fixture();
+    let mut changed = 0;
+    let mut err = None;
+    walk(dir, &mut |p| {
+        let name = p.file_name().and_then(|n| n.to_str()).unwrap_or("");
+        if name == "edid" || name == "manifest.json" {
+            return;
+        }
+        let Ok(text) = fs::read_to_string(p) else {
+            return;
+        };
+        let new = if name.ends_with(".json") {
+            match serde_json::from_str::<serde_json::Value>(&text) {
+                Ok(mut v) => {
+                    r.json(&mut v);
+                    let mut s = serde_json::to_string_pretty(&v).unwrap_or_default();
+                    s.push('\n');
+                    s
+                }
+                Err(_) => r.text(&text),
+            }
+        } else {
+            r.text(&text)
+        };
+        if new != text {
+            match fs::write(p, new) {
+                Ok(()) => changed += 1,
+                Err(e) => err = Some(e),
+            }
+        }
+    })?;
+    err.map_or(Ok(changed), Err)
+}
+
 fn walk(dir: &Path, f: &mut dyn FnMut(&Path)) -> io::Result<()> {
     for e in fs::read_dir(dir)? {
         let e = e?;

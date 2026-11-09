@@ -7,7 +7,7 @@
       "properties": {
         "module.name": "libpipewire-module-rt",
         "object.id": "1",
-        "object.serial": "redacted-serial-6b86b273",
+        "object.serial": "redacted-serial-333bef4f",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Use realtime thread scheduling, falling back to RTKit",
         "module.usage": "( nice.level=<priority: default 20(don't change)> ) ( rt.prio=<priority: default 83> ) ( rt.time.soft=<in usec: default -1> ) ( rt.time.hard=<in usec: default -1> ) ( rlimits.enabled=<default true> ) ( rtportal.enabled=<default true> ) ( rtkit.enabled=<default true> ) ( uclamp.min=<default 0> ) ( uclamp.max=<default 1024> )",
@@ -23,7 +23,7 @@
       "properties": {
         "module.name": "libpipewire-module-protocol-native",
         "object.id": "2",
-        "object.serial": "redacted-serial-d4735e3a",
+        "object.serial": "redacted-serial-6f8af2d0",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Native protocol using unix sockets",
         "module.version": "1.4.2"
@@ -36,7 +36,7 @@
       "properties": {
         "module.name": "libpipewire-module-profiler",
         "object.id": "4",
-        "object.serial": "redacted-serial-4b227777",
+        "object.serial": "redacted-serial-600b3ccf",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Generate Profiling data",
         "module.usage": "( profile.interval.ms=<minimum interval for sampling data (in ms) ) ",
@@ -50,7 +50,7 @@
       "properties": {
         "module.name": "libpipewire-module-metadata",
         "object.id": "6",
-        "object.serial": "redacted-serial-e7f6c011",
+        "object.serial": "redacted-serial-6bb852b4",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Allow clients to create metadata store",
         "module.version": "1.4.2"
@@ -63,7 +63,7 @@
       "properties": {
         "module.name": "libpipewire-module-spa-device-factory",
         "object.id": "8",
-        "object.serial": "redacted-serial-2c624232",
+        "object.serial": "redacted-serial-a997a6d1",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Provide a factory to make SPA devices",
         "module.version": "1.4.2"
@@ -76,7 +76,7 @@
       "properties": {
         "module.name": "libpipewire-module-spa-node-factory",
         "object.id": "10",
-        "object.serial": "redacted-serial-4a44dc15",
+        "object.serial": "redacted-serial-c10d9f34",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Provide a factory to make SPA nodes",
         "module.version": "1.4.2"
@@ -89,7 +89,7 @@
       "properties": {
         "module.name": "libpipewire-module-client-node",
         "object.id": "12",
-        "object.serial": "redacted-serial-6b51d431",
+        "object.serial": "redacted-serial-7cb1a3a1",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Allow clients to create and control remote nodes",
         "module.version": "1.4.2"
@@ -102,7 +102,7 @@
       "properties": {
         "module.name": "libpipewire-module-client-device",
         "object.id": "14",
-        "object.serial": "redacted-serial-8527a891",
+        "object.serial": "redacted-serial-117e9fae",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Allow clients to create and control remote devices",
         "module.version": "1.4.2"
@@ -115,7 +115,7 @@
       "properties": {
         "module.name": "libpipewire-module-portal",
         "object.id": "16",
-        "object.serial": "redacted-serial-b17ef6d1"
+        "object.serial": "redacted-serial-3beef3f9"
       }
     },
     {
@@ -125,7 +125,7 @@
       "properties": {
         "module.name": "libpipewire-module-access",
         "object.id": "17",
-        "object.serial": "redacted-serial-4523540f",
+        "object.serial": "redacted-serial-cc08e846",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Perform access check",
         "module.usage": "( access.socket={ <socket>=<access>, ... } ) ( access.legacy=true ) ",
@@ -139,7 +139,7 @@
       "properties": {
         "module.name": "libpipewire-module-adapter",
         "object.id": "18",
-        "object.serial": "redacted-serial-4ec9599f",
+        "object.serial": "redacted-serial-bb1caa43",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Manage adapter nodes",
         "module.version": "1.4.2"
@@ -152,7 +152,7 @@
       "properties": {
         "module.name": "libpipewire-module-link-factory",
         "object.id": "20",
-        "object.serial": "redacted-serial-f5ca38f7",
+        "object.serial": "redacted-serial-6aed6f5a",
         "module.author": "Wim Taymans <wim.taymans@gmail.com>",
         "module.description": "Allow clients to create links",
         "module.usage": "( allow.link.passive=<bool, default false> ) ",
@@ -166,7 +166,7 @@
       "properties": {
         "module.name": "libpipewire-module-session-manager",
         "object.id": "22",
-        "object.serial": "redacted-serial-785f3ec7",
+        "object.serial": "redacted-serial-47217e12",
         "module.author": "George Kiagiadakis <george.kiagiadakis@collabora.com>",
         "module.description": "Implements objects for session management",
         "module.version": "1.4.2"
@@ -179,7 +179,7 @@
       "properties": {
         "module.name": "libpipewire-module-jackdbus-detect",
         "object.id": "29",
-        "object.serial": "redacted-serial-35135aaa"
+        "object.serial": "redacted-serial-992251ab"
       }
     },
     {
@@ -319,7 +319,7 @@
         "node.loop.name": "data-loop.0",
         "library.name": "audioconvert/libspa-audioconvert",
         "object.id": "47",
-        "object.serial": "redacted-serial-31489056",
+        "object.serial": "redacted-serial-0667de48",
         "api.acp.auto-port": "false",
         "api.acp.auto-profile": "false",
         "api.alsa.card": "1",
@@ -448,7 +448,7 @@
         "node.loop.name": "data-loop.0",
         "library.name": "audioconvert/libspa-audioconvert",
         "object.id": "49",
-        "object.serial": "redacted-serial-0e17daca",
+        "object.serial": "redacted-serial-ce150044",
         "api.acp.auto-port": "false",
         "api.acp.auto-profile": "false",
         "api.alsa.card": "0",
@@ -578,7 +578,7 @@
         "node.loop.name": "data-loop.0",
         "library.name": "audioconvert/libspa-audioconvert",
         "object.id": "47",
-        "object.serial": "redacted-serial-31489056",
+        "object.serial": "redacted-serial-0667de48",
         "api.acp.auto-port": "false",
         "api.acp.auto-profile": "false",
         "api.alsa.card": "1",
@@ -707,7 +707,7 @@
         "node.loop.name": "data-loop.0",
         "library.name": "audioconvert/libspa-audioconvert",
         "object.id": "48",
-        "object.serial": "redacted-serial-98010bd9",
+        "object.serial": "redacted-serial-5e31ab3f",
         "api.acp.auto-port": "false",
         "api.acp.auto-profile": "false",
         "api.alsa.card": "1",
@@ -834,7 +834,7 @@
         "node.loop.name": "data-loop.0",
         "library.name": "audioconvert/libspa-audioconvert",
         "object.id": "49",
-        "object.serial": "redacted-serial-0e17daca",
+        "object.serial": "redacted-serial-ce150044",
         "api.acp.auto-port": "false",
         "api.acp.auto-profile": "false",
         "api.alsa.card": "0",
@@ -964,7 +964,7 @@
         "node.loop.name": "data-loop.0",
         "library.name": "audioconvert/libspa-audioconvert",
         "object.id": "50",
-        "object.serial": "redacted-serial-1a656259",
+        "object.serial": "redacted-serial-570530e6",
         "api.acp.auto-port": "false",
         "api.acp.auto-profile": "false",
         "api.alsa.card": "0",
@@ -1020,7 +1020,7 @@
         "pipewire.sec.gid": "1000",
         "module.id": "2",
         "object.id": "33",
-        "object.serial": "redacted-serial-c6f3ac57",
+        "object.serial": "redacted-serial-29cd83c3",
         "application.version": "0.5.8",
         "wireplumber.daemon": "true",
         "wireplumber.profile": "main",
@@ -1070,7 +1070,7 @@
         "pipewire.sec.gid": "1000",
         "module.id": "2",
         "object.id": "41",
-        "object.serial": "redacted-serial-3d914f93",
+        "object.serial": "redacted-serial-5e521db0",
         "application.name": "WirePlumber [export]",
         "wireplumber.export-core": "true",
         "application.version": "0.5.8",
@@ -1120,7 +1120,7 @@
         "pipewire.sec.gid": "1000",
         "module.id": "2",
         "object.id": "63",
-        "object.serial": "redacted-serial-a68b412c",
+        "object.serial": "redacted-serial-6296d844",
         "config.name": "pipewire-pulse.conf",
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
@@ -1164,7 +1164,7 @@
         "pipewire.sec.gid": "1000",
         "module.id": "2",
         "object.id": "64",
-        "object.serial": "redacted-serial-3ada92f2",
+        "object.serial": "redacted-serial-99238edf",
         "client.api": "pipewire-pulse",
         "pulse.server.type": "unix",
         "application.process.id": "4446",
@@ -1238,7 +1238,7 @@
         "factory.id": "15",
         "client.id": "41",
         "object.id": "42",
-        "object.serial": "redacted-serial-73475cb4",
+        "object.serial": "redacted-serial-abcfae58",
         "object.path": "alsa:acp:Intel_1",
         "alsa.card": "1",
         "alsa.card_name": "HDA Intel",
@@ -1361,7 +1361,7 @@
         "factory.id": "15",
         "client.id": "41",
         "object.id": "43",
-        "object.serial": "redacted-serial-44cb730c",
+        "object.serial": "redacted-serial-54fd7bcb",
         "object.path": "alsa:acp:Intel",
         "alsa.card": "0",
         "alsa.card_name": "HDA Intel",

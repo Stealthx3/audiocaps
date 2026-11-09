@@ -1,0 +1,23 @@
+Sound Driver:3.8.1a-980706 (ALSA emulation code)
+Kernel: Linux redacted-host 7.0.0-42-generic #42-Ubuntu SMP PREEMPT_DYNAMIC Thu Oct 15 08:06:44 UTC 2026 x86_64
+Config options: 0
+
+Installed drivers: 
+Type 10: ALSA emulation
+
+Card config: 
+HDA NVidia at 0xfc080000 irq 101
+HD-Audio Generic at 0xfcb00000 irq 103
+HP, Inc HyperX SoloCast at usb-0000:07:00.3-4, full speed
+Sonix Technology Co., Ltd. Adesso CyberTrack H4 at usb-0000:07:00.1-2.1.4, high
+
+Audio devices: NOT ENABLED IN CONFIG
+
+Synth devices: NOT ENABLED IN CONFIG
+
+Midi devices: NOT ENABLED IN CONFIG
+
+Timers:
+31: system timer
+
+Mixers: NOT ENABLED IN CONFIG

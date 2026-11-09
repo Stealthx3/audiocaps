@@ -1,0 +1,356 @@
+{
+  "type": "a{oa{sa{sv}}}",
+  "data": [
+    {
+      "/org/bluez": {
+        "org.freedesktop.DBus.Introspectable": {},
+        "org.bluez.AgentManager1": {},
+        "org.bluez.ProfileManager1": {}
+      },
+      "/org/bluez/hci0": {
+        "org.freedesktop.DBus.Introspectable": {},
+        "org.bluez.Adapter1": {
+          "Address": {
+            "type": "s",
+            "data": "02:EF:61:7E:6E:4D"
+          },
+          "AddressType": {
+            "type": "s",
+            "data": "public"
+          },
+          "Name": {
+            "type": "s",
+            "data": "redacted-host"
+          },
+          "Alias": {
+            "type": "s",
+            "data": "redacted-host"
+          },
+          "Class": {
+            "type": "u",
+            "data": 0
+          },
+          "Connectable": {
+            "type": "b",
+            "data": false
+          },
+          "Powered": {
+            "type": "b",
+            "data": false
+          },
+          "PowerState": {
+            "type": "s",
+            "data": "off"
+          },
+          "Discoverable": {
+            "type": "b",
+            "data": false
+          },
+          "DiscoverableTimeout": {
+            "type": "u",
+            "data": 180
+          },
+          "Pairable": {
+            "type": "b",
+            "data": true
+          },
+          "PairableTimeout": {
+            "type": "u",
+            "data": 0
+          },
+          "Discovering": {
+            "type": "b",
+            "data": false
+          },
+          "UUIDs": {
+            "type": "as",
+            "data": [
+              "0000110e-0000-1000-8000-00805f9b34fb",
+              "00001200-0000-1000-8000-00805f9b34fb",
+              "0000112e-0000-1000-8000-00805f9b34fb",
+              "0000110b-0000-1000-8000-00805f9b34fb",
+              "0000111f-0000-1000-8000-00805f9b34fb",
+              "0000110c-0000-1000-8000-00805f9b34fb",
+              "00001800-0000-1000-8000-00805f9b34fb",
+              "0000110a-0000-1000-8000-00805f9b34fb",
+              "00001801-0000-1000-8000-00805f9b34fb",
+              "0000180a-0000-1000-8000-00805f9b34fb",
+              "03b80e5a-ede8-4b33-a751-6ce34ec4c700",
+              "00005005-0000-1000-8000-0002ee000001",
+              "00001104-0000-1000-8000-00805f9b34fb"
+            ]
+          },
+          "Modalias": {
+            "type": "s",
+            "data": "usb:v1D6Bp0246d0557"
+          },
+          "Roles": {
+            "type": "as",
+            "data": [
+              "central",
+              "peripheral"
+            ]
+          },
+          "Manufacturer": {
+            "type": "q",
+            "data": 93
+          },
+          "Version": {
+            "type": "y",
+            "data": 12
+          }
+        },
+        "org.freedesktop.DBus.Properties": {},
+        "org.bluez.BatteryProviderManager1": {},
+        "org.bluez.RangingProviderManager1": {},
+        "org.bluez.GattManager1": {},
+        "org.bluez.Media1": {
+          "SupportedUUIDs": {
+            "type": "as",
+            "data": [
+              "0000110a-0000-1000-8000-00805f9b34fb",
+              "0000110b-0000-1000-8000-00805f9b34fb"
+            ]
+          },
+          "SupportedFeatures": {
+            "type": "as",
+            "data": [
+              "tx-timestamping"
+            ]
+          }
+        },
+        "org.bluez.NetworkServer1": {},
+        "org.bluez.LEAdvertisingManager1": {
+          "ActiveInstances": {
+            "type": "y",
+            "data": 0
+          },
+          "SupportedInstances": {
+            "type": "y",
+            "data": 10
+          },
+          "SupportedIncludes": {
+            "type": "as",
+            "data": [
+              "tx-power",
+              "appearance",
+              "local-name"
+            ]
+          },
+          "SupportedSecondaryChannels": {
+            "type": "as",
+            "data": [
+              "1M",
+              "2M",
+              "Coded"
+            ]
+          },
+          "SupportedFeatures": {
+            "type": "as",
+            "data": [
+              "CanSetTxPower",
+              "HardwareOffload"
+            ]
+          },
+          "SupportedCapabilities": {
+            "type": "a{sv}",
+            "data": {
+              "MinTxPower": {
+                "type": "n",
+                "data": 1
+              },
+              "MaxTxPower": {
+                "type": "n",
+                "data": 29
+              },
+              "MaxAdvLen": {
+                "type": "y",
+                "data": 251
+              },
+              "MaxScnRspLen": {
+                "type": "y",
+                "data": 251
+              }
+            }
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_A6_02_01_73_C3": {
+        "org.freedesktop.DBus.Introspectable": {},
+        "org.bluez.Device1": {
+          "Address": {
+            "type": "s",
+            "data": "02:A6:02:01:73:C3"
+          },
+          "AddressType": {
+            "type": "s",
+            "data": "public"
+          },
+          "Name": {
+            "type": "s",
+            "data": "redacted-name"
+          },
+          "Alias": {
+            "type": "s",
+            "data": "redacted-name"
+          },
+          "Class": {
+            "type": "u",
+            "data": 9480
+          },
+          "Icon": {
+            "type": "s",
+            "data": "input-gaming"
+          },
+          "Paired": {
+            "type": "b",
+            "data": true
+          },
+          "Bonded": {
+            "type": "b",
+            "data": true
+          },
+          "Trusted": {
+            "type": "b",
+            "data": true
+          },
+          "Blocked": {
+            "type": "b",
+            "data": false
+          },
+          "LegacyPairing": {
+            "type": "b",
+            "data": false
+          },
+          "CablePairing": {
+            "type": "b",
+            "data": false
+          },
+          "Connected": {
+            "type": "b",
+            "data": false
+          },
+          "UUIDs": {
+            "type": "as",
+            "data": [
+              "00001124-0000-1000-8000-00805f9b34fb",
+              "00001200-0000-1000-8000-00805f9b34fb"
+            ]
+          },
+          "Modalias": {
+            "type": "s",
+            "data": "usb:v045Ep02E0d0903"
+          },
+          "Adapter": {
+            "type": "o",
+            "data": "/org/bluez/hci0"
+          },
+          "ServicesResolved": {
+            "type": "b",
+            "data": false
+          },
+          "WakeAllowed": {
+            "type": "b",
+            "data": true
+          }
+        },
+        "org.freedesktop.DBus.Properties": {},
+        "org.bluez.Bearer.BREDR1": {},
+        "org.bluez.Input1": {
+          "ReconnectMode": {
+            "type": "s",
+            "data": "any"
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_19_66_E7_9E_2D": {
+        "org.freedesktop.DBus.Introspectable": {},
+        "org.bluez.Device1": {
+          "Address": {
+            "type": "s",
+            "data": "02:19:66:E7:9E:2D"
+          },
+          "AddressType": {
+            "type": "s",
+            "data": "public"
+          },
+          "Name": {
+            "type": "s",
+            "data": "redacted-name"
+          },
+          "Alias": {
+            "type": "s",
+            "data": "redacted-name"
+          },
+          "Class": {
+            "type": "u",
+            "data": 9480
+          },
+          "Icon": {
+            "type": "s",
+            "data": "input-gaming"
+          },
+          "Paired": {
+            "type": "b",
+            "data": true
+          },
+          "Bonded": {
+            "type": "b",
+            "data": true
+          },
+          "Trusted": {
+            "type": "b",
+            "data": true
+          },
+          "Blocked": {
+            "type": "b",
+            "data": false
+          },
+          "LegacyPairing": {
+            "type": "b",
+            "data": false
+          },
+          "CablePairing": {
+            "type": "b",
+            "data": false
+          },
+          "Connected": {
+            "type": "b",
+            "data": false
+          },
+          "UUIDs": {
+            "type": "as",
+            "data": [
+              "00001124-0000-1000-8000-00805f9b34fb",
+              "00001200-0000-1000-8000-00805f9b34fb"
+            ]
+          },
+          "Modalias": {
+            "type": "s",
+            "data": "usb:v054Cp0CE6d0100"
+          },
+          "Adapter": {
+            "type": "o",
+            "data": "/org/bluez/hci0"
+          },
+          "ServicesResolved": {
+            "type": "b",
+            "data": false
+          },
+          "WakeAllowed": {
+            "type": "b",
+            "data": true
+          }
+        },
+        "org.freedesktop.DBus.Properties": {},
+        "org.bluez.Bearer.BREDR1": {},
+        "org.bluez.Input1": {
+          "ReconnectMode": {
+            "type": "s",
+            "data": "device"
+          }
+        }
+      }
+    }
+  ]
+}
