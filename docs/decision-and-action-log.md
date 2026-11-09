@@ -30,6 +30,7 @@ document "AudioCaps — Development Plan"; local review copies sit in
 
 | Date | Action | Result |
 | --- | --- | --- |
+| 2026-11-08 | Prepared the hand-over to Claude Code | `CLAUDE.md` with standing rules; `docs/plan/local-environment.md` and `docs/plan/claude-code-kickoff.md` (git-ignored) |
 | 2026-11-08 | Prepared the repository scaffold in the project folder | README, license, notice, changelog, git and editor settings, this log; `git init` and the first commit on branch `main` run locally |
 | 2026-11-08 | Exported the development plan to PDF for review | `docs/plan/AudioCaps-Development-Plan.pdf` (git-ignored) |
 | 2026-11-08 | Rebuilt the development plan around the decided design | Single-plan document with roadmap and decision log |
