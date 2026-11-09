@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+[package]
+name = "audiocaps-backends"
+description = "AudioCaps system access: SystemRoot, probing and per-subsystem backends"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[dependencies]
+audiocaps-model.workspace = true
+audiocaps-parse.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+expect-test.workspace = true

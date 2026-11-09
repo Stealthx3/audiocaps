@@ -1,0 +1,6 @@
+USB Mixer: usb_id=0x19151025, ctrlif=1, ctlerr=0
+Card: USB Composite Device USB Composite Device at usb-0000:02:00.0-3, full speed
+  Unit: 2
+    Control: name="Mic Capture Switch", index=0
+    Info: id=2, control=1, cmask=0x0, channels=1, type="INV_BOOLEAN"
+    Volume: min=0, max=1, dBmin=0, dBmax=0

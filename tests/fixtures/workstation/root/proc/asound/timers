@@ -1,0 +1,13 @@
+G0: system timer : 1000.000us (10000000 ticks)
+G3: HR timer : 0.001us (1000000000 ticks)
+  Client sequencer queue 0 : stopped
+P0-3-0: PCM Playback 0-3-0 : SLAVE
+P0-7-0: PCM Playback 0-7-0 : SLAVE
+P0-8-0: PCM Playback 0-8-0 : SLAVE
+P0-9-0: PCM Playback 0-9-0 : SLAVE
+P1-0-0: PCM Playback 1-0-0 : 21333.333us (1 ticks) SLAVE
+P1-0-1: PCM Capture 1-0-1 : SLAVE
+P1-1-0: PCM Playback 1-1-0 : SLAVE
+P1-2-1: PCM Capture 1-2-1 : SLAVE
+P2-0-1: PCM Capture 2-0-1 : SLAVE
+P3-0-1: PCM Capture 3-0-1 : SLAVE

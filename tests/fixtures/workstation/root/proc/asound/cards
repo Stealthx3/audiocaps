@@ -1,0 +1,8 @@
+ 0 [NVidia         ]: HDA-Intel - HDA NVidia
+                      HDA NVidia at 0xfc080000 irq 101
+ 1 [Generic        ]: HDA-Intel - HD-Audio Generic
+                      HD-Audio Generic at 0xfcb00000 irq 103
+ 2 [SoloCast       ]: USB-Audio - HyperX SoloCast
+                      HP, Inc HyperX SoloCast at usb-0000:07:00.3-4, full speed
+ 3 [H4             ]: USB-Audio - Adesso CyberTrack H4
+                      Sonix Technology Co., Ltd. Adesso CyberTrack H4 at usb-0000:07:00.1-2.1.4, high

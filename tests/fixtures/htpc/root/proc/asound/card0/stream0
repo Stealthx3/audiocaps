@@ -1,0 +1,12 @@
+USB Composite Device USB Composite Device at usb-0000:02:00.0-3, full speed : USB Audio
+
+Capture:
+  Status: Stop
+  Interface 2
+    Altset 1
+    Format: S16_LE
+    Channels: 1
+    Endpoint: 0x82 (2 IN) (ASYNC)
+    Rates: 8000
+    Bits: 16
+    Channel map: MONO

@@ -1,0 +1,6 @@
+DEVTYPE=usb_interface
+DRIVER=snd-usb-audio
+PRODUCT=3f0/78b/4112
+TYPE=0/0/0
+INTERFACE=1/1/0
+MODALIAS=usb:v03F0p078Bd4112dc00dsc00dp00ic01isc01ip00in00

@@ -5,6 +5,7 @@
 | [PLAN.md](PLAN.md) | Roadmap to Linux 1.0 as checkboxes, plus open items; drives the progress page |
 | [DECISIONS.md](DECISIONS.md) | Every user decision and action, oldest first |
 | [CHANGELOG.md](CHANGELOG.md) | Release notes (Keep a Changelog) |
+| [architecture.md](architecture.md) | Crate boundaries, key types and passive guarantees as built |
 | [USAGE-PLAN.md](USAGE-PLAN.md) | How Claude routes models, agents and tools for this project |
 | [LAB.md](LAB.md) | The libvirt lab guests used to build and test |
 | [standards/](standards/) | Shared working standards that apply to this project |
