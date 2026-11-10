@@ -31,7 +31,7 @@ Open items (not phase tasks):
 - [x] **2.3** HDA codec dump and procfs parsers
 - [x] **2.4** USB Audio Class descriptor parser
 - [x] **2.5** Fuzz targets for every parser
-- [ ] **2.6** Gate: 24 h fuzz runs clean; parser output matches the captures
+- [x] **2.6** Gate: 24 h fuzz runs clean; parser output matches the captures
 
 ## Phase 3 — Runtime, ALSA, capture, MIDI
 
