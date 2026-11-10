@@ -55,3 +55,4 @@ Entries up to the adoption line were migrated from the former `docs/decision-and
 - **2026-11-09** · decision · Capture tool saves the USB device's raw sysfs descriptors (string indexes only, no serial strings); new fixture lab-usb-uac1 from QEMU's emulated USB Audio device in the capture VM — _why:_ check the UAC parser against kernel output without new hardware _(by claude)_
 - **2026-11-09** · action · Started the 24 h fuzz run for the phase 2 gate on lab-audiocaps-main (5 targets, 2026-11-09 08:38 UTC) _(by claude)_
 - **2026-11-10** · action · Phase 2 gate met: 24 h fuzz run on lab-audiocaps-main finished clean (5 targets, 86 401 s each, 0 crashes, ~15.9 billion executions in all); gate.sh PASS; history scan clean _(by claude)_
+- **2026-11-10** · approval · Approved phase 2 at its gate and the merge of feat/phase-2-parsers-fuzzing into main
