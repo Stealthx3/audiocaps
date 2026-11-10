@@ -14,5 +14,8 @@ fi
 # rust-toolchain.toml in the repo pins the version and components; this installs it.
 rustup show active-toolchain >/dev/null 2>&1 || rustup toolchain install stable --profile minimal -c rustfmt,clippy
 command -v cargo-deny >/dev/null || cargo install --locked cargo-deny --quiet
+# Fuzzing (phase 2): fuzz/rust-toolchain.toml pins a nightly; cargo-fuzz drives libFuzzer.
+(cd fuzz 2>/dev/null && rustup show active-toolchain >/dev/null 2>&1) || true
+command -v cargo-fuzz >/dev/null || cargo install --locked cargo-fuzz --quiet
 grep -q 'cargo/env' "$HOME/.bashrc" || echo '. "$HOME/.cargo/env"' >> "$HOME/.bashrc"
 rustc --version; cargo deny --version

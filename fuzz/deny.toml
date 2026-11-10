@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# cargo-deny configuration for the fuzz workspace only: the main gate plus NCSA (libfuzzer-sys,
+# decision 2026-11-09). The harness is never shipped.
+# Permissive licenses compatible with LGPL-2.1-or-later are allowed. "MIT OR Apache-2.0" crates
+# pass because MIT is allowed (taken under MIT). Apache-2.0-only, GPL-only, unknown or unlisted
+# licenses fail the check so Micaiah can review them (CLAUDE.md, "License").
+
+[graph]
+all-features = true
+
+[licenses]
+allow = [
+    "MIT",
+    "MIT-0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "0BSD",
+    "CC0-1.0",
+    "Unicode-3.0",
+    "BSL-1.0",
+    "LGPL-2.1-or-later",
+    "NCSA",
+]
+confidence-threshold = 0.93
+# Our own crates (publish = false) are LGPL-2.1-or-later.
+private = { ignore = true }
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[advisories]
+yanked = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

@@ -10,6 +10,7 @@ repository.workspace = true
 publish.workspace = true
 
 [dependencies]
+audiocaps-model.workspace = true
 
 [lints]
 workspace = true
