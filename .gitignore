@@ -20,6 +20,7 @@ AudioCaps-Development-Plan*.docx
 /fuzz/corpus/
 /fuzz/artifacts/
 /fuzz/coverage/
+/fuzz/logs/
 
 # ---------------------------------------------------------------
 # Raw system captures (may contain serials, MAC addresses, EDIDs).

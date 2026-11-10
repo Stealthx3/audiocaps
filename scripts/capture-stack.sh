@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # capture-stack.sh — inside lab-audiocaps-capture: install one sound stack, start it for the lab
 # user, then run the passive check and a capture. Start from a revert to the 'tooling' snapshot.
-# Usage: scripts/lab.sh run -r capture 'bash scripts/capture-stack.sh <alsa-only|pipewire|pulseaudio>'
+# Usage: scripts/lab.sh run -r capture 'bash scripts/capture-stack.sh <alsa-only|pipewire|pulseaudio> [label]'
 set -euo pipefail
 stack="${1:?stack}"
 export DEBIAN_FRONTEND=noninteractive
@@ -21,4 +21,4 @@ case "$stack" in
   *) echo "unknown stack $stack" >&2; exit 2 ;;
 esac
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
-bash scripts/check-passive.sh "lab-$stack"
+bash scripts/check-passive.sh "${2:-lab-$stack}"

@@ -42,7 +42,7 @@ the CLI or the FFI crate.
 | Crate | Owns | Must not |
 |---|---|---|
 | `audiocaps-model` | Every exported type: `ProbeScope`, `Snapshot`, `Endpoint`, `LayerCapabilities`, `CapabilitySet`, `EffectiveSet`, `PathReport`/`Hop`, `Finding`, `Value<T>` with `Provenance` and `Confidence`, `Sensitive` and `RedactionPolicy`. Generates the JSON schema. | Do I/O, or assume Linux (Linux identifiers appear only as data). |
-| `audiocaps-parse` | Pure parsers over bytes/text. Phase 1: `/proc/asound/cards` and `/pcm`, os-release, EDID serial redaction. Phase 2 adds ELD, EDID/CTA-861, HDA codec dumps, USB descriptors. | Do I/O. Every parser gets a fuzz target in phase 2. |
+| `audiocaps-parse` | Pure parsers over bytes/text: raw ELD and kernel ELD text, EDID/CTA-861 (SADs, speaker allocation, HDMI/HDMI Forum VSDBs), HDA codec dumps, USB Audio Class descriptors, procfs (cards, pcm, USB `stream#`, `hw_params`), os-release, EDID serial redaction. Maps SADs to model `CodecCapability`. Each parser has a cargo-fuzz target in `fuzz/` (separate workspace, never shipped) and is checked against the captures in `tests/captures.rs`. | Do I/O; panic on any input. |
 | `audiocaps-backends` | `SystemRoot` (live `/` or a fixture tree), the capture `Manifest` format, and `probe(root, scope)`. Later: one module per subsystem with per-backend deadlines on a single-threaded executor. | Read outside the scope; open `/dev` nodes through `SystemRoot`; run commands (only the CLI's capture does). |
 | `audiocaps-rules` | Declarative rule packs that turn snapshots into findings (phase 7). | Fetch anything from the network. |
 | `audiocaps-ffi` | The C ABI and cbindgen header (phase 9). Only crate allowed `unsafe`. | Contain logic beyond marshalling. |

@@ -37,6 +37,8 @@ const DEVICE_ATTRS: &[&str] = &[
     "idProduct",
     "bcdDevice",
     "bcdUSB",
+    // Raw device and configuration descriptors (USB Audio Class layout, no serial strings).
+    "descriptors",
     "speed",
     "version",
     "manufacturer",
@@ -130,6 +132,9 @@ impl Staging {
         }
         let data = if live.file_name().is_some_and(|n| n == "edid") {
             edid::redact_serials(&mut buf);
+            buf
+        } else if live.file_name().is_some_and(|n| n == "descriptors") {
+            // USB descriptors carry string indexes only, never the serial string itself.
             buf
         } else if let Ok(text) = std::str::from_utf8(&buf) {
             self.redactor.text(text).into_bytes()

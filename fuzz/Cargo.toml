@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Fuzz harness (cargo-fuzz / libFuzzer). A separate workspace: never shipped, never linked into
+# the library. libfuzzer-sys is (MIT OR Apache-2.0) AND NCSA; NCSA is allowed here only
+# (decision 2026-11-09, see fuzz/deny.toml).
+[package]
+name = "audiocaps-fuzz"
+version = "0.0.0"
+edition = "2024"
+license = "LGPL-2.1-or-later"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+audiocaps-parse = { path = "../crates/audiocaps-parse" }
+
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "eld"
+path = "fuzz_targets/eld.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "edid"
+path = "fuzz_targets/edid.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "hda_codec"
+path = "fuzz_targets/hda_codec.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "usb_descriptors"
+path = "fuzz_targets/usb_descriptors.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "procfs"
+path = "fuzz_targets/procfs.rs"
+test = false
+doc = false
+bench = false
