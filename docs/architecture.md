@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 4. Updated at every phase gate._
+_Status: end of phase 5. Updated at every phase gate._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
@@ -17,8 +17,8 @@ published; applications bundle the shared library and use the generated C header
             ┌──────────────────────────────────────┐  │
             │  audiocaps-backends                  │  │
             │  SystemRoot · Runtime · probe()      │  │
-            │  alsa · sysfs · server · watch       │  │
-            │  (BlueZ/JACK: phase 5)               │  │
+            │  alsa · sysfs · server · bluez ·     │  │
+            │  jack · sandbox · watch              │  │
             └──────┬───────────────────────┬───────┘  │
                    │                       │          │
                    ▼                       ▼          ▼
@@ -139,6 +139,19 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
 - Caches: hardware parameter ranges and HDA codec dumps per card (cleared on hotplug), the ALSA
   configuration text (reloaded only when alsa-lib reloads it) and the resolved routing.
 
+## Bluetooth, JACK and sandboxes (phase 5)
+
+- `bluez`: one `GetManagedObjects` call on the system bus, only when `org.bluez` already owns its
+  name. Remote stream endpoints (`MediaEndpoint1`) give the codecs a device advertises; the
+  transport (`MediaTransport1`) gives the negotiated one. The wireless layer merges these with the
+  host's per-codec profiles from PipeWire: `advertised_by_device`, `available_on_host`,
+  `negotiated` per codec. Addresses are `Sensitive` (hashed on export); aliases are personal names.
+- `jack`: libjack is loaded at run time; the client opens with `JackNoStartServer`, is never
+  activated, and its log output is silenced. Reported as a server state (rate, buffer, ports).
+- `sandbox`: Flatpak from `/.flatpak-info`; Snap plugs inferred (sockets, `/dev/snd` listing,
+  `/sys/class/sound`, and BlueZ refusing access). Each gap: permission, hidden layers, fix,
+  required or not. A layer that can't be read because of a gap says so in its detail.
+
 ## Passive guarantees
 
 - Readers never open device nodes (`SystemRoot` refuses `/dev`).
@@ -164,9 +177,13 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
 - Note: reading `/proc/asound/cardN/codec#M` makes the HDA driver query the codec (it may resume a
   runtime-suspended codec). It does not open a PCM or change any setting; `alsa-info.sh` does the same.
 
-## Limits at the end of phase 4
+## Limits at the end of phase 5
 
-- Sink chain and wireless layers are `not_implemented` (phases 6, 5).
+- The sink chain layer is `not_implemented` (phase 6).
+- Bluetooth codec gaps are checked against synthetic fixtures and unit tests; no Bluetooth
+  hardware has been probed yet (the headset test needs a host exception).
+- Snap plug detection is inferred; the sandbox release gate (phase 9) runs real Flatpak and Snap
+  builds.
 - On a system without a sound server, the first probe in a process opens each free PCM once
   (non-blocking, about a millisecond); an application opening that device at the same instant
   gets EBUSY. Later probes use the cached ranges.

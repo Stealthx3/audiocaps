@@ -17,6 +17,7 @@ use audiocaps_parse::procfs::{CardEntry, StreamDirection, UsbStream};
 
 use crate::alsa::dump::{ControlDump, HwRanges, NotOpened, PcmResult, StreamDir};
 mod server;
+mod wireless;
 
 use crate::probe::{Found, Kind, PROC_PCM, Results, ServerResult};
 use crate::root::SystemRoot;
@@ -51,7 +52,13 @@ pub(crate) fn snapshot(
         .filter(|l| scope.layers.includes(l))
         .map(|&layer| SystemLayer {
             layer,
-            availability: ctx.system_availability(root, layer),
+            availability: match ctx.system_availability(root, layer) {
+                Availability::Unknown { reason, detail } => Availability::Unknown {
+                    reason,
+                    detail: Some(ctx.with_fix(layer, detail.as_deref().unwrap_or(""))),
+                },
+                a => a,
+            },
         })
         .collect();
     let environment = if scope.layers.includes(&LayerKind::Environment) {
@@ -72,14 +79,18 @@ pub(crate) fn snapshot(
     let mut endpoints: Vec<Endpoint> = found.iter().map(|f| ctx.endpoint(f)).collect();
     let known: Vec<_> = found.iter().map(|f| f.id.clone()).collect();
     endpoints.extend(ctx.server_only_endpoints(&known));
+    endpoints.extend(ctx.bt_only_endpoints(&ctx.server_bt_addresses()));
     endpoints.sort_by(|a, b| a.id.cmp(&b.id));
     let servers = if scope.layers.includes(&LayerKind::SoundServer) {
-        ctx.server_states()
+        let mut v = ctx.server_states();
+        v.extend(ctx.jack_state());
+        v
     } else {
         vec![]
     };
     let environment = environment.map(|mut e| {
         ctx.live_presence(&mut e);
+        ctx.wireless_environment(&mut e);
         e
     });
     let mut snapshot = Snapshot {
@@ -231,7 +242,13 @@ impl Ctx<'_> {
                     }
                 }
             }
-            LayerKind::Wireless => not_implemented(5),
+            LayerKind::Wireless => match &self.res.bluez {
+                Some(crate::probe::Outcome::Read { .. }) => Availability::Read,
+                Some(crate::probe::Outcome::Unknown { reason, detail }) => {
+                    unknown_layer(*reason, detail.clone())
+                }
+                None => unknown_layer(UnknownReason::NotRequested, "not in scope"),
+            },
         }
     }
 
@@ -433,7 +450,10 @@ impl Ctx<'_> {
                 }
                 LayerKind::SinkChain => plain(layer, not_implemented(6)),
                 LayerKind::SoundServer => self.server_layer(&f.id),
-                LayerKind::Wireless => plain(layer, not_implemented(5)),
+                LayerKind::Wireless => plain(
+                    layer,
+                    unknown_layer(UnknownReason::NotExposed, "not a wireless endpoint"),
+                ),
                 LayerKind::Environment => unreachable!(),
             });
         }

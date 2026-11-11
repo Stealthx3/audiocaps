@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "generation": 1,
   "taken_at_ms": 1794212816599,
   "source": {
@@ -70,8 +70,8 @@
       "layer": "wireless",
       "availability": {
         "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 5 of the roadmap"
+        "reason": "service_not_running",
+        "detail": "org.bluez not running; not activating it"
       }
     },
     {
@@ -173,6 +173,14 @@
         "state": "unknown",
         "reason": "service_not_running",
         "detail": "pactl not installed"
+      }
+    },
+    {
+      "server": "jack",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "jack not captured"
       }
     }
   ],
@@ -591,8 +599,8 @@
           "layer": "wireless",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "not a wireless endpoint"
           },
           "caps": {}
         }
@@ -1012,8 +1020,8 @@
           "layer": "wireless",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "not a wireless endpoint"
           },
           "caps": {}
         }
@@ -1433,8 +1441,8 @@
           "layer": "wireless",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "not a wireless endpoint"
           },
           "caps": {}
         }
@@ -1854,8 +1862,8 @@
           "layer": "wireless",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "not a wireless endpoint"
           },
           "caps": {}
         }
@@ -2255,8 +2263,8 @@
           "layer": "wireless",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "not a wireless endpoint"
           },
           "caps": {}
         }

@@ -50,10 +50,10 @@ Open items (not phase tasks):
 
 ## Phase 5 — Bluetooth, JACK, sandbox
 
-- [ ] **5.1** BlueZ backend over D-Bus: advertised vs negotiated codecs
-- [ ] **5.2** JACK backend, loaded lazily, never starting a server
-- [ ] **5.3** Sandbox detection: Flatpak and Snap permissions
-- [ ] **5.4** Gate: codec and permission gaps reported correctly
+- [x] **5.1** BlueZ backend over D-Bus: advertised vs negotiated codecs
+- [x] **5.2** JACK backend, loaded lazily, never starting a server
+- [x] **5.3** Sandbox detection: Flatpak and Snap permissions
+- [x] **5.4** Gate: codec and permission gaps reported correctly
 
 ## Phase 6 — Sink chain, CEC, quirk data
 

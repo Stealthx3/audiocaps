@@ -1,0 +1,224 @@
+{
+  "schema_version": "1.3.0",
+  "generation": 1,
+  "taken_at_ms": 1794500000000,
+  "source": {
+    "kind": "fixture",
+    "name": "synthetic-flatpak-no-audio"
+  },
+  "scope": {
+    "endpoint_classes": {
+      "select": "all"
+    },
+    "directions": {
+      "select": "all"
+    },
+    "endpoints": {
+      "select": "all"
+    },
+    "layers": {
+      "select": "all"
+    },
+    "fields": {
+      "select": "all"
+    },
+    "access_paths": {
+      "select": "all"
+    }
+  },
+  "redaction": {
+    "serials": "hash",
+    "bluetooth_addresses": "hash",
+    "device_names": "mask"
+  },
+  "layers": [
+    {
+      "layer": "sink_chain",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 6 of the roadmap"
+      }
+    },
+    {
+      "layer": "host_hardware",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/sys/class/sound: No such file or directory (os error 2)"
+      }
+    },
+    {
+      "layer": "kernel_driver",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/sys/module: No such file or directory (os error 2)"
+      }
+    },
+    {
+      "layer": "alsa_userspace",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/proc/asound/pcm: No such file or directory (os error 2); missing --socket=pulseaudio: flatpak override --user --socket=pulseaudio org.example.Viewer (packagers: finish-args --socket=pulseaudio)"
+      }
+    },
+    {
+      "layer": "sound_server",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pw-dump not installed; missing --socket=pulseaudio: flatpak override --user --socket=pulseaudio org.example.Viewer (packagers: finish-args --socket=pulseaudio)"
+      }
+    },
+    {
+      "layer": "wireless",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "org.bluez not running; not activating it; missing --system-talk-name=org.bluez: flatpak override --user --system-talk-name=org.bluez org.example.Viewer (packagers: finish-args --system-talk-name=org.bluez)"
+      }
+    },
+    {
+      "layer": "environment",
+      "availability": {
+        "state": "partial"
+      }
+    }
+  ],
+  "environment": {
+    "os": {
+      "state": "known",
+      "value": {
+        "id": "debian",
+        "version_id": "13",
+        "family": "debian"
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/etc/os-release"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "kernel": {
+      "state": "known",
+      "value": "6.12.0-synthetic",
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/proc/sys/kernel/osrelease"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "sandbox": {
+      "state": "known",
+      "value": {
+        "kind": "flatpak",
+        "granted": [
+          "sockets=wayland;"
+        ],
+        "missing": [
+          {
+            "permission": "--socket=pulseaudio",
+            "layers": [
+              "sound_server",
+              "alsa_userspace"
+            ],
+            "fix": "flatpak override --user --socket=pulseaudio org.example.Viewer (packagers: finish-args --socket=pulseaudio)",
+            "required": true
+          },
+          {
+            "permission": "--filesystem=xdg-run/pipewire-0",
+            "layers": [
+              "sound_server"
+            ],
+            "fix": "flatpak override --user --filesystem=xdg-run/pipewire-0 org.example.Viewer (packagers: finish-args --filesystem=xdg-run/pipewire-0)",
+            "required": false
+          },
+          {
+            "permission": "--system-talk-name=org.bluez",
+            "layers": [
+              "wireless"
+            ],
+            "fix": "flatpak override --user --system-talk-name=org.bluez org.example.Viewer (packagers: finish-args --system-talk-name=org.bluez)",
+            "required": false
+          }
+        ]
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/.flatpak-info"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "servers": [
+      {
+        "server": "pipe_wire",
+        "info": {
+          "state": "unknown",
+          "reason": "library_missing",
+          "detail": "pw-dump not installed"
+        }
+      },
+      {
+        "server": "pulse_audio",
+        "info": {
+          "state": "unknown",
+          "reason": "service_not_running",
+          "detail": "no PulseAudio socket"
+        }
+      }
+    ]
+  },
+  "routing": {
+    "default_playback": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    },
+    "default_capture": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    }
+  },
+  "servers": [
+    {
+      "server": "pipe_wire",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pw-dump not installed"
+      }
+    },
+    {
+      "server": "pulse_audio",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "no PulseAudio socket"
+      }
+    },
+    {
+      "server": "jack",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "jack not captured"
+      }
+    }
+  ],
+  "endpoints": []
+}

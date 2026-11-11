@@ -18,6 +18,9 @@ alsa.workspace = true
 pipewire.workspace = true
 libpulse-binding.workspace = true
 nix.workspace = true
+jack.workspace = true
+zbus.workspace = true
+zruntime.workspace = true
 sha2.workspace = true
 
 [lints]

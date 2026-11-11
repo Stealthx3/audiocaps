@@ -28,6 +28,9 @@ expect-test = "1"
 alsa = "0.12"
 pipewire = "0.10"
 libpulse-binding = { version = "2.30", default-features = false }
+jack = { version = "0.14", default-features = false, features = ["dynamic_loading"] }
+zbus = "6.2"
+zruntime = "0.2"
 nix = { version = "0.31", default-features = false, features = ["inotify", "poll"] }
 
 [workspace.lints.rust]

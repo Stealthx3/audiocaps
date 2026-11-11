@@ -203,6 +203,15 @@ impl SystemRoot {
         Ok(fs::read_link(p)?.to_string_lossy().into_owned())
     }
 
+    /// Whether `/dev/snd` can be listed (the sandbox exposes sound devices). Lists the directory
+    /// only; no device node is opened. Unknown for a fixture.
+    pub fn dev_snd_visible(&self) -> Option<bool> {
+        match self {
+            Self::Live => Some(fs::read_dir("/dev/snd").is_ok()),
+            Self::Fixture(_) => None,
+        }
+    }
+
     /// Output of a command captured with a fixture. The library never runs commands itself, so
     /// this is always `None` on the live system.
     pub fn captured_command(&self, name: &str) -> Option<(CapturedCommand, Option<Vec<u8>>)> {
