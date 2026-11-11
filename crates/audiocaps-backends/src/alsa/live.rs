@@ -34,12 +34,22 @@ pub fn wanted_control(name: &str) -> bool {
     name.ends_with(" Jack") || name.starts_with("IEC958") || name == "ELD"
 }
 
-/// Reads the global configuration as alsa-lib loads it.
-pub fn read_config() -> Result<String, String> {
+static CONFIG_CACHE: std::sync::Mutex<Option<std::sync::Arc<String>>> = std::sync::Mutex::new(None);
+
+/// Reads the global configuration as alsa-lib loads it. alsa-lib reloads only when a
+/// configuration file changed; until then the saved text is reused.
+pub fn read_config() -> Result<std::sync::Arc<String>, String> {
+    let reloaded = alsa::config::update().map_err(|e| e.to_string())?;
+    let mut cache = CONFIG_CACHE.lock().unwrap_or_else(|e| e.into_inner());
+    if !reloaded && let Some(c) = cache.as_ref() {
+        return Ok(c.clone());
+    }
     let cfg = alsa::config::update_ref().map_err(|e| e.to_string())?;
     let mut out = Output::buffer_open().map_err(|e| e.to_string())?;
     cfg.save(&mut out).map_err(|e| e.to_string())?;
-    Ok(out.buffer_string(|b| String::from_utf8_lossy(b).into_owned()))
+    let text = std::sync::Arc::new(out.buffer_string(|b| String::from_utf8_lossy(b).into_owned()));
+    *cache = Some(text.clone());
+    Ok(text)
 }
 
 /// Reads the wanted controls of one card.
@@ -126,6 +136,21 @@ pub fn busy(root: &SystemRoot, card: u32, device: u32, stream: StreamDir) -> Opt
     Some(owner)
 }
 
+type RangeKey = (u32, String, u32, StreamDir);
+
+/// Ranges already read, by (card index, card id, device, direction). A device's ranges don't
+/// change while it exists, so each free PCM is opened once per process; later probes reuse the
+/// result. Cleared on kernel hotplug events.
+static RANGE_CACHE: std::sync::Mutex<Vec<(RangeKey, HwRanges)>> = std::sync::Mutex::new(Vec::new());
+
+/// Forgets cached ranges (after a hotplug event).
+pub(crate) fn invalidate_cache() {
+    RANGE_CACHE
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clear();
+}
+
 /// Reads one PCM's hardware parameter ranges, if the passive rules allow opening it.
 pub fn read_pcm(
     root: &SystemRoot,
@@ -145,6 +170,19 @@ pub fn read_pcm(
             reason: NotOpened::ManagedByServer,
             detail: Some(server.to_string()),
         };
+    }
+    let key: Option<RangeKey> = root
+        .read_string(&format!("/proc/asound/card{card}/id"))
+        .ok()
+        .map(|id| (card, id.trim().to_string(), device, stream));
+    if let Some(k) = &key
+        && let Some((_, r)) = RANGE_CACHE
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .iter()
+            .find(|(ck, _)| ck == k)
+    {
+        return PcmResult::Ranges(r.clone());
     }
     let dir = match stream {
         StreamDir::Playback => Direction::Playback,
@@ -173,6 +211,11 @@ pub fn read_pcm(
         Err(e) => return err(e),
     };
     drop(pcm);
+    if let Some(k) = key {
+        let mut cache = RANGE_CACHE.lock().unwrap_or_else(|e| e.into_inner());
+        cache.retain(|(ck, _)| ck != &k);
+        cache.push((k, ranges.clone()));
+    }
     PcmResult::Ranges(ranges)
 }
 
@@ -249,7 +292,7 @@ fn ranges(pcm: &PCM, hw: &HwParams<'_>) -> HwRanges {
 pub fn dump_all(root: &SystemRoot) -> AlsaDump {
     let managing = crate::servers::managing_server(root);
     let (config, config_error) = match read_config() {
-        Ok(c) => (Some(c), None),
+        Ok(c) => (Some(c.to_string()), None),
         Err(e) => (None, Some(e)),
     };
     let pcms = root

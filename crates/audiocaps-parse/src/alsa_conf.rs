@@ -464,6 +464,8 @@ pub struct CardRef {
     pub id: String,
     /// Driver, e.g. `HDA-Intel`.
     pub driver: String,
+    /// Short name, e.g. `HDA Intel PCH` (`card_name`).
+    pub name: String,
 }
 
 /// Stream direction for resolution (`asym` picks its slave by it).
@@ -509,6 +511,7 @@ pub fn resolve_pcm(root: &Node, name: &str, stream: Stream, cards: &[CardRef]) -
         cards,
         stream,
         env: BTreeMap::new(),
+        hops: 0,
     };
     let mut next = Some(PcmRef::Name(name.to_string()));
     while let Some(cur) = next.take() {
@@ -551,6 +554,8 @@ struct Resolver<'a> {
     cards: &'a [CardRef],
     stream: Stream,
     env: BTreeMap<String, String>,
+    /// Definitions followed so far (bounds `@func refer` chains).
+    hops: usize,
 }
 
 impl Resolver<'_> {
@@ -628,8 +633,21 @@ impl Resolver<'_> {
             }
             PcmRef::Inline(def, args) => (String::new(), def, args),
         };
+        self.hops += 1;
+        if self.hops > 4 * MAX_HOPS {
+            return Err("definition chain too long".into());
+        }
         let saved = std::mem::replace(&mut self.env, args);
-        let res = self.describe(&display, &def);
+        // A definition can itself be `@func refer` (USB-Audio: a per-device variant, else a
+        // default): follow it with the arguments bound.
+        let res = match def.get("@func").and_then(Node::leaf) {
+            Some("refer") => self.refer(&def).and_then(|next| self.step(next)),
+            // Any other function evaluates to the name of the PCM to use (`dmix:CARD`).
+            Some(_) => self
+                .func(&def, 0)
+                .and_then(|name| self.step(PcmRef::Name(name))),
+            None => self.describe(&display, &def),
+        };
         self.env = saved;
         res
     }
@@ -794,6 +812,12 @@ impl Resolver<'_> {
                     .map(|c| c.driver.clone())
                     .ok_or_else(|| format!("no card {c}"))
             }
+            "card_name" => {
+                let c = arg("card")?;
+                self.card(&c)
+                    .map(|c| c.name.clone())
+                    .ok_or_else(|| format!("no card {c}"))
+            }
             "card_inum" => {
                 let c = arg("card")?;
                 self.card(&c)
@@ -868,6 +892,7 @@ impl Resolver<'_> {
                     cards: self.cards,
                     stream: self.stream,
                     env: env.clone(),
+                    hops: self.hops,
                 };
                 if let Some(v) = r.value(Some(d)) {
                     env.insert(n.clone(), v);
@@ -917,11 +942,13 @@ pcm.dmix {
                 index: 0,
                 id: "PCH".into(),
                 driver: "HDA-Intel".into(),
+                name: "PCH".into(),
             },
             CardRef {
                 index: 1,
                 id: "HDMI".into(),
                 driver: "HDA-Intel".into(),
+                name: "HDMI".into(),
             },
         ]
     }
@@ -1069,6 +1096,7 @@ pcm.dmix {
             index: 0,
             id: "Device".into(),
             driver: "USB-Audio".into(),
+            name: "Device".into(),
         }];
         let mut t = parse(&dump).unwrap();
         load_cards(&mut t, &usb, &loader);

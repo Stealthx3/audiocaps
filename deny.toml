@@ -24,6 +24,12 @@ allow = [
 confidence-threshold = 0.93
 # Our own crates (publish = false) are LGPL-2.1-or-later.
 private = { ignore = true }
+# Build-time only, never linked into the library: bindgen's libclang loader and system-deps'
+# target parser, pulled in by the pipewire crates (approved by Micaiah, 2026-11-11).
+exceptions = [
+    { name = "clang-sys", allow = ["Apache-2.0"] },
+    { name = "target-lexicon", allow = ["Apache-2.0 WITH LLVM-exception"] },
+]
 
 [bans]
 multiple-versions = "warn"
