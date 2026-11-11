@@ -1,0 +1,152 @@
+{
+  "type": "a{oa{sa{sv}}}",
+  "data": [
+    {
+      "/org/bluez/hci0": {
+        "org.bluez.Adapter1": {
+          "Powered": {
+            "type": "b",
+            "data": true
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_5A_11_22_33_44": {
+        "org.bluez.Device1": {
+          "Address": {
+            "type": "s",
+            "data": "02:5A:11:22:33:44"
+          },
+          "Alias": {
+            "type": "s",
+            "data": "Headphones"
+          },
+          "Connected": {
+            "type": "b",
+            "data": true
+          },
+          "Paired": {
+            "type": "b",
+            "data": true
+          },
+          "UUIDs": {
+            "type": "as",
+            "data": [
+              "0000110b-0000-1000-8000-00805f9b34fb",
+              "0000111e-0000-1000-8000-00805f9b34fb"
+            ]
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_5A_11_22_33_44/sep1": {
+        "org.bluez.MediaEndpoint1": {
+          "UUID": {
+            "type": "s",
+            "data": "0000110b-0000-1000-8000-00805f9b34fb"
+          },
+          "Codec": {
+            "type": "y",
+            "data": 255
+          },
+          "Capabilities": {
+            "type": "ay",
+            "data": [
+              45,
+              1,
+              0,
+              0,
+              170,
+              0,
+              60,
+              7
+            ]
+          },
+          "Device": {
+            "type": "o",
+            "data": "/org/bluez/hci0/dev_02_5A_11_22_33_44"
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_5A_11_22_33_44/sep2": {
+        "org.bluez.MediaEndpoint1": {
+          "UUID": {
+            "type": "s",
+            "data": "0000110b-0000-1000-8000-00805f9b34fb"
+          },
+          "Codec": {
+            "type": "y",
+            "data": 2
+          },
+          "Capabilities": {
+            "type": "ay",
+            "data": [
+              128,
+              1,
+              4,
+              3,
+              91,
+              96
+            ]
+          },
+          "Device": {
+            "type": "o",
+            "data": "/org/bluez/hci0/dev_02_5A_11_22_33_44"
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_5A_11_22_33_44/sep3": {
+        "org.bluez.MediaEndpoint1": {
+          "UUID": {
+            "type": "s",
+            "data": "0000110b-0000-1000-8000-00805f9b34fb"
+          },
+          "Codec": {
+            "type": "y",
+            "data": 0
+          },
+          "Capabilities": {
+            "type": "ay",
+            "data": [
+              255,
+              255,
+              2,
+              53
+            ]
+          },
+          "Device": {
+            "type": "o",
+            "data": "/org/bluez/hci0/dev_02_5A_11_22_33_44"
+          }
+        }
+      },
+      "/org/bluez/hci0/dev_02_5A_11_22_33_44/sep3/fd0": {
+        "org.bluez.MediaTransport1": {
+          "Device": {
+            "type": "o",
+            "data": "/org/bluez/hci0/dev_02_5A_11_22_33_44"
+          },
+          "UUID": {
+            "type": "s",
+            "data": "0000110b-0000-1000-8000-00805f9b34fb"
+          },
+          "Codec": {
+            "type": "y",
+            "data": 0
+          },
+          "Configuration": {
+            "type": "ay",
+            "data": [
+              33,
+              21,
+              2,
+              53
+            ]
+          },
+          "State": {
+            "type": "s",
+            "data": "active"
+          }
+        }
+      }
+    }
+  ]
+}

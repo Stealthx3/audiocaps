@@ -241,6 +241,7 @@ pub struct FormatRange {
 /// Property keys kept on nodes and devices.
 pub(crate) const KEPT_PROPS: &[&str] = &[
     "api.bluez5.codec",
+    "api.bluez5.address",
     "api.bluez5.profile",
     "bluez5.codecs",
     "bluez5.a2dp.ldac.quality",

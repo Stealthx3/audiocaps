@@ -1,0 +1,24 @@
+{
+  "rate": 48000,
+  "buffer_frames": 256,
+  "ports": [
+    {
+      "client": "system",
+      "direction": "capture",
+      "channels": 2,
+      "latency": [
+        256,
+        256
+      ]
+    },
+    {
+      "client": "system",
+      "direction": "playback",
+      "channels": 2,
+      "latency": [
+        512,
+        512
+      ]
+    }
+  ]
+}

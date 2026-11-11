@@ -1,0 +1,112 @@
+[
+  {
+    "id": 0,
+    "type": "PipeWire:Interface:Core",
+    "info": {
+      "name": "pipewire-0",
+      "version": "1.4.2",
+      "props": {
+        "default.clock.rate": 48000
+      }
+    }
+  },
+  {
+    "id": 70,
+    "type": "PipeWire:Interface:Device",
+    "info": {
+      "props": {
+        "device.name": "bluez_card.02_5A_11_22_33_44",
+        "device.api": "bluez5",
+        "media.class": "Audio/Device",
+        "api.bluez5.address": "02:5A:11:22:33:44"
+      },
+      "params": {
+        "EnumProfile": [
+          {
+            "index": 0,
+            "name": "off",
+            "description": "Off",
+            "available": "yes"
+          },
+          {
+            "index": 1,
+            "name": "a2dp-sink-sbc",
+            "description": "High Fidelity Playback (A2DP Sink, codec SBC)",
+            "available": "yes"
+          },
+          {
+            "index": 2,
+            "name": "a2dp-sink-aac",
+            "description": "High Fidelity Playback (A2DP Sink, codec AAC)",
+            "available": "yes"
+          },
+          {
+            "index": 3,
+            "name": "headset-head-unit-msbc",
+            "description": "Headset Head Unit (HSP/HFP, codec mSBC)",
+            "available": "yes"
+          }
+        ],
+        "Profile": [
+          {
+            "index": 1,
+            "name": "a2dp-sink-sbc"
+          }
+        ],
+        "EnumRoute": [],
+        "Route": []
+      }
+    }
+  },
+  {
+    "id": 71,
+    "type": "PipeWire:Interface:Node",
+    "info": {
+      "state": "idle",
+      "props": {
+        "media.class": "Audio/Sink",
+        "node.name": "bluez_output.02_5A_11_22_33_44.1",
+        "node.description": "Headphones",
+        "device.id": 70,
+        "device.api": "bluez5",
+        "factory.name": "api.bluez5.a2dp.sink",
+        "api.bluez5.address": "02:5A:11:22:33:44",
+        "api.bluez5.codec": "sbc",
+        "api.bluez5.profile": "a2dp-sink"
+      },
+      "params": {
+        "EnumFormat": [
+          {
+            "mediaType": "audio",
+            "mediaSubtype": "raw",
+            "format": "S16LE",
+            "rate": 48000,
+            "channels": 2,
+            "position": [
+              "FL",
+              "FR"
+            ]
+          }
+        ],
+        "Format": [
+          {
+            "mediaType": "audio",
+            "mediaSubtype": "raw",
+            "format": "S16LE",
+            "rate": 48000,
+            "channels": 2
+          }
+        ],
+        "Props": [
+          {
+            "channelVolumes": [
+              0.3,
+              0.3
+            ],
+            "mute": false
+          }
+        ]
+      }
+    }
+  }
+]

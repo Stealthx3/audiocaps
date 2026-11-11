@@ -81,27 +81,20 @@ fn family_of(id: &str, like: &str) -> DistroFamily {
 fn sandbox(root: &SystemRoot, now: u64) -> Value<Sandbox> {
     let p = prov(LayerKind::Environment, Source::file("/.flatpak-info"), now);
     if let Ok(info) = root.read_string("/.flatpak-info") {
-        let granted = info
-            .lines()
-            .filter(|l| {
-                ["sockets=", "devices=", "system-talk-name", "filesystems="]
-                    .iter()
-                    .any(|k| l.starts_with(k))
-            })
-            .map(|l| l.trim().to_string())
-            .collect();
-        return Value::measured(Sandbox::Flatpak { granted }, p);
+        let (granted, missing) = crate::sandbox::flatpak(&info);
+        return Value::measured(Sandbox::Flatpak { granted, missing }, p);
     }
     let snap = match root {
         SystemRoot::Live => std::env::var_os("SNAP_NAME").is_some(),
         SystemRoot::Fixture(f) => f.manifest().sandbox.snap,
     };
     if snap {
-        return Value::measured(
-            Sandbox::Snap { connected: vec![] },
+        let (connected, missing) = crate::sandbox::snap(root);
+        return Value::inferred(
+            Sandbox::Snap { connected, missing },
             prov(
                 LayerKind::Environment,
-                Source::derived("SNAP_NAME environment variable"),
+                Source::derived("SNAP_NAME and the sockets, devices and files the snap can reach"),
                 now,
             ),
         );
