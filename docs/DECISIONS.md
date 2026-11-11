@@ -74,3 +74,4 @@ Entries up to the adoption line were migrated from the former `docs/decision-and
 - **2026-11-10** · decision · Dependencies: pipewire 0.10 (MIT), libpulse-binding 2.30 (MIT/Apache-2.0, taken under MIT), nix 0.31 (MIT, inotify), sha2 in backends (for hashing Bluetooth addresses) _(by claude)_
 - **2026-11-10** · action · Phase 4 gate checks in lab-audiocaps-capture: live PipeWire and PulseAudio backends match pw-dump and pactl (0 mismatches on PipeWire+pipewire-pulse and on native PulseAudio); no PCM opened while a server runs; server-change updates in 4.6–11.7 ms, kernel hotplug updates in 12.2–15.6 ms; phase 3 ALSA checks still pass (routing now also on USB-Audio, 0/100 EBUSY with one long-running prober) _(by claude)_
 - **2026-11-10** · action · Phase 4 gate met: matches pw-dump and pactl; hotplug under 20 ms; gate.sh PASS _(by claude)_
+- **2026-11-10** · approval · Approved phase 4 at its gate ("Continue") and the merge of feat/phase-4-pipewire-pulse into main
