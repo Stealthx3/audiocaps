@@ -3,7 +3,7 @@
   "library_protocol_version": 35,
   "server_protocol_version": 35,
   "is_local": "yes",
-  "client_index": 4,
+  "client_index": 5,
   "tile_size": "65472",
   "user_name": "redacted",
   "host_name": "redacted",
@@ -11,7 +11,7 @@
   "server_version": "17.0",
   "default_sample_specification": "s16le 2ch 44100Hz",
   "default_channel_map": "front-left,front-right",
-  "default_sink_name": "alsa_output.pci-0000_08_01.0.analog-stereo",
+  "default_sink_name": "alsa_output.usb-QEMU_QEMU_USB_Audio_1-0000_00_02.1_00.0-4-00.analog-stereo",
   "default_source_name": "alsa_input.pci-0000_08_01.0.analog-stereo",
-  "cookie": "0536:f6ef"
+  "cookie": "68e7:60d7"
 }

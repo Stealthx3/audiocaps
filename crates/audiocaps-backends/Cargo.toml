@@ -14,6 +14,7 @@ audiocaps-model.workspace = true
 audiocaps-parse.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+alsa.workspace = true
 
 [lints]
 workspace = true

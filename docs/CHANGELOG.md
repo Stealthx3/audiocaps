@@ -34,7 +34,26 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `audiocaps capture` now saves the raw USB `descriptors` of audio devices; new
   `lab-usb-uac1` fixture from an emulated USB Audio device.
 
+- Runtime: a probe thread with per-backend deadlines (150 ms default), round-robin backend tasks,
+  snapshot generations, `latest()` and `Snapshot::diff`.
+- ALSA backend: hardware parameter ranges, channel maps, jack and IEC958 controls and the
+  `default` plugin chain, under strict passive rules (a PCM is opened non-blocking only when no
+  sound server runs and the device is free; nothing is ever configured or written).
+- Host hardware and driver detail: transport measured from HDA codec pins or USB, converter and
+  USB alt-setting capabilities, pins, bus IDs, module, parameters, power state and jack state.
+- Capture endpoints get the same detail; MIDI endpoints for raw MIDI devices and sequencer ports.
+- Schema 1.1.0 (additive): per-layer `detail`, `routing`, `midi`, new correlation keys, field
+  groups `routing`, `driver` and `hardware`, reason `managed_by_server`, provenance source `api`.
+- `audiocaps probe` runs through the runtime (`--endpoint`, `--repeat`, `--quiet`); new
+  `audiocaps alsa-dump`.
+- Capture format 2: the ALSA dump (`commands/alsa.json`) and alsa-lib's card and PCM definition
+  files; the three lab fixtures were recaptured with a USB Audio device and virtual MIDI.
+- Parsers for alsa-lib configuration, PCM `info`/`status`, raw MIDI and sequencer clients, and
+  HDA converter-to-PCM bindings; fuzz target `alsa_conf`.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in
   `docs/DECISIONS.md`, changelog in `docs/CHANGELOG.md`.
+- `scripts/check-passive.sh` allows control-device reads and non-blocking PCM opens when no
+  sound server runs; it fails on any PCM opened while a server runs.

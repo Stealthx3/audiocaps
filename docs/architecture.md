@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 1. Updated at every phase gate._
+_Status: end of phase 3. Updated at every phase gate._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
@@ -16,9 +16,9 @@ published; applications bundle the shared library and use the generated C header
                       ▼                     ▼         │
             ┌──────────────────────────────────────┐  │
             │  audiocaps-backends                  │  │
-            │  SystemRoot · manifest · probe()     │  │
-            │  (ALSA/PipeWire/Pulse/BlueZ/JACK:    │  │
-            │   phases 3–5)                        │  │
+            │  SystemRoot · Runtime · probe()      │  │
+            │  alsa · sysfs · environment          │  │
+            │  (PipeWire/Pulse/BlueZ/JACK: 4–5)    │  │
             └──────┬───────────────────────┬───────┘  │
                    │                       │          │
                    ▼                       ▼          ▼
@@ -42,11 +42,11 @@ the CLI or the FFI crate.
 | Crate | Owns | Must not |
 |---|---|---|
 | `audiocaps-model` | Every exported type: `ProbeScope`, `Snapshot`, `Endpoint`, `LayerCapabilities`, `CapabilitySet`, `EffectiveSet`, `PathReport`/`Hop`, `Finding`, `Value<T>` with `Provenance` and `Confidence`, `Sensitive` and `RedactionPolicy`. Generates the JSON schema. | Do I/O, or assume Linux (Linux identifiers appear only as data). |
-| `audiocaps-parse` | Pure parsers over bytes/text: raw ELD and kernel ELD text, EDID/CTA-861 (SADs, speaker allocation, HDMI/HDMI Forum VSDBs), HDA codec dumps, USB Audio Class descriptors, procfs (cards, pcm, USB `stream#`, `hw_params`), os-release, EDID serial redaction. Maps SADs to model `CodecCapability`. Each parser has a cargo-fuzz target in `fuzz/` (separate workspace, never shipped) and is checked against the captures in `tests/captures.rs`. | Do I/O; panic on any input. |
-| `audiocaps-backends` | `SystemRoot` (live `/` or a fixture tree), the capture `Manifest` format, and `probe(root, scope)`. Later: one module per subsystem with per-backend deadlines on a single-threaded executor. | Read outside the scope; open `/dev` nodes through `SystemRoot`; run commands (only the CLI's capture does). |
+| `audiocaps-parse` | Pure parsers over bytes/text: raw ELD and kernel ELD text, EDID/CTA-861 (SADs, speaker allocation, HDMI/HDMI Forum VSDBs), HDA codec dumps, USB Audio Class descriptors, procfs (cards, pcm, PCM `info`/`status`, USB `stream#`, `hw_params`, raw MIDI, sequencer clients), alsa-lib configuration (syntax with includes and quoted keys; resolves a PCM name such as `default` through its plugin chain, including the lazily loaded per-card definitions), os-release, EDID serial redaction. Maps SADs to model `CodecCapability`. Each parser has a cargo-fuzz target in `fuzz/` (separate workspace, never shipped) and is checked against the captures in `tests/captures.rs`. | Do I/O; panic on any input. |
+| `audiocaps-backends` | `SystemRoot` (live `/` or a fixture tree), the capture `Manifest` format, the `Runtime` (probe thread, per-backend deadlines, snapshot generations and diffs), `probe`/`probe_with`, and the backends: `alsa` (alsa-lib reader and its serializable dump), `sysfs` (codecs, USB streams, driver, PCM state, MIDI), `environment`. `servers` decides passively whether a sound server manages the cards. | Read outside the scope; open `/dev` nodes through `SystemRoot`; open a PCM a server manages or that is in use; write any control; run commands (only the CLI's capture does). |
 | `audiocaps-rules` | Declarative rule packs that turn snapshots into findings (phase 7). | Fetch anything from the network. |
 | `audiocaps-ffi` | The C ABI and cbindgen header (phase 9). Only crate allowed `unsafe`. | Contain logic beyond marshalling. |
-| `audiocaps-cli` | `capture`, `import`, `check-redaction`, `replay`, `probe`, `schema`. Owns command execution and text/JSON redaction for captures. | Be linked by applications. |
+| `audiocaps-cli` | `capture`, `import`, `check-redaction`, `replay`, `probe` (through the runtime; `--endpoint`, `--repeat`), `alsa-dump`, `schema`. Owns command execution and text/JSON redaction for captures. | Be linked by applications. |
 
 ## Key types
 
@@ -83,19 +83,76 @@ Both refuse paths under `/dev`; fixture reads also refuse anything that escapes 
 `..` or symlinks. The capture clock (`captured_at_ms`) replaces "now", so replays are deterministic.
 Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.json`.
 
-## Passive guarantees (phase 1)
+## Runtime (phase 3)
+
+- `Runtime::new(root)` starts one probe thread that owns the backends. `Runtime::probe(scope,
+  options)` sends the request and waits at most the longest backend deadline plus 250 ms; a probe
+  thread stuck in a kernel call yields a snapshot whose layers are `unknown` / `timeout`, and the
+  application carries on.
+- On the probe thread, `runtime::run` interleaves the backend tasks (`alsa`, `sysfs`,
+  `environment`) round-robin, one bounded step at a time (one PCM, one card). Each backend has its
+  own deadline (`ProbeOptions`, default 150 ms); a backend past it stops and everything it didn't
+  reach is reported as `timeout` while the others finish.
+- Each completed probe gets the next generation number and becomes `latest()` (an `Arc` swap);
+  `Snapshot::diff` lists added, removed and changed endpoints between generations (read times are
+  ignored). Queries on a snapshot never lock.
+- `probe(root, scope)` is the same pipeline without deadlines, for fixtures, tests and tools.
+
+## Probe pipeline (phase 3)
+
+1. **Discovery:** `/proc/asound/cards` and `/proc/asound/pcm`; with MIDI in scope, raw MIDI devices
+   (`/proc/asound/cardN/midiD`) and sequencer clients (`/proc/asound/seq/clients`). Kernel
+   sequencer ports that belong to a raw device become its correlation keys; other ports
+   (applications, Midi Through) are virtual MIDI endpoints. Only in-scope endpoints are kept.
+2. **Backends** get work only for in-scope endpoints, layers and field groups:
+   - `sysfs`: codec dumps and USB `stream#` files (transport from the codec pins or USB, host caps,
+     pins and alt-settings), bus IDs, driver/module/parameters/power, PCM sub-stream state.
+   - `alsa`: hardware parameter ranges and channel maps, jack and IEC958 controls, the
+     configuration. On a fixture it reads the captured dump (`commands/alsa.json`) instead.
+   - `environment`: os-release, kernel, sandbox, server presence (captured output only until
+     phase 4).
+3. **Assembly** turns the results into the model. New in schema 1.1.0 (additive): per-layer
+   `detail` (`host_hardware`, `kernel_driver`, `device`), `Snapshot.routing` (the `default` plugin
+   chain per direction), `Endpoint.midi`, ALSA raw MIDI and sequencer correlation keys, the
+   `routing`, `driver` and `hardware` field groups, `unknown` reason `managed_by_server`, and the
+   `api` provenance source.
+
+## Passive guarantees
 
 - Readers never open device nodes (`SystemRoot` refuses `/dev`).
-- `audiocaps capture` reads regular files under `/proc`, `/sys`, `/etc` only, and runs `pw-dump`;
-  `pactl` only when a PulseAudio socket exists, with autospawn disabled; `busctl` against BlueZ only
-  when `org.bluez` already owns its bus name (no D-Bus activation).
-- `scripts/check-passive.sh` runs the capture under `strace -f` and fails if any process opened
-  `/dev/snd/*`.
+- The ALSA backend opens a PCM only through alsa-lib, only with `SND_PCM_NONBLOCK`, only when no
+  sound server runs (PipeWire, PulseAudio or JACK socket or process; checked passively, nothing is
+  connected to; inside Flatpak or Snap a host server can't be ruled out, so it never opens one)
+  and only when `/proc` shows a free sub-device. It reads the parameter ranges
+  (`snd_pcm_hw_params_any`) and channel maps and closes the handle; parameters are never installed
+  and nothing is prepared, started or written. A PCM in use is described from `/proc`
+  (`status`, `hw_params`) and reported `busy`; a PCM a server manages is `managed_by_server`.
+- Control devices are opened to list and read elements (jacks, IEC958 switches, ELD); nothing is
+  written, locked or subscribed.
+- The configuration is read with `snd_config_update` (files only, no plugin instantiated, so
+  nothing connects to a server). The per-card definitions that alsa-lib loads lazily on open are
+  built from the same files (`/usr/share/alsa/cards`, `/usr/share/alsa/pcm`) by the parser.
+- `audiocaps capture` reads regular files under `/proc`, `/sys`, `/etc` and `/usr/share/alsa`,
+  runs the ALSA reader in-process under the rules above, runs `pw-dump`; `pactl` only when a
+  PulseAudio socket exists, with autospawn disabled; `busctl` against BlueZ only when `org.bluez`
+  already owns its bus name (no D-Bus activation).
+- `scripts/check-passive.sh` runs a command under `strace -f` and fails on any `/dev/snd` node
+  other than PCM and control devices, on any PCM opened while a server runs, and on any blocking
+  PCM open. `scripts/gate-alsa.sh` checks that playback on a busy device is never touched.
 - Note: reading `/proc/asound/cardN/codec#M` makes the HDA driver query the codec (it may resume a
   runtime-suspended codec). It does not open a PCM or change any setting; `alsa-info.sh` does the same.
 
-## Phase 1 limits
+## Limits at the end of phase 3
 
-The phase 1 probe builds endpoints from `/proc/asound/pcm` and reports the environment (os-release,
-kernel, sandbox, and server presence from captured command output). Every other layer is
-`unknown` / `not_implemented` with the phase that adds it. Transport is inferred from PCM names.
+- Sink chain, sound server and wireless layers are `not_implemented` (phases 6, 4, 5).
+- HDMI PCMs: the generic HDMI driver binds converters and pins at runtime, so per-PCM host caps
+  and pins are `not_exposed` until ELD correlation in phase 6.
+- IEC958 channel status (non-audio bit, rate) has no safe reader in the `alsa` crate; only the
+  switch state is reported.
+- On a machine with a sound server, hardware ranges are `managed_by_server` until the server
+  backends (phase 4) read them through the server.
+- A container that shares `/dev/snd` with the host but has its own PID namespace (outside Flatpak
+  and Snap) can hide an idle host server; a device that server is playing on is still seen as busy
+  from `/proc` and never opened.
+- The workstation and HTPC fixtures predate the ALSA dump (capture format 1); their ALSA layer is
+  `not_exposed` until they are recaptured.

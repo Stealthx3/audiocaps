@@ -1,6 +1,6 @@
 Client info
-  cur  clients : 4
-  peak clients : 17
+  cur  clients : 6
+  peak clients : 20
   max  clients : 192
 
 Client   0 : "System" [Kernel Legacy]
@@ -10,14 +10,18 @@ Client   0 : "System" [Kernel Legacy]
     Connecting To: 142:0
 Client  14 : "Midi Through" [Kernel Legacy]
   Port   0 : "Midi Through Port-0" (RWe-) [In/Out]
+Client  16 : "Virtual Raw MIDI 0-0" [Kernel Legacy]
+  Port   0 : "VirMIDI 0-0" (RWeX) [In/Out]
+Client  17 : "Virtual Raw MIDI 0-1" [Kernel Legacy]
+  Port   0 : "VirMIDI 0-1" (RWeX) [In/Out]
 Client 142 : "PipeWire-System" [User Legacy]
   Port   0 : "input" (rwe-) [In/Out]
     Connected From: 0:1, 0:0
   Input pool :
     Pool size          : 200
     Cells in use       : 0
-    Peak cells in use  : 4
-    Alloc success      : 4
+    Peak cells in use  : 2
+    Alloc success      : 2
     Alloc failures     : 0
 Client 143 : "PipeWire-RT-Event" [User Legacy]
   Port   0 : "input" (rwe-) [In/Out]

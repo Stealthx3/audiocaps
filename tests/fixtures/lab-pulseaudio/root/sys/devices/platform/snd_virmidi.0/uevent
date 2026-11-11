@@ -1,0 +1,2 @@
+DRIVER=snd_virmidi
+MODALIAS=platform:snd_virmidi

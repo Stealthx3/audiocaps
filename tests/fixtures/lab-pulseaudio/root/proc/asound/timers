@@ -1,9 +1,11 @@
 G0: system timer : 4000.000us (10000000 ticks)
-P0-0-0: PCM Playback 0-0-0 : 24988.662us (1 ticks) SLAVE
-  Client application 5350 : running
-P0-0-1: PCM Capture 0-0-1 : 24988.662us (1 ticks) SLAVE
-  Client application 5350 : running
-P1-0-0: PCM Playback 1-0-0 : 24988.662us (1 ticks) SLAVE
-  Client application 5350 : running
-P1-0-1: PCM Capture 1-0-1 : 24988.662us (1 ticks) SLAVE
-  Client application 5350 : running
+P1-0-0: PCM Playback 1-0-0 : 24979.166us (1 ticks) SLAVE
+  Client application 2778 : running
+P2-0-0: PCM Playback 2-0-0 : 24988.662us (1 ticks) SLAVE
+  Client application 2778 : running
+P2-0-1: PCM Capture 2-0-1 : 24988.662us (1 ticks) SLAVE
+  Client application 2778 : running
+P3-0-0: PCM Playback 3-0-0 : 24988.662us (1 ticks) SLAVE
+  Client application 2778 : running
+P3-0-1: PCM Capture 3-0-1 : 24988.662us (1 ticks) SLAVE
+  Client application 2778 : running

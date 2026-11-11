@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "generation": 1,
-  "taken_at_ms": 1794189701342,
+  "taken_at_ms": 1794363070520,
   "source": {
     "kind": "fixture",
     "name": "lab-pulseaudio"
@@ -43,23 +43,19 @@
     {
       "layer": "host_hardware",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 3 of the roadmap"
+        "state": "read"
       }
     },
     {
       "layer": "kernel_driver",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 3 of the roadmap"
+        "state": "read"
       }
     },
     {
       "layer": "alsa_userspace",
       "availability": {
-        "state": "partial"
+        "state": "read"
       }
     },
     {
@@ -100,7 +96,7 @@
           "kind": "file",
           "path": "/etc/os-release"
         },
-        "read_at_ms": 1794189701342
+        "read_at_ms": 1794363070520
       }
     },
     "kernel": {
@@ -113,7 +109,7 @@
           "kind": "file",
           "path": "/proc/sys/kernel/osrelease"
         },
-        "read_at_ms": 1794189701342
+        "read_at_ms": 1794363070520
       }
     },
     "sandbox": {
@@ -128,7 +124,7 @@
           "kind": "file",
           "path": "/.flatpak-info"
         },
-        "read_at_ms": 1794189701342
+        "read_at_ms": 1794363070520
       }
     },
     "servers": [
@@ -155,331 +151,400 @@
               "kind": "command",
               "name": "pactl-info"
             },
-            "read_at_ms": 1794189701342
+            "read_at_ms": 1794363070520
           }
         }
       }
     ]
   },
+  "routing": {
+    "default_playback": {
+      "state": "known",
+      "value": [
+        {
+          "name": "default",
+          "kind": "empty"
+        },
+        {
+          "name": "<inline plug>",
+          "kind": "plug",
+          "card": "VirMIDI"
+        },
+        {
+          "name": "<inline hw>",
+          "kind": "hw",
+          "card": "VirMIDI"
+        }
+      ],
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "alsa_userspace",
+        "source": {
+          "kind": "command",
+          "name": "alsa"
+        },
+        "read_at_ms": 1794363070520
+      }
+    },
+    "default_capture": {
+      "state": "known",
+      "value": [
+        {
+          "name": "default",
+          "kind": "empty"
+        },
+        {
+          "name": "<inline plug>",
+          "kind": "plug",
+          "card": "VirMIDI"
+        },
+        {
+          "name": "<inline hw>",
+          "kind": "hw",
+          "card": "VirMIDI"
+        }
+      ],
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "alsa_userspace",
+        "source": {
+          "kind": "command",
+          "name": "alsa"
+        },
+        "read_at_ms": 1794363070520
+      }
+    }
+  },
   "endpoints": [
     {
-      "id": "alsa:card0/pcm0c",
-      "class": "hardware",
-      "direction": "capture",
+      "id": "alsa:card0/midi0",
+      "class": "virtual",
+      "direction": "midi",
       "transport": {
         "state": "known",
-        "value": "analog",
-        "confidence": "inferred",
+        "value": {
+          "virtual": "virmidi"
+        },
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "kernel_driver",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/cards"
           },
-          "read_at_ms": 1794189701342
+          "read_at_ms": 1794363070520
         }
       },
       "name": {
         "state": "known",
         "value": {
-          "plain": "Generic Analog"
+          "plain": "Virtual Raw MIDI"
         },
         "confidence": "measured",
         "provenance": {
           "layer": "alsa_userspace",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/pcm"
+            "path": "/proc/asound/card0/midi0"
           },
-          "read_at_ms": 1794189701342
+          "read_at_ms": 1794363070520
         }
       },
       "correlation": [
         {
           "id": {
-            "kind": "alsa_card",
+            "kind": "alsa_raw_midi",
             "card": 0,
-            "id": "Intel"
+            "device": 0
           },
           "confidence": "measured"
         },
         {
           "id": {
-            "kind": "alsa_pcm",
-            "card": 0,
-            "device": 0
+            "kind": "alsa_seq_port",
+            "client": 16,
+            "port": 0
           },
-          "confidence": "measured"
+          "confidence": "inferred"
         }
       ],
+      "midi": {
+        "kind": "raw",
+        "input": true,
+        "output": true,
+        "subdevices": 16
+      },
       "layers": [
-        {
-          "layer": "sink_chain",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "host_hardware",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
-          },
-          "caps": {}
-        },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "VirMIDI",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_virmidi",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "enable",
+                  "value": "Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "midi_devs",
+                  "value": "2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_virmidi/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "unsupported",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
-        },
-        {
-          "layer": "sound_server",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "wireless",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
-          },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=VirMIDI,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/midi0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
         }
       ]
     },
     {
-      "id": "alsa:card0/pcm0p",
-      "class": "hardware",
-      "direction": "playback",
+      "id": "alsa:card0/midi1",
+      "class": "virtual",
+      "direction": "midi",
       "transport": {
         "state": "known",
-        "value": "analog",
-        "confidence": "inferred",
+        "value": {
+          "virtual": "virmidi"
+        },
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "kernel_driver",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/cards"
           },
-          "read_at_ms": 1794189701342
+          "read_at_ms": 1794363070520
         }
       },
       "name": {
         "state": "known",
         "value": {
-          "plain": "Generic Analog"
+          "plain": "Virtual Raw MIDI"
         },
         "confidence": "measured",
         "provenance": {
           "layer": "alsa_userspace",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/pcm"
+            "path": "/proc/asound/card0/midi1"
           },
-          "read_at_ms": 1794189701342
+          "read_at_ms": 1794363070520
         }
       },
       "correlation": [
         {
           "id": {
-            "kind": "alsa_card",
+            "kind": "alsa_raw_midi",
             "card": 0,
-            "id": "Intel"
+            "device": 1
           },
           "confidence": "measured"
         },
         {
           "id": {
-            "kind": "alsa_pcm",
-            "card": 0,
-            "device": 0
+            "kind": "alsa_seq_port",
+            "client": 17,
+            "port": 0
           },
-          "confidence": "measured"
+          "confidence": "inferred"
         }
       ],
+      "midi": {
+        "kind": "raw",
+        "input": true,
+        "output": true,
+        "subdevices": 16
+      },
       "layers": [
-        {
-          "layer": "sink_chain",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "host_hardware",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
-          },
-          "caps": {}
-        },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "VirMIDI",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_virmidi",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "enable",
+                  "value": "Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "midi_devs",
+                  "value": "2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_virmidi/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "unsupported",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
-        },
-        {
-          "layer": "sound_server",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "wireless",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
-          },
-          "caps": {}
-        }
-      ]
-    },
-    {
-      "id": "alsa:card1/pcm0c",
-      "class": "hardware",
-      "direction": "capture",
-      "transport": {
-        "state": "known",
-        "value": "analog",
-        "confidence": "inferred",
-        "provenance": {
-          "layer": "alsa_userspace",
-          "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
-          },
-          "read_at_ms": 1794189701342
-        }
-      },
-      "name": {
-        "state": "known",
-        "value": {
-          "plain": "Generic Analog"
-        },
-        "confidence": "measured",
-        "provenance": {
-          "layer": "alsa_userspace",
-          "source": {
-            "kind": "file",
-            "path": "/proc/asound/pcm"
-          },
-          "read_at_ms": 1794189701342
-        }
-      },
-      "correlation": [
-        {
-          "id": {
-            "kind": "alsa_card",
-            "card": 1,
-            "id": "Intel_1"
-          },
-          "confidence": "measured"
-        },
-        {
-          "id": {
-            "kind": "alsa_pcm",
-            "card": 1,
-            "device": 0
-          },
-          "confidence": "measured"
-        }
-      ],
-      "layers": [
-        {
-          "layer": "sink_chain",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "host_hardware",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "kernel_driver",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "alsa_userspace",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "sound_server",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
-          },
-          "caps": {}
-        },
-        {
-          "layer": "wireless",
-          "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 5 of the roadmap"
-          },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=VirMIDI,DEV=1",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/midi1"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
         }
       ]
     },
@@ -489,21 +554,21 @@
       "direction": "playback",
       "transport": {
         "state": "known",
-        "value": "analog",
-        "confidence": "inferred",
+        "value": "usb",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card1/usbid"
           },
-          "read_at_ms": 1794189701342
+          "read_at_ms": 1794363070520
         }
       },
       "name": {
         "state": "known",
         "value": {
-          "plain": "Generic Analog"
+          "plain": "USB Audio"
         },
         "confidence": "measured",
         "provenance": {
@@ -512,7 +577,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794189701342
+          "read_at_ms": 1794363070520
         }
       },
       "correlation": [
@@ -520,7 +585,7 @@
           "id": {
             "kind": "alsa_card",
             "card": 1,
-            "id": "Intel_1"
+            "id": "Audio"
           },
           "confidence": "measured"
         },
@@ -546,29 +611,338 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/stream0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  48000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/stream0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/stream0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "usb_id": {
+              "state": "known",
+              "value": "46f4:0002",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/usbid"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "usb_speed": {
+              "state": "known",
+              "value": "full",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/stream0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "usb_alt_settings": {
+              "state": "known",
+              "value": [
+                {
+                  "interface": 1,
+                  "alt_setting": 1,
+                  "formats": [
+                    "s16_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      48000
+                    ]
+                  },
+                  "sync": "sync"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/stream0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "USB-Audio",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_usb_audio",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "autoclock",
+                  "value": "Y"
+                },
+                {
+                  "name": "delayed_register",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "device_setup",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "ignore_ctl_error",
+                  "value": "N"
+                },
+                {
+                  "name": "implicit_fb",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "lowlatency",
+                  "value": "Y"
+                },
+                {
+                  "name": "pid",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "quirk_alias",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "quirk_flags",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "skip_validation",
+                  "value": "N"
+                },
+                {
+                  "name": "use_vmalloc",
+                  "value": "Y"
+                },
+                {
+                  "name": "vid",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_usb_audio/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Audio,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "in_use",
+                "owner_pid": 2778
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0p/sub0/status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 0
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0p/info"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "current": {
+              "state": "known",
+              "value": {
+                "format": "s16_le",
+                "channels": 2,
+                "rate_hz": 48000,
+                "period_frames": 1199,
+                "buffer_frames": 4797
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0p/sub0/hw_params"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -587,6 +961,1878 @@
             "detail": "read from phase 5 of the roadmap"
           },
           "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card2/pcm0c",
+      "class": "hardware",
+      "direction": "capture",
+      "transport": {
+        "state": "known",
+        "value": "analog",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "host_hardware",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/card2/codec#0"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Generic Analog"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 2,
+            "id": "Intel_1"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 2,
+            "device": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "8086:293e",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/vendor"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "QEMU Generic",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 5,
+                  "device": "line_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "10"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "jack": {
+              "state": "known",
+              "value": {
+                "control": "Line Phantom Jack",
+                "plugged": true
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Intel_1,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "in_use",
+                "owner_pid": 2778
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0c/sub0/status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 0
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0c/info"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "current": {
+              "state": "known",
+              "value": {
+                "format": "s16_le",
+                "channels": 2,
+                "rate_hz": 44100,
+                "period_frames": 1102,
+                "buffer_frames": 4408
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0c/sub0/hw_params"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          }
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card2/pcm0p",
+      "class": "hardware",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "analog",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "host_hardware",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/card2/codec#0"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Generic Analog"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 2,
+            "id": "Intel_1"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 2,
+            "device": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "8086:293e",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/vendor"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "QEMU Generic",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 3,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "10"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "jack": {
+              "state": "known",
+              "value": {
+                "control": "Line Out Phantom Jack",
+                "plugged": true
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Intel_1,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "in_use",
+                "owner_pid": 2778
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0p/sub0/status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 0
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0p/info"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "current": {
+              "state": "known",
+              "value": {
+                "format": "s16_le",
+                "channels": 2,
+                "rate_hz": 44100,
+                "period_frames": 1102,
+                "buffer_frames": 4408
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0p/sub0/hw_params"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          }
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card3/pcm0c",
+      "class": "hardware",
+      "direction": "capture",
+      "transport": {
+        "state": "known",
+        "value": "analog",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "host_hardware",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/card3/codec#0"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Generic Analog"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 3,
+            "id": "Intel"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 3,
+            "device": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "8086:293e",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/vendor"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "QEMU Generic",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 5,
+                  "device": "line_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "10"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "jack": {
+              "state": "known",
+              "value": {
+                "control": "Line Phantom Jack",
+                "plugged": true
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Intel,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "in_use",
+                "owner_pid": 2778
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0c/sub0/status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 0
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0c/info"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "current": {
+              "state": "known",
+              "value": {
+                "format": "s16_le",
+                "channels": 2,
+                "rate_hz": 44100,
+                "period_frames": 1102,
+                "buffer_frames": 4408
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0c/sub0/hw_params"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          }
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:card3/pcm0p",
+      "class": "hardware",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "analog",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "host_hardware",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/card3/codec#0"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Generic Analog"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/pcm"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_card",
+            "card": 3,
+            "id": "Intel"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_pcm",
+            "card": 3,
+            "device": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sink_chain",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 6 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "host_hardware",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "8086:293e",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/vendor"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "QEMU Generic",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 3,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/codec#0"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/uevent"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "10"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/power/runtime_status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "jack": {
+              "state": "known",
+              "value": {
+                "control": "Line Out Phantom Jack",
+                "plugged": true
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794363070520
+              }
+            }
+          }
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Intel,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "in_use",
+                "owner_pid": 2778
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0p/sub0/status"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 0
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0p/info"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "current": {
+              "state": "known",
+              "value": {
+                "format": "s16_le",
+                "channels": 2,
+                "rate_hz": 44100,
+                "period_frames": 1102,
+                "buffer_frames": 4408
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0p/sub0/hw_params"
+                },
+                "read_at_ms": 1794363070520
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "busy",
+              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+            }
+          }
+        },
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 4 of the roadmap"
+          },
+          "caps": {}
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "unknown",
+            "reason": "not_implemented",
+            "detail": "read from phase 5 of the roadmap"
+          },
+          "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:seq/Midi Through/Midi Through Port-0",
+      "class": "virtual",
+      "direction": "midi",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "alsa-seq-kernel"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Midi Through: Midi Through Port-0"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794363070520
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_seq_port",
+            "client": 14,
+            "port": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "midi": {
+        "kind": "sequencer",
+        "input": true,
+        "output": true,
+        "protocol": "midi1"
+      },
+      "layers": [
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "seq:14:0"
+          }
         }
       ]
     }
