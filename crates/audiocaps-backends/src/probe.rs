@@ -1,379 +1,564 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! The scoped probe. Phase 1 reads only the ALSA procfs PCM list and the environment basics; every
-//! other layer is reported as `unknown` with reason `not_implemented` and the phase that adds it.
-//! Nothing outside the scope is read.
+//! The scoped probe: discovery, the backend tasks, and assembly into a [`Snapshot`].
+//!
+//! 1. **Discovery** reads the ALSA card and PCM lists (and, when MIDI is in scope, the raw MIDI
+//!    devices and sequencer clients) and keeps only endpoints in scope.
+//! 2. **Backends** run as tasks on the runtime's executor, each with its own deadline:
+//!    `sysfs` (codecs, USB streams, driver state, PCM state, MIDI), `alsa` (alsa-lib: PCM ranges,
+//!    controls, configuration; or the captured dump for a fixture) and `environment`.
+//! 3. **Assembly** ([`crate::assemble`]) turns what was read into the model, with provenance, and
+//!    reports anything not reached as `unknown` with the reason.
+//!
+//! Nothing outside the scope is read: each backend only gets work for in-scope endpoints, layers
+//! and field groups.
+
+use std::collections::{BTreeMap, VecDeque};
 
 use audiocaps_model::{
-    Availability, CapabilitySet, CorrelationId, CorrelationKey, Direction, DistroFamily, Endpoint,
-    EndpointClass, EndpointId, EndpointName, EnvironmentInfo, FieldGroup, LayerCapabilities,
-    LayerKind, OsInfo, ProbeScope, Provenance, RedactionPolicy, SCHEMA_VERSION, Sandbox,
-    ServerInfo, ServerPresence, Snapshot, SnapshotSource, SoundServer, Source, SystemLayer,
-    Transport, UnknownReason, Value,
+    Direction, EndpointClass, EndpointId, EnvironmentInfo, FieldGroup, LayerKind, ProbeScope,
+    Snapshot,
 };
-use audiocaps_parse::{os_release, procfs};
+use audiocaps_parse::procfs::{self, CardEntry, SeqPort};
 
+use crate::alsa::dump::{self, AlsaDump, CardDump, DUMP_FORMAT, PcmDump, StreamDir};
+use crate::alsa::live;
 use crate::root::SystemRoot;
+use crate::runtime::{self, Backend, ProbeOptions, Task};
+use crate::sysfs::{self, CardData, Dir, Wants};
 
-const PROC_PCM: &str = "/proc/asound/pcm";
-const PROC_CARDS: &str = "/proc/asound/cards";
+pub(crate) const PROC_PCM: &str = "/proc/asound/pcm";
+pub(crate) const PROC_CARDS: &str = "/proc/asound/cards";
+pub(crate) const PROC_SEQ: &str = "/proc/asound/seq/clients";
 
-/// Probes `root` within `scope`. The result is redacted with the default policy (an opt-out
-/// option arrives with the C API in phase 9).
+/// Probes `root` within `scope` with no deadlines (fixtures, tests, tools). Applications use
+/// [`crate::Runtime`], which applies per-backend deadlines.
 pub fn probe(root: &SystemRoot, scope: &ProbeScope) -> Snapshot {
+    probe_with(root, scope, &ProbeOptions::unbounded())
+}
+
+/// Probes `root` within `scope`, running the backends with the deadlines in `opts`.
+pub fn probe_with(root: &SystemRoot, scope: &ProbeScope, opts: &ProbeOptions) -> Snapshot {
     let now = root.now_ms();
-    let source = match root {
-        SystemRoot::Live => SnapshotSource::Live,
-        SystemRoot::Fixture(f) => SnapshotSource::Fixture {
-            name: f.name().to_string(),
-        },
+    let needs_cards =
+        !scope.endpoint_classes.is_empty() && !scope.directions.is_empty() || routing_wanted(scope);
+    let cards = if needs_cards {
+        root.read_string(PROC_CARDS)
+            .map(|t| procfs::parse_cards(&t))
+            .unwrap_or_default()
+    } else {
+        vec![]
     };
+    let found = discover(root, scope, &cards);
+    let mut res = Results::default();
+    let mut tasks: Vec<Box<dyn Task<Results> + '_>> = Vec::new();
 
-    let layers = LayerKind::ALL
-        .iter()
-        .filter(|l| scope.layers.includes(l))
-        .map(|&layer| SystemLayer {
-            layer,
-            availability: system_availability(root, layer),
-        })
-        .collect();
+    let want = wants(scope, &found);
+    let mut card_work: BTreeMap<u32, Vec<(u32, Dir)>> = BTreeMap::new();
+    for f in &found {
+        match f.kind {
+            Kind::Pcm { card, device, dir } => {
+                card_work.entry(card).or_default().push((device, dir))
+            }
+            Kind::RawMidi { card, .. } => {
+                card_work.entry(card).or_default();
+            }
+            Kind::Seq { .. } => {}
+        }
+    }
+    if !card_work.is_empty() {
+        tasks.push(Box::new(SysfsTask {
+            root,
+            cards: cards.clone(),
+            todo: card_work.into_iter().collect(),
+            want,
+            out: BTreeMap::new(),
+        }));
+    }
 
-    let environment = scope
-        .layers
-        .includes(&LayerKind::Environment)
-        .then(|| environment(root, now));
-
-    let mut snapshot = Snapshot {
-        schema_version: SCHEMA_VERSION.to_string(),
-        generation: 1,
-        taken_at_ms: now,
-        source,
-        scope: scope.clone(),
-        redaction: RedactionPolicy::keep_all(),
-        layers,
-        environment,
-        endpoints: alsa_endpoints(root, scope, now),
-        findings: vec![],
-    };
-    snapshot.endpoints.sort_by(|a, b| a.id.cmp(&b.id));
-    snapshot.redact(&RedactionPolicy::default());
-    snapshot
+    let alsa = alsa_work(scope, &found);
+    if alsa.any() {
+        tasks.push(Box::new(AlsaTask::new(root, alsa)));
+    }
+    if scope.layers.includes(&LayerKind::Environment) {
+        tasks.push(Box::new(EnvTask {
+            root,
+            now,
+            out: None,
+        }));
+    }
+    runtime::run(tasks, opts, &mut res);
+    crate::assemble::snapshot(root, scope, now, &cards, found, res)
 }
 
-fn not_implemented(phase: u8) -> Availability {
-    Availability::Unknown {
-        reason: UnknownReason::NotImplemented,
-        detail: Some(format!("read from phase {phase} of the roadmap")),
+/// Results the backend tasks hand over.
+#[derive(Debug, Default)]
+pub(crate) struct Results {
+    pub cards: BTreeMap<u32, CardData>,
+    pub sysfs_timed_out: bool,
+    pub alsa: Option<AlsaDump>,
+    /// Why there is no ALSA dump (fixture without one).
+    pub alsa_missing: Option<String>,
+    pub alsa_live: bool,
+    pub alsa_timed_out: bool,
+    pub environment: Option<EnvironmentInfo>,
+    pub env_timed_out: bool,
+}
+
+/// A discovered endpoint.
+#[derive(Debug, Clone)]
+pub(crate) struct Found {
+    pub id: EndpointId,
+    pub class: EndpointClass,
+    pub direction: Direction,
+    pub kind: Kind,
+    /// Name from the list it was found in.
+    pub name: String,
+    /// Sequencer ports that belong to a raw MIDI device.
+    pub seq_ports: Vec<(u32, u32)>,
+}
+
+/// What a discovered endpoint is.
+#[derive(Debug, Clone)]
+pub(crate) enum Kind {
+    Pcm {
+        card: u32,
+        device: u32,
+        dir: Dir,
+    },
+    RawMidi {
+        card: u32,
+        device: u32,
+    },
+    Seq {
+        client: u32,
+        kernel: bool,
+        midi_version: Option<String>,
+        port: SeqPort,
+    },
+}
+
+fn routing_wanted(scope: &ProbeScope) -> bool {
+    scope.fields.includes(&FieldGroup::Routing) && scope.layers.includes(&LayerKind::AlsaUserspace)
+}
+
+fn wants(scope: &ProbeScope, found: &[Found]) -> Wants {
+    let layer = |l| scope.layers.includes(&l);
+    let field = |f| scope.fields.includes(&f);
+    let pcm = found.iter().any(|f| matches!(f.kind, Kind::Pcm { .. }));
+    Wants {
+        // Codecs and USB stream files give the transport, which every endpoint reports.
+        hardware: pcm,
+        bus_ids: layer(LayerKind::HostHardware) && field(FieldGroup::Hardware),
+        driver: layer(LayerKind::KernelDriver) && field(FieldGroup::Driver),
+        pcm_state: pcm && layer(LayerKind::AlsaUserspace) && field(FieldGroup::DirectAccess),
+        midi: found.iter().any(|f| matches!(f.kind, Kind::RawMidi { .. })),
     }
 }
 
-fn phase_for(layer: LayerKind) -> u8 {
-    match layer {
-        LayerKind::SinkChain => 6,
-        LayerKind::HostHardware | LayerKind::KernelDriver | LayerKind::AlsaUserspace => 3,
-        LayerKind::SoundServer => 4,
-        LayerKind::Wireless => 5,
-        LayerKind::Environment => 5,
-    }
-}
-
-fn system_availability(root: &SystemRoot, layer: LayerKind) -> Availability {
-    match layer {
-        LayerKind::AlsaUserspace => match root.read(PROC_PCM) {
-            Ok(_) => Availability::Partial,
-            Err(e) => io_unknown(&e, PROC_PCM),
-        },
-        LayerKind::Environment => Availability::Partial,
-        other => not_implemented(phase_for(other)),
-    }
-}
-
-fn io_unknown(e: &std::io::Error, path: &str) -> Availability {
-    let reason = match e.kind() {
-        std::io::ErrorKind::NotFound => UnknownReason::NotExposed,
-        std::io::ErrorKind::PermissionDenied => UnknownReason::NotGranted,
-        _ => UnknownReason::ReadError,
-    };
-    Availability::Unknown {
-        reason,
-        detail: Some(format!("{path}: {e}")),
-    }
-}
-
-fn prov(layer: LayerKind, source: Source, at: u64) -> Provenance {
-    Provenance {
-        layer,
-        source,
-        read_at_ms: at,
-    }
-}
-
-fn alsa_endpoints(root: &SystemRoot, scope: &ProbeScope, now: u64) -> Vec<Endpoint> {
-    // Nothing to do unless hardware endpoints and at least one direction are in scope.
-    if !scope.endpoint_classes.includes(&EndpointClass::Hardware) || scope.directions.is_empty() {
-        return vec![];
-    }
-    let Ok(pcm_text) = root.read_string(PROC_PCM) else {
-        return vec![];
-    };
-    let cards = root
-        .read_string(PROC_CARDS)
-        .map(|t| procfs::parse_cards(&t))
-        .unwrap_or_default();
-    let identity = scope.fields.includes(&FieldGroup::Identity);
+/// Discovers endpoints in scope.
+fn discover(root: &SystemRoot, scope: &ProbeScope, cards: &[CardEntry]) -> Vec<Found> {
     let mut out = Vec::new();
-    for pcm in procfs::parse_pcm(&pcm_text) {
-        for (dir, count, suffix) in [
-            (Direction::Playback, pcm.playback, 'p'),
-            (Direction::Capture, pcm.capture, 'c'),
-        ] {
-            if count == 0 {
-                continue;
-            }
-            let id = EndpointId(format!("alsa:card{}/pcm{}{}", pcm.card, pcm.device, suffix));
-            if !scope.includes_endpoint(EndpointClass::Hardware, dir, &id) {
-                continue;
-            }
-            let card = cards.iter().find(|c| c.index == pcm.card);
-            let mut correlation = vec![];
-            if identity {
-                if let Some(c) = card {
-                    correlation.push(CorrelationKey {
-                        id: CorrelationId::AlsaCard {
-                            card: c.index,
-                            id: c.id.clone(),
+    let hw = scope.endpoint_classes.includes(&EndpointClass::Hardware);
+    let pcm_dirs = scope.directions.includes(&Direction::Playback)
+        || scope.directions.includes(&Direction::Capture);
+    if hw
+        && pcm_dirs
+        && let Ok(text) = root.read_string(PROC_PCM)
+    {
+        for pcm in procfs::parse_pcm(&text) {
+            for (dir, count, d) in [
+                (Direction::Playback, pcm.playback, Dir::Playback),
+                (Direction::Capture, pcm.capture, Dir::Capture),
+            ] {
+                if count == 0 {
+                    continue;
+                }
+                let id = EndpointId(format!(
+                    "alsa:card{}/pcm{}{}",
+                    pcm.card,
+                    pcm.device,
+                    d.suffix()
+                ));
+                if scope.includes_endpoint(EndpointClass::Hardware, dir, &id) {
+                    out.push(Found {
+                        id,
+                        class: EndpointClass::Hardware,
+                        direction: dir,
+                        kind: Kind::Pcm {
+                            card: pcm.card,
+                            device: pcm.device,
+                            dir: d,
                         },
-                        confidence: audiocaps_model::Confidence::Measured,
+                        name: pcm.name.clone(),
+                        seq_ports: vec![],
                     });
                 }
-                correlation.push(CorrelationKey {
-                    id: CorrelationId::AlsaPcm {
-                        card: pcm.card,
-                        device: pcm.device,
+            }
+        }
+    }
+    if scope.directions.includes(&Direction::Midi) {
+        discover_midi(root, scope, cards, &mut out);
+    }
+    out
+}
+
+/// Card classes that are virtual MIDI devices rather than hardware.
+fn midi_card_class(card: Option<&CardEntry>) -> EndpointClass {
+    match card.map(|c| c.driver.as_str()) {
+        Some("VirMIDI") => EndpointClass::Virtual,
+        _ => EndpointClass::Hardware,
+    }
+}
+
+fn discover_midi(root: &SystemRoot, scope: &ProbeScope, cards: &[CardEntry], out: &mut Vec<Found>) {
+    let mut raw: Vec<Found> = Vec::new();
+    for c in cards {
+        let class = midi_card_class(Some(c));
+        for device in sysfs::midi_devices(root, c.index) {
+            let id = EndpointId(format!("alsa:card{}/midi{device}", c.index));
+            if scope.includes_endpoint(class, Direction::Midi, &id) {
+                // The device's own name (first line of its proc file) matches its sequencer port.
+                let name = root
+                    .read_string(&format!("/proc/asound/card{}/midi{device}", c.index))
+                    .ok()
+                    .and_then(|t| t.lines().next().map(|l| l.trim().to_string()))
+                    .filter(|n| !n.is_empty())
+                    .unwrap_or_else(|| format!("{} MIDI {device}", c.name));
+                raw.push(Found {
+                    id,
+                    class,
+                    direction: Direction::Midi,
+                    kind: Kind::RawMidi {
+                        card: c.index,
+                        device,
                     },
-                    confidence: audiocaps_model::Confidence::Measured,
+                    name,
+                    seq_ports: vec![],
                 });
             }
-            let layers = LayerKind::ALL
+        }
+    }
+    let clients = root
+        .read_string(PROC_SEQ)
+        .map(|t| procfs::parse_seq_clients(&t))
+        .unwrap_or_default();
+    for client in clients {
+        if client.number == 0 {
+            continue; // System: timer and announce ports.
+        }
+        // A kernel client or port named after a raw MIDI device belongs to it: the device's
+        // name, or `<name> <card>-<device>` (VirMIDI: client "Virtual Raw MIDI 3-0").
+        if client.kernel {
+            let mut matched = false;
+            for p in &client.ports {
+                let owner = raw.iter_mut().find(|f| {
+                    let Kind::RawMidi { card, device } = f.kind else {
+                        return false;
+                    };
+                    let tag = format!(" {card}-{device}");
+                    f.name == p.name
+                        || client.name == format!("{}{tag}", f.name)
+                        || p.name.ends_with(&tag)
+                });
+                if let Some(r) = owner {
+                    r.seq_ports.push((client.number, p.number));
+                    matched = true;
+                }
+            }
+            if matched {
+                continue;
+            }
+        }
+        // A kernel client named after a card belongs to that card's raw MIDI devices.
+        let card = client
+            .kernel
+            .then(|| cards.iter().find(|c| c.name == client.name))
+            .flatten();
+        if let Some(card) = card {
+            let on_card: Vec<usize> = raw
                 .iter()
-                .filter(|l| scope.layers.includes(l) && **l != LayerKind::Environment)
-                .map(|&layer| LayerCapabilities {
-                    layer,
-                    availability: not_implemented(phase_for(layer)),
-                    caps: CapabilitySet::default(),
-                })
+                .enumerate()
+                .filter(|(_, f)| matches!(f.kind, Kind::RawMidi { card: c, .. } if c == card.index))
+                .map(|(i, _)| i)
                 .collect();
-            out.push(Endpoint {
+            for p in &client.ports {
+                let target = if on_card.len() == 1 {
+                    on_card.first().copied()
+                } else {
+                    on_card.get(p.number as usize).copied()
+                };
+                if let Some(i) = target {
+                    raw[i].seq_ports.push((client.number, p.number));
+                }
+            }
+            continue;
+        }
+        for port in client.ports {
+            if !port.readable && !port.writable {
+                continue;
+            }
+            let id = EndpointId(format!(
+                "alsa:seq/{}/{}",
+                client.name.replace('/', "_"),
+                port.name.replace('/', "_")
+            ));
+            if !scope.includes_endpoint(EndpointClass::Virtual, Direction::Midi, &id) {
+                continue;
+            }
+            out.push(Found {
                 id,
-                class: EndpointClass::Hardware,
-                direction: dir,
-                transport: infer_transport(&pcm.name, card.map(|c| c.driver.as_str()), now),
-                name: identity.then(|| {
-                    Value::measured(
-                        EndpointName::Plain(pcm.name.clone()),
-                        prov(LayerKind::AlsaUserspace, Source::file(PROC_PCM), now),
-                    )
-                }),
-                correlation,
-                sink: None,
-                layers,
-                effective: vec![],
-                paths: vec![],
+                class: EndpointClass::Virtual,
+                direction: Direction::Midi,
+                name: format!("{}: {}", client.name, port.name),
+                kind: Kind::Seq {
+                    client: client.number,
+                    kernel: client.kernel,
+                    midi_version: client.midi_version.clone(),
+                    port,
+                },
+                seq_ports: vec![],
             });
         }
     }
-    out
+    out.extend(raw);
 }
 
-/// Phase 1 heuristic from names; phase 3 replaces it with pin configs and USB descriptors.
-fn infer_transport(pcm_name: &str, driver: Option<&str>, now: u64) -> Value<Transport> {
-    let from = |what: &str| {
-        prov(
-            LayerKind::AlsaUserspace,
-            Source::derived(what.to_string()),
-            now,
-        )
-    };
-    let n = pcm_name.to_ascii_lowercase();
-    if driver == Some("USB-Audio") {
-        return Value::inferred(Transport::Usb, from("card driver in /proc/asound/cards"));
+// ---------------------------------------------------------------------------------------------
+// sysfs task
+
+struct SysfsTask<'a> {
+    root: &'a SystemRoot,
+    cards: Vec<CardEntry>,
+    todo: VecDeque<(u32, Vec<(u32, Dir)>)>,
+    want: Wants,
+    out: BTreeMap<u32, CardData>,
+}
+
+impl Task<Results> for SysfsTask<'_> {
+    fn backend(&self) -> Backend {
+        Backend::Sysfs
     }
-    let t = if n.contains("hdmi") || n.contains("displayport") || n.split(' ').any(|w| w == "dp") {
-        Some(Transport::HdmiDp)
-    } else if n.contains("s/pdif")
-        || n.contains("spdif")
-        || n.contains("iec958")
-        || n.contains("digital")
-    {
-        Some(Transport::Spdif)
-    } else if n.contains("analog") {
-        Some(Transport::Analog)
-    } else {
-        None
-    };
-    match t {
-        Some(t) => Value::inferred(t, from("PCM name in /proc/asound/pcm")),
-        None => Value::unknown(
-            UnknownReason::NotImplemented,
-            Some("transport is read from HDA pin configs and USB descriptors in phase 3".into()),
-        ),
+
+    fn step(&mut self) -> bool {
+        if let Some((index, pcms)) = self.todo.pop_front() {
+            let entry = self.cards.iter().find(|c| c.index == index).cloned();
+            let data = sysfs::read_card(self.root, entry, index, &pcms, self.want);
+            self.out.insert(index, data);
+        }
+        self.todo.is_empty()
+    }
+
+    fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
+        out.cards = self.out;
+        out.sysfs_timed_out = timed_out;
     }
 }
 
-fn environment(root: &SystemRoot, now: u64) -> EnvironmentInfo {
-    let os = ["/etc/os-release", "/usr/lib/os-release"]
+// ---------------------------------------------------------------------------------------------
+// ALSA task
+
+/// What the ALSA backend must read.
+#[derive(Debug, Default)]
+pub(crate) struct AlsaWork {
+    pub pcms: Vec<(u32, u32, StreamDir)>,
+    pub controls: Vec<u32>,
+    pub config: bool,
+}
+
+impl AlsaWork {
+    fn any(&self) -> bool {
+        !self.pcms.is_empty() || !self.controls.is_empty() || self.config
+    }
+}
+
+fn alsa_work(scope: &ProbeScope, found: &[Found]) -> AlsaWork {
+    let layer = |l| scope.layers.includes(&l);
+    let field = |f| scope.fields.includes(&f);
+    let ranges = layer(LayerKind::AlsaUserspace)
+        && [
+            FieldGroup::Formats,
+            FieldGroup::Rates,
+            FieldGroup::Channels,
+            FieldGroup::ChannelMaps,
+            FieldGroup::Latency,
+            FieldGroup::DirectAccess,
+        ]
         .iter()
-        .find_map(|p| root.read_string(p).ok().map(|t| (p, t)))
-        .map(|(p, text)| {
-            let kv = os_release::parse(&text);
-            let id = os_release::get(&kv, "ID").unwrap_or("linux").to_string();
-            let like = os_release::get(&kv, "ID_LIKE").unwrap_or("");
-            let family = family_of(&id, like);
-            Value::measured(
-                OsInfo {
-                    id,
-                    version_id: os_release::get(&kv, "VERSION_ID").map(String::from),
-                    family,
+        .any(|f| field(*f));
+    let controls = (layer(LayerKind::KernelDriver) && field(FieldGroup::Driver))
+        || (layer(LayerKind::AlsaUserspace) && field(FieldGroup::Passthrough));
+    let mut w = AlsaWork {
+        config: routing_wanted(scope),
+        ..AlsaWork::default()
+    };
+    for f in found {
+        if let Kind::Pcm { card, device, dir } = f.kind {
+            if ranges {
+                let s = match dir {
+                    Dir::Playback => StreamDir::Playback,
+                    Dir::Capture => StreamDir::Capture,
+                };
+                w.pcms.push((card, device, s));
+            }
+            if controls && !w.controls.contains(&card) {
+                w.controls.push(card);
+            }
+        }
+    }
+    w
+}
+
+enum AlsaItem {
+    LoadFixture,
+    Managing,
+    Config,
+    Controls(u32),
+    Pcm(u32, u32, StreamDir),
+}
+
+struct AlsaTask<'a> {
+    root: &'a SystemRoot,
+    items: VecDeque<AlsaItem>,
+    managing: Option<String>,
+    dump: AlsaDump,
+    missing: Option<String>,
+    live: bool,
+}
+
+impl<'a> AlsaTask<'a> {
+    fn new(root: &'a SystemRoot, work: AlsaWork) -> Self {
+        let live = matches!(root, SystemRoot::Live);
+        let mut items = VecDeque::new();
+        if live {
+            if !work.pcms.is_empty() {
+                items.push_back(AlsaItem::Managing);
+            }
+            if work.config {
+                items.push_back(AlsaItem::Config);
+            }
+            items.extend(work.controls.into_iter().map(AlsaItem::Controls));
+            items.extend(
+                work.pcms
+                    .into_iter()
+                    .map(|(c, d, s)| AlsaItem::Pcm(c, d, s)),
+            );
+        } else {
+            items.push_back(AlsaItem::LoadFixture);
+        }
+        Self {
+            root,
+            items,
+            managing: None,
+            dump: AlsaDump {
+                format: DUMP_FORMAT,
+                ..AlsaDump::default()
+            },
+            missing: None,
+            live,
+        }
+    }
+
+    fn card(&mut self, index: u32) -> &mut CardDump {
+        if let Some(i) = self.dump.cards.iter().position(|c| c.index == index) {
+            &mut self.dump.cards[i]
+        } else {
+            self.dump.cards.push(CardDump {
+                index,
+                ..CardDump::default()
+            });
+            self.dump.cards.last_mut().expect("just pushed")
+        }
+    }
+}
+
+impl Task<Results> for AlsaTask<'_> {
+    fn backend(&self) -> Backend {
+        Backend::Alsa
+    }
+
+    fn step(&mut self) -> bool {
+        match self.items.pop_front() {
+            Some(AlsaItem::LoadFixture) => match self.root.captured_command(dump::CAPTURE_NAME) {
+                Some((_, Some(bytes))) => match serde_json::from_slice::<AlsaDump>(&bytes) {
+                    Ok(d) => self.dump = d,
+                    Err(e) => self.missing = Some(format!("alsa.json: {e}")),
                 },
-                prov(LayerKind::Environment, Source::file(*p), now),
-            )
-        })
-        .unwrap_or_else(|| Value::unknown(UnknownReason::NotExposed, Some("no os-release".into())));
-
-    let kernel = match root.read_string("/proc/sys/kernel/osrelease") {
-        Ok(k) => Value::measured(
-            k.trim().to_string(),
-            prov(
-                LayerKind::Environment,
-                Source::file("/proc/sys/kernel/osrelease"),
-                now,
-            ),
-        ),
-        Err(e) => Value::unknown(UnknownReason::ReadError, Some(e.to_string())),
-    };
-
-    let sandbox = sandbox(root, now);
-    EnvironmentInfo {
-        os,
-        kernel,
-        sandbox,
-        servers: servers(root, now),
+                Some((cmd, None)) => {
+                    self.missing = Some(
+                        cmd.skipped
+                            .unwrap_or_else(|| "the capture has no ALSA output".into()),
+                    )
+                }
+                None => {
+                    self.missing =
+                        Some("the capture predates ALSA dumps (capture format 1, phase 2)".into())
+                }
+            },
+            Some(AlsaItem::Managing) => {
+                self.managing = crate::servers::managing_server(self.root);
+                self.dump.managing_server = self.managing.clone();
+            }
+            Some(AlsaItem::Config) => match live::read_config() {
+                Ok(c) => self.dump.config = Some(c),
+                Err(e) => self.dump.config_error = Some(e),
+            },
+            Some(AlsaItem::Controls(card)) => {
+                let r = live::read_controls(card);
+                let c = self.card(card);
+                match r {
+                    Ok(v) => c.controls = Some(v),
+                    Err(e) => c.controls_error = Some(e),
+                }
+            }
+            Some(AlsaItem::Pcm(card, device, stream)) => {
+                let result =
+                    live::read_pcm(self.root, card, device, stream, self.managing.as_deref());
+                self.card(card).pcms.push(PcmDump {
+                    device,
+                    stream,
+                    result,
+                });
+            }
+            None => {}
+        }
+        self.items.is_empty()
     }
-}
 
-fn family_of(id: &str, like: &str) -> DistroFamily {
-    let all: Vec<&str> = std::iter::once(id).chain(like.split_whitespace()).collect();
-    let has = |x: &str| all.contains(&x);
-    if has("debian") || has("ubuntu") {
-        DistroFamily::Debian
-    } else if has("fedora") || has("rhel") || has("centos") {
-        DistroFamily::Fedora
-    } else if has("arch") {
-        DistroFamily::Arch
-    } else if all.iter().any(|x| x.contains("suse")) {
-        DistroFamily::Suse
-    } else {
-        DistroFamily::Other
-    }
-}
-
-fn sandbox(root: &SystemRoot, now: u64) -> Value<Sandbox> {
-    let p = prov(LayerKind::Environment, Source::file("/.flatpak-info"), now);
-    if let Ok(info) = root.read_string("/.flatpak-info") {
-        let granted = info
-            .lines()
-            .filter(|l| {
-                ["sockets=", "devices=", "system-talk-name", "filesystems="]
-                    .iter()
-                    .any(|k| l.starts_with(k))
-            })
-            .map(|l| l.trim().to_string())
-            .collect();
-        return Value::measured(Sandbox::Flatpak { granted }, p);
-    }
-    let snap = match root {
-        SystemRoot::Live => std::env::var_os("SNAP_NAME").is_some(),
-        SystemRoot::Fixture(f) => f.manifest().sandbox.snap,
-    };
-    if snap {
-        return Value::measured(
-            Sandbox::Snap { connected: vec![] },
-            prov(
-                LayerKind::Environment,
-                Source::derived("SNAP_NAME environment variable"),
-                now,
-            ),
-        );
-    }
-    Value::measured(Sandbox::None, p)
-}
-
-/// Phase 1 reads server presence only from captured command output. Live server probing (native
-/// client APIs, never auto-spawning a server) arrives in phase 4.
-fn servers(root: &SystemRoot, now: u64) -> Vec<ServerPresence> {
-    if matches!(root, SystemRoot::Live) {
-        return vec![];
-    }
-    let mut out = vec![];
-    let src = |name: &str| prov(LayerKind::SoundServer, Source::command(name), now);
-    if let Some((cmd, out_bytes)) = root.captured_command("pw-dump") {
-        let info = match (cmd.exit_code, out_bytes) {
-            (Some(0), Some(b)) => pipewire_core(&b)
-                .map(|(name, version)| {
-                    Value::measured(ServerInfo { name, version }, src("pw-dump"))
-                })
-                .unwrap_or_else(|| Value::unknown(UnknownReason::ParseError, None)),
-            _ => Value::unknown(skip_reason(cmd.skipped.as_deref()), cmd.skipped.clone()),
+    fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
+        out.alsa = if self.missing.is_some() {
+            None
+        } else {
+            Some(self.dump)
         };
-        out.push(ServerPresence {
-            server: SoundServer::PipeWire,
-            info,
-        });
-    }
-    if let Some((cmd, out_bytes)) = root.captured_command("pactl-info") {
-        let info = match (cmd.exit_code, out_bytes) {
-            (Some(0), Some(b)) => pulse_info(&b)
-                .map(|(name, version)| {
-                    Value::measured(ServerInfo { name, version }, src("pactl-info"))
-                })
-                .unwrap_or_else(|| Value::unknown(UnknownReason::ParseError, None)),
-            _ => Value::unknown(skip_reason(cmd.skipped.as_deref()), cmd.skipped.clone()),
-        };
-        out.push(ServerPresence {
-            server: SoundServer::PulseAudio,
-            info,
-        });
-    }
-    out
-}
-
-/// Maps a capture skip note to an unknown reason.
-fn skip_reason(skipped: Option<&str>) -> UnknownReason {
-    match skipped {
-        Some(s) if s.contains("not installed") => UnknownReason::LibraryMissing,
-        Some(s) if s.contains("timed out") => UnknownReason::Timeout,
-        _ => UnknownReason::ServiceNotRunning,
+        out.alsa_missing = self.missing;
+        out.alsa_live = self.live;
+        out.alsa_timed_out = timed_out;
     }
 }
 
-fn pipewire_core(bytes: &[u8]) -> Option<(String, Option<String>)> {
-    let v: serde_json::Value = serde_json::from_slice(bytes).ok()?;
-    let core = v
-        .as_array()?
-        .iter()
-        .find(|o| o["type"] == "PipeWire:Interface:Core")?;
-    let info = &core["info"];
-    Some((
-        info["name"].as_str().unwrap_or("pipewire").to_string(),
-        info["version"].as_str().map(String::from),
-    ))
+// ---------------------------------------------------------------------------------------------
+// environment task
+
+struct EnvTask<'a> {
+    root: &'a SystemRoot,
+    now: u64,
+    out: Option<EnvironmentInfo>,
 }
 
-fn pulse_info(bytes: &[u8]) -> Option<(String, Option<String>)> {
-    let v: serde_json::Value = serde_json::from_slice(bytes).ok()?;
-    Some((
-        v["server_name"].as_str()?.to_string(),
-        v["server_version"].as_str().map(String::from),
-    ))
+impl Task<Results> for EnvTask<'_> {
+    fn backend(&self) -> Backend {
+        Backend::Environment
+    }
+
+    fn step(&mut self) -> bool {
+        self.out = Some(crate::environment::environment(self.root, self.now));
+        true
+    }
+
+    fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
+        out.environment = self.out;
+        out.env_timed_out = timed_out;
+    }
 }
 
 #[cfg(test)]
@@ -381,44 +566,39 @@ mod tests {
     use super::*;
 
     #[test]
-    fn families() {
-        assert_eq!(family_of("ubuntu", "debian"), DistroFamily::Debian);
-        assert_eq!(
-            family_of("rocky", "rhel centos fedora"),
-            DistroFamily::Fedora
-        );
-        assert_eq!(family_of("opensuse-tumbleweed", "suse"), DistroFamily::Suse);
-        assert_eq!(family_of("nixos", ""), DistroFamily::Other);
-    }
-
-    #[test]
-    fn transport_heuristic_is_inferred() {
-        assert!(matches!(
-            infer_transport("HDMI 0", None, 0),
-            Value::Known {
-                value: Transport::HdmiDp,
-                confidence: audiocaps_model::Confidence::Inferred,
-                ..
-            }
-        ));
-        assert!(matches!(
-            infer_transport("USB Audio", Some("USB-Audio"), 0),
-            Value::Known {
-                value: Transport::Usb,
-                ..
-            }
-        ));
-        assert!(matches!(
-            infer_transport("Something", None, 0),
-            Value::Unknown { .. }
-        ));
-    }
-
-    #[test]
     fn empty_scope_reads_nothing() {
         let s = probe(&SystemRoot::Live, &ProbeScope::nothing());
         assert!(s.endpoints.is_empty());
         assert!(s.layers.is_empty());
         assert!(s.environment.is_none());
+        assert!(s.routing.is_none());
+    }
+
+    #[test]
+    fn alsa_work_follows_scope() {
+        let f = vec![Found {
+            id: EndpointId("alsa:card0/pcm0p".into()),
+            class: EndpointClass::Hardware,
+            direction: Direction::Playback,
+            kind: Kind::Pcm {
+                card: 0,
+                device: 0,
+                dir: Dir::Playback,
+            },
+            name: "x".into(),
+            seq_ports: vec![],
+        }];
+        let only_identity = ProbeScope::nothing()
+            .with_layer(LayerKind::AlsaUserspace)
+            .with_field(FieldGroup::Identity);
+        assert!(!alsa_work(&only_identity, &f).any());
+        let rates = only_identity.clone().with_field(FieldGroup::Rates);
+        let w = alsa_work(&rates, &f);
+        assert_eq!(w.pcms.len(), 1);
+        assert!(w.controls.is_empty() && !w.config);
+        let wrong_layer = ProbeScope::nothing()
+            .with_layer(LayerKind::SinkChain)
+            .with_field(FieldGroup::Rates);
+        assert!(!alsa_work(&wrong_layer, &f).any());
     }
 }

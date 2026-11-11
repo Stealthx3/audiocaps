@@ -56,3 +56,10 @@ path = "fuzz_targets/procfs.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "alsa_conf"
+path = "fuzz_targets/alsa_conf.rs"
+test = false
+doc = false
+bench = false

@@ -25,6 +25,7 @@ regex = "1"
 tar = "0.4"
 flate2 = "1"
 expect-test = "1"
+alsa = "0.12"
 
 [workspace.lints.rust]
 unsafe_code = "deny"

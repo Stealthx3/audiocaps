@@ -8,12 +8,15 @@ Type 10: ALSA emulation
 Card config: 
 HDA Intel at 0xfea10000 irq 62
 HDA Intel at 0xfca00000 irq 63
+QEMU QEMU USB Audio at usb-0000:02:00.0-4, full speed
+Virtual MIDI Card 1
 
 Audio devices: NOT ENABLED IN CONFIG
 
 Synth devices: NOT ENABLED IN CONFIG
 
-Midi devices: NOT ENABLED IN CONFIG
+Midi devices:
+3: Virtual Raw MIDI
 
 Timers:
 31: system timer

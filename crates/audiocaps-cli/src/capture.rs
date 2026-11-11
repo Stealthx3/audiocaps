@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 //! `audiocaps capture`: saves the files and command outputs that AudioCaps reads into a redacted
 //! tarball. Read-only and passive:
-//! - only regular files under `/proc`, `/sys` and `/etc` are read, never `/dev`;
+//! - only regular files under `/proc`, `/sys`, `/etc` and `/usr/share/alsa` are read, never `/dev`;
 //! - commands are client tools that only query (`pw-dump`, `pactl`, `busctl`);
+//! - the ALSA dump (`commands/alsa.json`) comes from the library's own ALSA reader, with the same
+//!   passive rules as a probe: PCMs are opened non-blocking only when no sound server runs and the
+//!   device is free, parameters are never installed, and controls are only read;
 //! - `pactl` runs only when a PulseAudio socket exists, with autospawn disabled;
 //! - BlueZ is queried only when `org.bluez` already owns its bus name (no D-Bus activation).
 
@@ -288,6 +291,35 @@ fn run_command(
     rec
 }
 
+/// Runs the library's ALSA reader in-process and stores its redacted dump.
+fn alsa_dump(st: &mut Staging) -> CapturedCommand {
+    use audiocaps_backends::alsa::{dump, live};
+    let mut rec = CapturedCommand {
+        name: dump::CAPTURE_NAME.into(),
+        argv: vec!["(in-process)".into(), "audiocaps alsa reader".into()],
+        exit_code: Some(0),
+        output_file: None,
+        skipped: None,
+    };
+    let d = live::dump_all(&audiocaps_backends::SystemRoot::Live);
+    match serde_json::to_value(&d) {
+        Ok(mut v) => {
+            st.redactor.json(&mut v);
+            let mut s = serde_json::to_string_pretty(&v).unwrap_or_default();
+            s.push('\n');
+            let file = format!("{}.json", dump::CAPTURE_NAME);
+            if fs::write(st.dir.join("commands").join(&file), s).is_ok() {
+                rec.output_file = Some(file);
+            }
+        }
+        Err(e) => {
+            rec.exit_code = None;
+            rec.skipped = Some(format!("dump failed: {e}"));
+        }
+    }
+    rec
+}
+
 fn which(bin: &str) -> bool {
     std::env::var_os("PATH")
         .map(|p| std::env::split_paths(&p).any(|d| d.join(bin).is_file()))
@@ -304,6 +336,7 @@ fn commands(st: &mut Staging) -> Vec<CapturedCommand> {
         skipped: Some(why.into()),
     };
 
+    out.push(alsa_dump(st));
     if which("pw-dump") {
         out.push(run_command(st, "pw-dump", &["pw-dump"], &[]));
     } else {
@@ -416,6 +449,10 @@ pub fn capture(opts: &Options) -> io::Result<PathBuf> {
     };
 
     st.copy_tree(Path::new("/proc/asound"), 5);
+    // alsa-lib's per-card and PCM definitions, used to resolve the default device's plugin chain.
+    st.copy(Path::new("/usr/share/alsa/alsa.conf"));
+    st.copy_tree(Path::new("/usr/share/alsa/cards"), 1);
+    st.copy_tree(Path::new("/usr/share/alsa/pcm"), 1);
     for f in [
         "/proc/sys/kernel/osrelease",
         "/etc/os-release",

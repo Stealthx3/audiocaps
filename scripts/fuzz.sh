@@ -9,7 +9,7 @@
 set -uo pipefail
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 cd "$(dirname "$0")/.."
-TARGETS=(eld edid hda_codec usb_descriptors procfs)
+TARGETS=(eld edid hda_codec usb_descriptors procfs alsa_conf)
 F=fuzz
 
 seed_files() { # target dir pattern...
@@ -28,9 +28,11 @@ case "${1:-}" in
     seed_files edid -name edid
     seed_files hda_codec -name 'codec#*'
     seed_files usb_descriptors -name descriptors
+    seed_files alsa_conf -name 'alsa-config*' -o -name 'asound.conf' -o -name '*.conf' -path '*alsa*'
     mkdir -p "$F/corpus/procfs"
     i=0
-    for pat in cards pcm 'stream[0-9]*' hw_params os-release; do
+    # Order matches the selector in fuzz_targets/procfs.rs.
+    for pat in cards pcm 'stream[0-9]*' hw_params info status 'midi[0-9]*' clients os-release; do
       find tests/fixtures -type f -name "$pat" -size +0 -print0 |
         while IFS= read -r -d '' p; do
           { printf "\\x$(printf %02x "$i")"; cat "$p"; } > "$F/corpus/procfs/seed-$i-$(sha256sum "$p" | cut -c1-16)"

@@ -9,11 +9,11 @@ mod timefmt;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use audiocaps_backends::{SystemRoot, probe};
-use audiocaps_model::ProbeScope;
+use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
+use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 1)
+audiocaps — AudioCaps command-line tool (phase 3)
 
 USAGE:
   audiocaps capture [--out DIR] [--label NAME]
@@ -26,8 +26,12 @@ USAGE:
       Re-apply the redaction rules to an extracted fixture (after a rule change).
   audiocaps replay <fixture-dir>
       Probe a fixture with the full scope and print the snapshot as JSON.
-  audiocaps probe
-      Probe the live system with the full scope and print the snapshot as JSON.
+  audiocaps probe [--endpoint ID]... [--unbounded] [--repeat N] [--quiet]
+      Probe the live system through the runtime (per-backend deadlines, 150 ms default) and
+      print the last snapshot as JSON. --endpoint limits the scope to those endpoints;
+      --repeat probes N times and prints each probe's time to stderr; --quiet skips the JSON.
+  audiocaps alsa-dump
+      Print what the ALSA backend reads on this system (same passive rules as a probe).
   audiocaps schema
       Print the JSON schema of the snapshot (v1).
 ";
@@ -44,8 +48,13 @@ fn main() -> ExitCode {
         Some("replay") if args.len() == 2 => SystemRoot::fixture(&args[1])
             .map_err(|e| e.to_string())
             .map(|r| print_snapshot(&r)),
-        Some("probe") => {
-            print_snapshot(&SystemRoot::Live);
+        Some("probe") => cmd_probe(&args[1..]),
+        Some("alsa-dump") => {
+            let d = audiocaps_backends::alsa::live::dump_all(&SystemRoot::Live);
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&d).expect("dump serializes")
+            );
             Ok(())
         }
         Some("schema") => {
@@ -72,6 +81,54 @@ fn print_snapshot(root: &SystemRoot) {
         "{}",
         serde_json::to_string_pretty(&snap).expect("snapshot serializes")
     );
+}
+
+fn cmd_probe(args: &[String]) -> Result<(), String> {
+    let mut scope = ProbeScope::everything();
+    let mut opts = ProbeOptions::default();
+    let mut repeat = 1u32;
+    let mut quiet = false;
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        match a.as_str() {
+            "--endpoint" => {
+                let id = it.next().ok_or("--endpoint needs an id")?;
+                scope = scope.with_endpoint(EndpointId(id.clone()));
+            }
+            "--unbounded" => opts = ProbeOptions::unbounded(),
+            "--repeat" => {
+                repeat = it
+                    .next()
+                    .and_then(|n| n.parse().ok())
+                    .filter(|n| *n > 0)
+                    .ok_or("--repeat needs a positive number")?
+            }
+            "--quiet" => quiet = true,
+            other => return Err(format!("unknown option {other}")),
+        }
+    }
+    let rt = Runtime::new(SystemRoot::Live).map_err(|e| e.to_string())?;
+    let mut last = None;
+    for i in 0..repeat {
+        let t = std::time::Instant::now();
+        let snap = rt.probe(&scope, &opts);
+        if repeat > 1 {
+            eprintln!(
+                "probe {}: {:.2} ms, {} endpoints",
+                i + 1,
+                t.elapsed().as_secs_f64() * 1000.0,
+                snap.endpoints.len()
+            );
+        }
+        last = Some(snap);
+    }
+    if !quiet && let Some(snap) = last {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&*snap).expect("snapshot serializes")
+        );
+    }
+    Ok(())
 }
 
 fn cmd_capture(args: &[String]) -> Result<(), String> {

@@ -121,6 +121,19 @@ pub struct Node {
     pub devices: Vec<PinDevice>,
     /// Mixer control names bound to this widget.
     pub controls: Vec<String>,
+    /// ALSA PCM devices bound to this converter (`Device: name=…, type=…, device=N`).
+    pub pcm_devices: Vec<PcmDevice>,
+}
+
+/// An ALSA PCM device a converter widget belongs to.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PcmDevice {
+    /// PCM name, e.g. `ALC897 Analog`.
+    pub name: String,
+    /// PCM type: `Audio`, `SPDIF`, `HDMI`, `Modem`.
+    pub kind: String,
+    /// ALSA device number.
+    pub device: u32,
 }
 
 impl Node {
@@ -361,6 +374,7 @@ pub fn parse_codec(text: &str) -> HdaCodec {
                 selected: None,
                 devices: Vec::new(),
                 controls: Vec::new(),
+                pcm_devices: Vec::new(),
             });
             continue;
         }
@@ -452,11 +466,105 @@ pub fn parse_codec(text: &str) -> HdaCodec {
             if let Some((name, _)) = v.split_once('"') {
                 node.controls.push(name.to_string());
             }
+        } else if let Some(v) = t.strip_prefix("Device: name=\"") {
+            if let Some(d) = parse_pcm_device(v) {
+                node.pcm_devices.push(d);
+            }
         } else if let Some(d) = parse_dev_line(t) {
             node.devices.push(d);
         }
     }
     c
+}
+
+/// Parses the tail of `Device: name="ALC897 Analog", type="Audio", device=0`.
+fn parse_pcm_device(v: &str) -> Option<PcmDevice> {
+    let (name, rest) = v.split_once('"')?;
+    let kind = rest
+        .split_once("type=\"")
+        .and_then(|(_, r)| r.split_once('"'))
+        .map(|(k, _)| k.to_string())
+        .unwrap_or_default();
+    let device = rest
+        .split_once("device=")
+        .and_then(|(_, r)| r.trim().split(|c: char| !c.is_ascii_digit()).next())
+        .and_then(|d| d.parse().ok())?;
+    Some(PcmDevice {
+        name: name.to_string(),
+        kind,
+        device,
+    })
+}
+
+impl HdaCodec {
+    /// Converter nodes bound to ALSA PCM `device` in the given direction.
+    pub fn converters_for(&self, device: u32, output: bool) -> impl Iterator<Item = &Node> {
+        let want = if output {
+            WidgetKind::AudioOutput
+        } else {
+            WidgetKind::AudioInput
+        };
+        self.nodes
+            .iter()
+            .filter(move |n| n.kind == want && n.pcm_devices.iter().any(|d| d.device == device))
+    }
+
+    /// Pins reachable from converter `nid`: for outputs, pins whose connection graph leads to it;
+    /// for inputs, pins the converter's connection graph leads to. Mixers and selectors are
+    /// followed up to a small depth.
+    pub fn pins_for(&self, nid: u16, output: bool) -> Vec<&Node> {
+        let mut out: Vec<&Node> = Vec::new();
+        if output {
+            for pin in self.pins() {
+                if self.reaches(pin.nid, nid, 0) && !out.iter().any(|p| p.nid == pin.nid) {
+                    out.push(pin);
+                }
+            }
+        } else {
+            let mut seen = Vec::new();
+            self.collect_pins(nid, 0, &mut seen, &mut out);
+        }
+        out
+    }
+
+    fn reaches(&self, from: u16, target: u16, depth: u8) -> bool {
+        if depth > 6 {
+            return false;
+        }
+        let Some(n) = self.node(from) else {
+            return false;
+        };
+        n.connections
+            .iter()
+            .any(|&c| c == target || self.reaches(c, target, depth + 1))
+    }
+
+    fn collect_pins<'a>(
+        &'a self,
+        nid: u16,
+        depth: u8,
+        seen: &mut Vec<u16>,
+        out: &mut Vec<&'a Node>,
+    ) {
+        if depth > 6 || seen.contains(&nid) {
+            return;
+        }
+        seen.push(nid);
+        let Some(n) = self.node(nid) else {
+            return;
+        };
+        for &c in &n.connections {
+            match self.node(c) {
+                Some(p) if p.kind == WidgetKind::PinComplex => {
+                    if !out.iter().any(|x| x.nid == p.nid) {
+                        out.push(p);
+                    }
+                }
+                Some(_) => self.collect_pins(c, depth + 1, seen, out),
+                None => {}
+            }
+        }
+    }
 }
 
 /// Parses `*Dev 00: PD = 1, ELDV = 1, IA = 0, Connections [ … ]`.

@@ -98,6 +98,12 @@ pub enum FieldGroup {
     Paths,
     /// Diagnostic findings.
     Findings,
+    /// Routing of the default device (e.g. the ALSA plugin chain).
+    Routing,
+    /// Driver state: module, parameters, power, jack.
+    Driver,
+    /// Host hardware detail: bus IDs, codec pins, USB interfaces.
+    Hardware,
 }
 
 /// What a probe may read and report. Build it with [`ProbeScope::nothing`] and the `with_*`

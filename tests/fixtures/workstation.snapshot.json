@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "generation": 1,
   "taken_at_ms": 1794190223762,
   "source": {
@@ -43,17 +43,13 @@
     {
       "layer": "host_hardware",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 3 of the roadmap"
+        "state": "read"
       }
     },
     {
       "layer": "kernel_driver",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 3 of the roadmap"
+        "state": "read"
       }
     },
     {
@@ -172,6 +168,18 @@
       }
     ]
   },
+  "routing": {
+    "default_playback": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    },
+    "default_capture": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    }
+  },
   "endpoints": [
     {
       "id": "alsa:card0/pcm3p",
@@ -180,12 +188,12 @@
       "transport": {
         "state": "known",
         "value": "hdmi_dp",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card0/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -237,28 +245,275 @@
           "layer": "host_hardware",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "10de:22ba",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Nvidia GPU a3 HDMI/DP",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "HDMI PCMs are bound to pins at runtime; mapped from ELD in phase 6"
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=NVidia,DEV=3",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm3p/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm3p/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "iec958": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -287,12 +542,12 @@
       "transport": {
         "state": "known",
         "value": "hdmi_dp",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card0/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -344,28 +599,275 @@
           "layer": "host_hardware",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "10de:22ba",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Nvidia GPU a3 HDMI/DP",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "HDMI PCMs are bound to pins at runtime; mapped from ELD in phase 6"
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=NVidia,DEV=7",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm7p/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm7p/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "iec958": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -394,12 +896,12 @@
       "transport": {
         "state": "known",
         "value": "hdmi_dp",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card0/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -451,28 +953,275 @@
           "layer": "host_hardware",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "10de:22ba",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Nvidia GPU a3 HDMI/DP",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "HDMI PCMs are bound to pins at runtime; mapped from ELD in phase 6"
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=NVidia,DEV=8",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm8p/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm8p/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "iec958": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -501,12 +1250,12 @@
       "transport": {
         "state": "known",
         "value": "hdmi_dp",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card0/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -558,28 +1307,275 @@
           "layer": "host_hardware",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "10de:22ba",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Nvidia GPU a3 HDMI/DP",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "HDMI PCMs are bound to pins at runtime; mapped from ELD in phase 6"
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=NVidia,DEV=9",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm9p/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card0/pcm9p/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "iec958": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -608,12 +1604,12 @@
       "transport": {
         "state": "known",
         "value": "analog",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card1/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -664,29 +1660,395 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  96000,
+                  192000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "1022:1487",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Realtek ALCS1200A",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 24,
+                  "device": "mic_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 25,
+                  "device": "mic_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 26,
+                  "device": "line_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 27,
+                  "device": "hp_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 20,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 21,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 22,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Generic,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0c/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0c/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -715,12 +2077,12 @@
       "transport": {
         "state": "known",
         "value": "analog",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card1/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -771,29 +2133,415 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  96000,
+                  192000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "1022:1487",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Realtek ALCS1200A",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 20,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 21,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 22,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 24,
+                  "device": "mic_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 25,
+                  "device": "mic_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 26,
+                  "device": "line_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 27,
+                  "device": "hp_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Generic,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "in_use",
+                "owner_pid": 777833
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0p/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 0
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0p/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "current": {
+              "state": "known",
+              "value": {
+                "format": "s32_le",
+                "channels": 2,
+                "rate_hz": 48000,
+                "period_frames": 1024,
+                "buffer_frames": 32768
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm0p/sub0/hw_params"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -822,12 +2570,12 @@
       "transport": {
         "state": "known",
         "value": "spdif",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card1/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -878,29 +2626,348 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  192000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "1022:1487",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Realtek ALCS1200A",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 30,
+                  "device": "spdif_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Generic,DEV=1",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm1p/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm1p/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "iec958": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -929,12 +2996,12 @@
       "transport": {
         "state": "known",
         "value": "analog",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "PCM name in /proc/asound/pcm"
+            "kind": "file",
+            "path": "/proc/asound/card1/codec#0"
           },
           "read_at_ms": 1794190223762
         }
@@ -985,29 +3052,395 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "derived",
+                  "from": "converter bits in /proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  96000,
+                  192000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "pci_id": {
+              "state": "known",
+              "value": "1022:1487",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/vendor"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "codec": {
+              "state": "known",
+              "value": "Realtek ALCS1200A",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "pins": {
+              "state": "known",
+              "value": [
+                {
+                  "node": 24,
+                  "device": "mic_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 25,
+                  "device": "mic_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 26,
+                  "device": "line_in",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 27,
+                  "device": "hp_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 20,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 21,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                },
+                {
+                  "node": 22,
+                  "device": "line_out",
+                  "connectivity": "jack",
+                  "max_channels": 2,
+                  "hdmi": false,
+                  "display_port": false,
+                  "hbr": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/codec#0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "HDA-Intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_hda_intel",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "align_buffer_size",
+                  "value": "-1"
+                },
+                {
+                  "name": "bdl_pos_adj",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "beep_mode",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "ctl_dev_id",
+                  "value": "N"
+                },
+                {
+                  "name": "dmic_detect",
+                  "value": "Y"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "enable_msi",
+                  "value": "-1"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "jackpoll_ms",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "model",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "patch",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "pm_blacklist",
+                  "value": "-1"
+                },
+                {
+                  "name": "position_fix",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "power_save",
+                  "value": "1"
+                },
+                {
+                  "name": "power_save_controller",
+                  "value": "Y"
+                },
+                {
+                  "name": "probe_mask",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "probe_only",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "single_cmd",
+                  "value": "-1"
+                },
+                {
+                  "name": "snoop",
+                  "value": "-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_hda_intel/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "active",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=Generic,DEV=2",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm2c/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card1/pcm2c/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -1036,12 +3469,12 @@
       "transport": {
         "state": "known",
         "value": "usb",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "card driver in /proc/asound/cards"
+            "kind": "file",
+            "path": "/proc/asound/card2/usbid"
           },
           "read_at_ms": 1794190223762
         }
@@ -1092,29 +3525,401 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s24_3_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  96000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "usb_id": {
+              "state": "known",
+              "value": "03f0:078b",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/usbid"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "usb_speed": {
+              "state": "known",
+              "value": "full",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "usb_alt_settings": {
+              "state": "known",
+              "value": [
+                {
+                  "interface": 1,
+                  "alt_setting": 1,
+                  "formats": [
+                    "s16_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      44100
+                    ]
+                  },
+                  "sync": "async"
+                },
+                {
+                  "interface": 1,
+                  "alt_setting": 2,
+                  "formats": [
+                    "s24_3_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      44100
+                    ]
+                  },
+                  "sync": "async"
+                },
+                {
+                  "interface": 1,
+                  "alt_setting": 3,
+                  "formats": [
+                    "s16_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      48000
+                    ]
+                  },
+                  "sync": "async"
+                },
+                {
+                  "interface": 1,
+                  "alt_setting": 4,
+                  "formats": [
+                    "s24_3_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      48000
+                    ]
+                  },
+                  "sync": "async"
+                },
+                {
+                  "interface": 1,
+                  "alt_setting": 5,
+                  "formats": [
+                    "s16_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      96000
+                    ]
+                  },
+                  "sync": "async"
+                },
+                {
+                  "interface": 1,
+                  "alt_setting": 6,
+                  "formats": [
+                    "s24_3_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      96000
+                    ]
+                  },
+                  "sync": "async"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "USB-Audio",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_usb_audio",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card2/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "autoclock",
+                  "value": "Y"
+                },
+                {
+                  "name": "delayed_register",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "device_setup",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "ignore_ctl_error",
+                  "value": "N"
+                },
+                {
+                  "name": "implicit_fb",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "index",
+                  "value": "-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "lowlatency",
+                  "value": "Y"
+                },
+                {
+                  "name": "midi2_enable",
+                  "value": "Y"
+                },
+                {
+                  "name": "midi2_ump_probe",
+                  "value": "Y"
+                },
+                {
+                  "name": "pid",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "quirk_alias",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "quirk_flags",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "skip_validation",
+                  "value": "N"
+                },
+                {
+                  "name": "use_vmalloc",
+                  "value": "Y"
+                },
+                {
+                  "name": "vid",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_usb_audio/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "/sys/class/sound/card2/device/power/runtime_status"
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=SoloCast,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0c/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card2/pcm0c/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -1143,12 +3948,12 @@
       "transport": {
         "state": "known",
         "value": "usb",
-        "confidence": "inferred",
+        "confidence": "measured",
         "provenance": {
-          "layer": "alsa_userspace",
+          "layer": "host_hardware",
           "source": {
-            "kind": "derived",
-            "from": "card driver in /proc/asound/cards"
+            "kind": "file",
+            "path": "/proc/asound/card3/usbid"
           },
           "read_at_ms": 1794190223762
         }
@@ -1199,29 +4004,335 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  8000,
+                  11025,
+                  16000,
+                  22050,
+                  24000,
+                  44100,
+                  48000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          },
+          "detail": {
+            "kind": "host_hardware",
+            "usb_id": {
+              "state": "known",
+              "value": "0c45:636b",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/usbid"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "usb_speed": {
+              "state": "known",
+              "value": "high",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "usb_alt_settings": {
+              "state": "known",
+              "value": [
+                {
+                  "interface": 3,
+                  "alt_setting": 1,
+                  "formats": [
+                    "s16_le"
+                  ],
+                  "channels": 2,
+                  "rates": {
+                    "kind": "discrete",
+                    "rates_hz": [
+                      8000,
+                      11025,
+                      16000,
+                      22050,
+                      24000,
+                      44100,
+                      48000
+                    ]
+                  },
+                  "sync": "async"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "host_hardware",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/stream0"
+                },
+                "read_at_ms": 1794190223762
+              }
+            }
+          }
         },
         {
           "layer": "kernel_driver",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "USB-Audio",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_usb_audio",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card3/device/uevent"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "autoclock",
+                  "value": "Y"
+                },
+                {
+                  "name": "delayed_register",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "device_setup",
+                  "value": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+                },
+                {
+                  "name": "enable",
+                  "value": "Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "ignore_ctl_error",
+                  "value": "N"
+                },
+                {
+                  "name": "implicit_fb",
+                  "value": "N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "index",
+                  "value": "-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "lowlatency",
+                  "value": "Y"
+                },
+                {
+                  "name": "midi2_enable",
+                  "value": "Y"
+                },
+                {
+                  "name": "midi2_ump_probe",
+                  "value": "Y"
+                },
+                {
+                  "name": "pid",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "quirk_alias",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "quirk_flags",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "skip_validation",
+                  "value": "N"
+                },
+                {
+                  "name": "use_vmalloc",
+                  "value": "Y"
+                },
+                {
+                  "name": "vid",
+                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_usb_audio/parameters"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "power": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "/sys/class/sound/card3/device/power/runtime_status"
+            },
+            "jack": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "alsa_userspace",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 3 of the roadmap"
+            "state": "partial"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "rates": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channels": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "channel_maps": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "latency_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            },
+            "direct_access": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          },
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=H4,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0c/sub0/status"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "subdevices": {
+              "state": "known",
+              "value": {
+                "total": 1,
+                "available": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card3/pcm0c/info"
+                },
+                "read_at_ms": 1794190223762
+              }
+            },
+            "period_us": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+            }
+          }
         },
         {
           "layer": "sound_server",
@@ -1240,6 +4351,198 @@
             "detail": "read from phase 5 of the roadmap"
           },
           "caps": {}
+        }
+      ]
+    },
+    {
+      "id": "alsa:seq/Midi Through/Midi Through Port-0",
+      "class": "virtual",
+      "direction": "midi",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "alsa-seq-kernel"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794190223762
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Midi Through: Midi Through Port-0"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794190223762
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_seq_port",
+            "client": 14,
+            "port": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "midi": {
+        "kind": "sequencer",
+        "input": true,
+        "output": true,
+        "protocol": "midi1"
+      },
+      "layers": [
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "seq:14:0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "alsa:seq/PipeWire-RT-Event/input",
+      "class": "virtual",
+      "direction": "midi",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "alsa-seq"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794190223762
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "PipeWire-RT-Event: input"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794190223762
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_seq_port",
+            "client": 143,
+            "port": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "midi": {
+        "kind": "sequencer",
+        "input": true,
+        "output": true,
+        "protocol": "ump"
+      },
+      "layers": [
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "seq:143:0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "alsa:seq/PipeWire-System/input",
+      "class": "virtual",
+      "direction": "midi",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "alsa-seq"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794190223762
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "PipeWire-System: input"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/seq/clients"
+          },
+          "read_at_ms": 1794190223762
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_seq_port",
+            "client": 142,
+            "port": 0
+          },
+          "confidence": "measured"
+        }
+      ],
+      "midi": {
+        "kind": "sequencer",
+        "input": true,
+        "output": true,
+        "protocol": "ump"
+      },
+      "layers": [
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "seq:142:0"
+          }
         }
       ]
     }

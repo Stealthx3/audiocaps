@@ -250,7 +250,12 @@ fn usb_streams_match_descriptors() {
         );
         let alts = text
             .lines()
-            .filter(|l| l.trim_start().starts_with("Altset "))
+            // "Altset N" lines; a running stream also prints "Altset = N" status lines.
+            .filter(|l| {
+                l.trim_start()
+                    .strip_prefix("Altset ")
+                    .is_some_and(|r| r.starts_with(|c: char| c.is_ascii_digit()))
+            })
             .count();
         let parsed: usize = s.dirs.iter().map(|d| d.formats.len()).sum();
         assert_eq!(parsed, alts, "{ctx}: formats");

@@ -1,13 +1,22 @@
 {
-  "format": 1,
+  "format": 2,
   "tool_version": "0.1.0",
-  "captured_at_ms": 1794189701342,
+  "captured_at_ms": 1794363070520,
   "sandbox": {
     "snap": false,
     "flatpak": false
   },
-  "file_count": 166,
+  "file_count": 356,
   "commands": [
+    {
+      "name": "alsa",
+      "argv": [
+        "(in-process)",
+        "audiocaps alsa reader"
+      ],
+      "exit_code": 0,
+      "output_file": "alsa.json"
+    },
     {
       "name": "pw-dump",
       "argv": [],
