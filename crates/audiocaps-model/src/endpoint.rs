@@ -5,6 +5,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::caps::{CapabilitySet, CodecCapability, Speaker};
+use crate::detail::{LayerDetail, MidiPort};
 use crate::path::{EffectiveSet, PathReport};
 use crate::redact::{Redact, RedactionPolicy, Sensitive};
 use crate::scope::LayerKind;
@@ -86,6 +87,9 @@ pub struct Endpoint {
     /// The connected sink, for HDMI/DP and similar links.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sink: Option<SinkRecord>,
+    /// MIDI port details, for MIDI endpoints.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub midi: Option<MidiPort>,
     /// Capabilities as each layer reports them.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub layers: Vec<LayerCapabilities>,
@@ -133,6 +137,20 @@ pub enum CorrelationId {
         card: u32,
         /// Device index.
         device: u32,
+    },
+    /// ALSA raw MIDI device.
+    AlsaRawMidi {
+        /// Card index.
+        card: u32,
+        /// Device index.
+        device: u32,
+    },
+    /// ALSA sequencer port.
+    AlsaSeqPort {
+        /// Client number.
+        client: u32,
+        /// Port number.
+        port: u32,
     },
     /// PipeWire node.
     PipewireNode {
@@ -198,6 +216,9 @@ pub struct LayerCapabilities {
     pub availability: Availability,
     /// What the layer reports. Fields outside the probe scope are omitted.
     pub caps: CapabilitySet,
+    /// Detail that a capability set can't express, when in scope.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detail: Option<LayerDetail>,
 }
 
 /// Whether a layer could be read.

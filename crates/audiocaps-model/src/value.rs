@@ -108,6 +108,9 @@ pub enum UnknownReason {
     NotImplemented,
     /// The value only exists after an opt-in call the application has not made (e.g. CEC).
     NotRequested,
+    /// A sound server manages the device, so it is never opened directly; the value is read
+    /// through the server instead.
+    ManagedByServer,
 }
 
 /// Where and when a value was read.
@@ -165,6 +168,13 @@ pub enum Source {
         /// Quirk identifier.
         id: String,
     },
+    /// A platform audio API call.
+    Api {
+        /// API, e.g. `alsa-lib`.
+        api: String,
+        /// Call or object, e.g. `snd_pcm_hw_params_any(hw:0,3)`.
+        call: String,
+    },
     /// Derived from other values.
     Derived {
         /// What it was derived from.
@@ -181,6 +191,14 @@ impl Source {
     /// A command source.
     pub fn command(name: impl Into<String>) -> Self {
         Self::Command { name: name.into() }
+    }
+
+    /// A platform API source.
+    pub fn api(api: impl Into<String>, call: impl Into<String>) -> Self {
+        Self::Api {
+            api: api.into(),
+            call: call.into(),
+        }
     }
 
     /// A derived source.

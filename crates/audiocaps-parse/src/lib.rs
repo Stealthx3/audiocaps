@@ -7,12 +7,15 @@
 //! - [`sad`] — CTA-861 Short Audio Descriptors, shared by ELD and EDID.
 //! - [`hda`] — HDA codec dumps (`codec#N`).
 //! - [`usb`] — USB Audio Class descriptors (sysfs `descriptors`).
-//! - [`procfs`] — ALSA card and PCM lists, USB `stream#` files, `hw_params`.
+//! - [`procfs`] — ALSA card and PCM lists, PCM `info`/`status`, USB `stream#` files, `hw_params`,
+//!   raw MIDI devices, sequencer clients.
+//! - [`alsa_conf`] — alsa-lib configuration syntax and PCM plugin-chain resolution.
 //! - [`os_release`] — `/etc/os-release`.
 //!
 //! Parsers never panic on any input; malformed input yields an error, `None`, or a partial result
 //! with a `truncated` flag.
 
+pub mod alsa_conf;
 pub mod edid;
 pub mod eld;
 pub mod hda;

@@ -309,6 +309,241 @@ pub fn parse_hw_params(text: &str) -> Option<HwParams> {
     Some(h)
 }
 
+/// A PCM's `info` file (`pcmXY/info` or `pcmXY/subN/info`).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct PcmInfo {
+    /// Id string.
+    pub id: Option<String>,
+    /// Name.
+    pub name: Option<String>,
+    /// Total sub-devices.
+    pub subdevices_count: Option<u32>,
+    /// Free sub-devices.
+    pub subdevices_avail: Option<u32>,
+}
+
+/// Parses a PCM `info` file.
+pub fn parse_pcm_info(text: &str) -> PcmInfo {
+    let mut i = PcmInfo::default();
+    for line in text.lines() {
+        let Some((k, v)) = line.split_once(':') else {
+            continue;
+        };
+        let v = v.trim();
+        match k.trim() {
+            "id" => i.id = Some(v.to_string()),
+            "name" => i.name = Some(v.to_string()),
+            "subdevices_count" => i.subdevices_count = v.parse().ok(),
+            "subdevices_avail" => i.subdevices_avail = v.parse().ok(),
+            _ => {}
+        }
+    }
+    i
+}
+
+/// A PCM sub-stream `status` file.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PcmStatus {
+    /// Not open.
+    Closed,
+    /// Open.
+    Open {
+        /// State, e.g. `RUNNING`, `PREPARED`, `SETUP`.
+        state: Option<String>,
+        /// Owning process.
+        owner_pid: Option<u32>,
+    },
+}
+
+/// Parses a sub-stream `status` file. Empty input is treated as closed.
+pub fn parse_pcm_status(text: &str) -> PcmStatus {
+    let t = text.trim();
+    if t.is_empty() || t == "closed" {
+        return PcmStatus::Closed;
+    }
+    let mut state = None;
+    let mut owner_pid = None;
+    for line in t.lines() {
+        let Some((k, v)) = line.split_once(':') else {
+            continue;
+        };
+        match k.trim() {
+            "state" => state = Some(v.trim().to_string()),
+            "owner_pid" => owner_pid = v.trim().parse().ok(),
+            _ => {}
+        }
+    }
+    PcmStatus::Open { state, owner_pid }
+}
+
+/// A raw MIDI device (`/proc/asound/cardN/midiD`).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct RawMidi {
+    /// Device name (first line).
+    pub name: String,
+    /// `Type:` line (`Legacy` or `UMP`), when present.
+    pub kind: Option<String>,
+    /// Output sub-streams.
+    pub outputs: Vec<MidiSubstream>,
+    /// Input sub-streams.
+    pub inputs: Vec<MidiSubstream>,
+}
+
+/// One raw MIDI sub-stream.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct MidiSubstream {
+    /// Number.
+    pub number: u32,
+    /// Owning process, when open.
+    pub owner_pid: Option<u32>,
+}
+
+/// Parses a raw MIDI proc file.
+pub fn parse_rawmidi(text: &str) -> RawMidi {
+    let mut m = RawMidi::default();
+    let mut lines = text.lines();
+    m.name = lines.next().unwrap_or("").trim().to_string();
+    let mut cur: Option<(bool, usize)> = None;
+    for line in lines {
+        let t = line.trim();
+        if let Some(n) = t.strip_prefix("Output ") {
+            if let Ok(number) = n.trim().parse() {
+                m.outputs.push(MidiSubstream {
+                    number,
+                    owner_pid: None,
+                });
+                cur = Some((true, m.outputs.len() - 1));
+            }
+        } else if let Some(n) = t.strip_prefix("Input ") {
+            if let Ok(number) = n.trim().parse() {
+                m.inputs.push(MidiSubstream {
+                    number,
+                    owner_pid: None,
+                });
+                cur = Some((false, m.inputs.len() - 1));
+            }
+        } else if let Some((k, v)) = t.split_once(':') {
+            match k.trim() {
+                "Type" => m.kind = Some(v.trim().to_string()),
+                "Owner PID" => {
+                    let pid = v.trim().parse().ok();
+                    match cur {
+                        Some((true, i)) => m.outputs[i].owner_pid = pid,
+                        Some((false, i)) => m.inputs[i].owner_pid = pid,
+                        None => {}
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    m
+}
+
+/// A sequencer client (`/proc/asound/seq/clients`).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct SeqClient {
+    /// Client number.
+    pub number: u32,
+    /// Name.
+    pub name: String,
+    /// Kernel client (else a user-space application).
+    pub kernel: bool,
+    /// MIDI version tag, e.g. `Legacy`, `UMP MIDI1`, `UMP MIDI2`.
+    pub midi_version: Option<String>,
+    /// Ports.
+    pub ports: Vec<SeqPort>,
+}
+
+/// A sequencer port.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct SeqPort {
+    /// Port number.
+    pub number: u32,
+    /// Name.
+    pub name: String,
+    /// Readable: the port sends events (an input to the app).
+    pub readable: bool,
+    /// Writable: the port receives events (an output from the app).
+    pub writable: bool,
+    /// Others may subscribe (capital `R`/`W` in the flags).
+    pub subscribable: bool,
+    /// Direction tag, e.g. `In`, `Out`, `In/Out`.
+    pub direction: Option<String>,
+}
+
+/// Parses `/proc/asound/seq/clients`.
+pub fn parse_seq_clients(text: &str) -> Vec<SeqClient> {
+    let mut out: Vec<SeqClient> = Vec::new();
+    for line in text.lines() {
+        let t = line.trim_start();
+        if let Some(rest) = t.strip_prefix("Client ") {
+            let Some((num, rest)) = rest.split_once(':') else {
+                continue;
+            };
+            let Ok(number) = num.trim().parse() else {
+                continue;
+            };
+            let (name, tail) = quoted(rest);
+            let tag = tail
+                .split_once('[')
+                .and_then(|(_, r)| r.split_once(']'))
+                .map(|(t, _)| t.trim())
+                .unwrap_or("");
+            let mut words = tag.splitn(2, ' ');
+            let kind = words.next().unwrap_or("");
+            out.push(SeqClient {
+                number,
+                name,
+                kernel: kind == "Kernel",
+                midi_version: words.next().map(str::to_string),
+                ports: vec![],
+            });
+        } else if let Some(rest) = t.strip_prefix("Port ") {
+            let Some(client) = out.last_mut() else {
+                continue;
+            };
+            let Some((num, rest)) = rest.split_once(':') else {
+                continue;
+            };
+            let Ok(number) = num.trim().parse() else {
+                continue;
+            };
+            let (name, tail) = quoted(rest);
+            let flags = tail
+                .split_once('(')
+                .and_then(|(_, r)| r.split_once(')'))
+                .map(|(f, _)| f)
+                .unwrap_or("");
+            let fb = flags.as_bytes();
+            let direction = tail
+                .rsplit_once('[')
+                .and_then(|(_, r)| r.split_once(']'))
+                .map(|(d, _)| d.trim().to_string());
+            client.ports.push(SeqPort {
+                number,
+                name,
+                readable: matches!(fb.first(), Some(b'R' | b'r')),
+                writable: matches!(fb.get(1), Some(b'W' | b'w')),
+                subscribable: matches!(fb.first(), Some(b'R')) || matches!(fb.get(1), Some(b'W')),
+                direction,
+            });
+        }
+    }
+    out
+}
+
+/// Splits `"name" rest` into the unquoted name and the rest.
+fn quoted(s: &str) -> (String, &str) {
+    let s = s.trim_start();
+    if let Some(r) = s.strip_prefix('"')
+        && let Some(end) = r.find('"')
+    {
+        return (r[..end].to_string(), &r[end + 1..]);
+    }
+    (String::new(), s)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -425,5 +660,49 @@ Capture:
             let _ = parse_usb_stream(s);
             let _ = parse_hw_params(s);
         }
+    }
+
+    #[test]
+    fn pcm_info_and_status() {
+        let i = parse_pcm_info(
+            "card: 1\ndevice: 0\nid: ALC Analog\nname: ALC Analog\nsubdevices_count: 1\nsubdevices_avail: 0\n",
+        );
+        assert_eq!(i.subdevices_count, Some(1));
+        assert_eq!(i.subdevices_avail, Some(0));
+        assert_eq!(parse_pcm_status("closed\n"), PcmStatus::Closed);
+        assert_eq!(
+            parse_pcm_status("state: RUNNING\nowner_pid   : 777833\ntrigger_time: 1.0\n"),
+            PcmStatus::Open {
+                state: Some("RUNNING".into()),
+                owner_pid: Some(777833)
+            }
+        );
+    }
+
+    #[test]
+    fn rawmidi() {
+        let m = parse_rawmidi(
+            "VirMIDI 1-0\n\nType: Legacy\nOutput 0\n  Tx bytes     : 0\n  Owner PID    : 42\n  Mode         : native\nInput 0\n  Rx bytes     : 0\n",
+        );
+        assert_eq!(m.name, "VirMIDI 1-0");
+        assert_eq!(m.kind.as_deref(), Some("Legacy"));
+        assert_eq!(m.outputs[0].owner_pid, Some(42));
+        assert_eq!(m.inputs.len(), 1);
+        assert_eq!(m.inputs[0].owner_pid, None);
+    }
+
+    #[test]
+    fn seq_clients() {
+        let t = "Client info\n  cur  clients : 4\n\nClient   0 : \"System\" [Kernel Legacy]\n  Port   0 : \"Timer\" (Rwe-) [In/Out]\n    Connecting To: 142:0\nClient  14 : \"Midi Through\" [Kernel Legacy]\n  Port   0 : \"Midi Through Port-0\" (RWe-) [In/Out]\nClient 142 : \"PipeWire-System\" [User UMP MIDI2]\n  Port   0 : \"input\" (rwe-) [In/Out]\n  Input pool :\n    Pool size          : 200\n";
+        let c = parse_seq_clients(t);
+        assert_eq!(c.len(), 3);
+        assert_eq!(c[1].number, 14);
+        assert!(c[1].kernel);
+        assert_eq!(c[1].ports[0].name, "Midi Through Port-0");
+        assert!(c[1].ports[0].readable && c[1].ports[0].writable && c[1].ports[0].subscribable);
+        assert!(!c[2].kernel);
+        assert_eq!(c[2].midi_version.as_deref(), Some("UMP MIDI2"));
+        assert!(!c[2].ports[0].subscribable);
+        assert_eq!(c[0].ports[0].direction.as_deref(), Some("In/Out"));
     }
 }

@@ -35,10 +35,10 @@ Open items (not phase tasks):
 
 ## Phase 3 — Runtime, ALSA, capture, MIDI
 
-- [ ] **3.1** Single-threaded runtime with per-backend deadlines and scoped snapshots
-- [ ] **3.2** ALSA backend: cards, PCMs, hw_params, controls, plugin chain
-- [ ] **3.3** Capture endpoints and MIDI ports
-- [ ] **3.4** Gate: matches hw_params; never disturbs playback
+- [x] **3.1** Single-threaded runtime with per-backend deadlines and scoped snapshots
+- [x] **3.2** ALSA backend: cards, PCMs, hw_params, controls, plugin chain
+- [x] **3.3** Capture endpoints and MIDI ports
+- [x] **3.4** Gate: matches hw_params; never disturbs playback
 
 ## Phase 4 — PipeWire, WirePlumber, Pulse
 

@@ -22,7 +22,7 @@ Node 0x02 [Audio Output] wcaps 0x1d: Stereo Amp-Out
     ControlAmp: chs=3, dir=Out, idx=0, ofs=0
   Device: name="Generic Analog", type="Audio", device=0
   Amp-Out caps: ofs=0x4a, nsteps=0x4a, stepsize=0x03, mute=1
-  Amp-Out vals:  [0x80 0x80]
+  Amp-Out vals:  [0x36 0x36]
   Converter: stream=0, channel=0
   PCM:
     rates [0x1fc]: 16000 22050 32000 44100 48000 88200 96000
@@ -43,7 +43,7 @@ Node 0x04 [Audio Input] wcaps 0x10011b: Stereo Amp-In
     ControlAmp: chs=3, dir=In, idx=0, ofs=0
   Device: name="Generic Analog", type="Audio", device=0
   Amp-In caps: ofs=0x4a, nsteps=0x4a, stepsize=0x03, mute=1
-  Amp-In vals:  [0x80 0x80]
+  Amp-In vals:  [0x4a 0x4a]
   Converter: stream=0, channel=0
   SDI-Select: 0
   PCM:

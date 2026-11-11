@@ -1,0 +1,6 @@
+DEVTYPE=usb_interface
+DRIVER=snd-usb-audio
+PRODUCT=46f4/2/0
+TYPE=0/0/0
+INTERFACE=1/1/0
+MODALIAS=usb:v46F4p0002d0000dc00dsc00dp00ic01isc01ip00in00

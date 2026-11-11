@@ -51,6 +51,17 @@
         }
       ]
     },
+    "routing": {
+      "description": "Routing of the default device, when the routing field group is in scope.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Routing"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "endpoints": {
       "description": "Endpoints in scope, sorted by id.",
       "type": "array",
@@ -76,7 +87,7 @@
     "layers",
     "endpoints"
   ],
-  "x-audiocaps-schema-version": "1.0.0",
+  "x-audiocaps-schema-version": "1.1.0",
   "$defs": {
     "SnapshotSource": {
       "description": "What a snapshot was taken from.",
@@ -498,6 +509,21 @@
           "description": "Diagnostic findings.",
           "type": "string",
           "const": "findings"
+        },
+        {
+          "description": "Routing of the default device (e.g. the ALSA plugin chain).",
+          "type": "string",
+          "const": "routing"
+        },
+        {
+          "description": "Driver state: module, parameters, power, jack.",
+          "type": "string",
+          "const": "driver"
+        },
+        {
+          "description": "Host hardware detail: bus IDs, codec pins, USB interfaces.",
+          "type": "string",
+          "const": "hardware"
         }
       ]
     },
@@ -733,6 +759,11 @@
           "description": "The value only exists after an opt-in call the application has not made (e.g. CEC).",
           "type": "string",
           "const": "not_requested"
+        },
+        {
+          "description": "A sound server manages the device, so it is never opened directly; the value is read\nthrough the server instead.",
+          "type": "string",
+          "const": "managed_by_server"
         }
       ]
     },
@@ -1057,6 +1088,29 @@
           ]
         },
         {
+          "description": "A platform audio API call.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "api"
+            },
+            "api": {
+              "description": "API, e.g. `alsa-lib`.",
+              "type": "string"
+            },
+            "call": {
+              "description": "Call or object, e.g. `snd_pcm_hw_params_any(hw:0,3)`.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "api",
+            "call"
+          ]
+        },
+        {
           "description": "Derived from other values.",
           "type": "object",
           "properties": {
@@ -1376,6 +1430,128 @@
         "name"
       ]
     },
+    "Routing": {
+      "description": "How the platform's default device is routed (system-wide, per direction).",
+      "type": "object",
+      "properties": {
+        "default_playback": {
+          "description": "The default playback device, stage by stage from the application side.",
+          "$ref": "#/$defs/Value5"
+        },
+        "default_capture": {
+          "description": "The default capture device, stage by stage from the application side.",
+          "$ref": "#/$defs/Value5"
+        }
+      },
+      "required": [
+        "default_playback",
+        "default_capture"
+      ]
+    },
+    "Value5": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/RouteStage"
+              }
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "RouteStage": {
+      "description": "One stage of a route, e.g. one ALSA plugin.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the stage as configured, e.g. `default`, `dmix:CARD=PCH`.",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Stage type, e.g. ALSA plugin types `plug`, `dmix`, `softvol`, `hw`, `pulse`, `pipewire`.",
+          "type": "string"
+        },
+        "card": {
+          "description": "Card the stage targets, when it names one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "device": {
+          "description": "Device the stage targets, when it names one.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "rate_hz": {
+          "description": "Fixed rate the stage forces, in Hz (e.g. a dmix rate).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "name",
+        "kind"
+      ]
+    },
     "Endpoint": {
       "description": "One endpoint with everything reported about it (within the probe scope).",
       "type": "object",
@@ -1394,13 +1570,13 @@
         },
         "transport": {
           "description": "Transport.",
-          "$ref": "#/$defs/Value5"
+          "$ref": "#/$defs/Value6"
         },
         "name": {
           "description": "Display name. Redacted only when it is a user-chosen name (Bluetooth aliases).",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value6"
+              "$ref": "#/$defs/Value7"
             },
             {
               "type": "null"
@@ -1419,6 +1595,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/SinkRecord"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "midi": {
+          "description": "MIDI port details, for MIDI endpoints.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MidiPort"
             },
             {
               "type": "null"
@@ -1454,7 +1641,7 @@
         "transport"
       ]
     },
-    "Value5": {
+    "Value6": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -1581,7 +1768,7 @@
         }
       ]
     },
-    "Value6": {
+    "Value7": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -1804,6 +1991,60 @@
           ]
         },
         {
+          "description": "ALSA raw MIDI device.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "alsa_raw_midi"
+            },
+            "card": {
+              "description": "Card index.",
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "device": {
+              "description": "Device index.",
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "card",
+            "device"
+          ]
+        },
+        {
+          "description": "ALSA sequencer port.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "alsa_seq_port"
+            },
+            "client": {
+              "description": "Client number.",
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "port": {
+              "description": "Port number.",
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "client",
+            "port"
+          ]
+        },
+        {
           "description": "PipeWire node.",
           "type": "object",
           "properties": {
@@ -1887,19 +2128,19 @@
         },
         "audio_descriptors": {
           "description": "Short audio descriptors: formats the sink accepts.",
-          "$ref": "#/$defs/Value8"
+          "$ref": "#/$defs/Value9"
         },
         "speaker_allocation": {
           "description": "Speaker allocation.",
-          "$ref": "#/$defs/Value9"
+          "$ref": "#/$defs/Value10"
         },
         "sync_delay_ms": {
           "description": "Audio sync delay reported by the sink, in milliseconds.",
-          "$ref": "#/$defs/Value7"
+          "$ref": "#/$defs/Value8"
         },
         "downstream": {
           "description": "Devices behind the sink (ARC/eARC receiver, TV behind a receiver), when known.",
-          "$ref": "#/$defs/Value10"
+          "$ref": "#/$defs/Value11"
         }
       },
       "required": [
@@ -1924,7 +2165,7 @@
         },
         "product_code": {
           "description": "Product code.",
-          "$ref": "#/$defs/Value7"
+          "$ref": "#/$defs/Value8"
         },
         "model_name": {
           "description": "Monitor or OSD name, e.g. `AVR-S660H`.",
@@ -1954,7 +2195,7 @@
         "sink_key"
       ]
     },
-    "Value7": {
+    "Value8": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2015,7 +2256,7 @@
         }
       ]
     },
-    "Value8": {
+    "Value9": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2255,7 +2496,7 @@
         }
       ]
     },
-    "Value9": {
+    "Value10": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2419,7 +2660,7 @@
         }
       ]
     },
-    "Value10": {
+    "Value11": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2480,6 +2721,60 @@
         }
       ]
     },
+    "MidiPort": {
+      "description": "A MIDI port.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "description": "Raw device or sequencer port.",
+          "$ref": "#/$defs/MidiKind"
+        },
+        "input": {
+          "description": "The port can be read (it sends MIDI to the app).",
+          "type": "boolean"
+        },
+        "output": {
+          "description": "The port can be written (the app sends MIDI to it).",
+          "type": "boolean"
+        },
+        "subdevices": {
+          "description": "Sub-devices (raw MIDI only).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "protocol": {
+          "description": "Protocol, e.g. `midi1`, `ump`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "input",
+        "output"
+      ]
+    },
+    "MidiKind": {
+      "description": "Kinds of MIDI port.",
+      "oneOf": [
+        {
+          "description": "A raw MIDI device of a sound card.",
+          "type": "string",
+          "const": "raw"
+        },
+        {
+          "description": "A sequencer port (kernel or application client).",
+          "type": "string",
+          "const": "sequencer"
+        }
+      ]
+    },
     "LayerCapabilities": {
       "description": "One layer's view of an endpoint.",
       "type": "object",
@@ -2495,6 +2790,17 @@
         "caps": {
           "description": "What the layer reports. Fields outside the probe scope are omitted.",
           "$ref": "#/$defs/CapabilitySet"
+        },
+        "detail": {
+          "description": "Detail that a capability set can't express, when in scope.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LayerDetail"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -2511,7 +2817,7 @@
           "description": "PCM sample formats.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value11"
+              "$ref": "#/$defs/Value12"
             },
             {
               "type": "null"
@@ -2522,7 +2828,7 @@
           "description": "Sample rates.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value12"
+              "$ref": "#/$defs/Value13"
             },
             {
               "type": "null"
@@ -2533,7 +2839,7 @@
           "description": "Channel counts.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value13"
+              "$ref": "#/$defs/Value14"
             },
             {
               "type": "null"
@@ -2544,7 +2850,7 @@
           "description": "Supported channel maps.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value14"
+              "$ref": "#/$defs/Value15"
             },
             {
               "type": "null"
@@ -2555,7 +2861,7 @@
           "description": "Compressed formats that can pass through (IEC 61937).",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value8"
+              "$ref": "#/$defs/Value9"
             },
             {
               "type": "null"
@@ -2566,7 +2872,7 @@
           "description": "Bluetooth codecs.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value15"
+              "$ref": "#/$defs/Value16"
             },
             {
               "type": "null"
@@ -2577,7 +2883,7 @@
           "description": "Latency range in microseconds.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value13"
+              "$ref": "#/$defs/Value14"
             },
             {
               "type": "null"
@@ -2588,7 +2894,7 @@
           "description": "Whether the app can open the device directly (exclusive/bit-perfect access).",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value16"
+              "$ref": "#/$defs/Value17"
             },
             {
               "type": "null"
@@ -2597,7 +2903,7 @@
         }
       }
     },
-    "Value11": {
+    "Value12": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2721,7 +3027,7 @@
         }
       ]
     },
-    "Value12": {
+    "Value13": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2834,7 +3140,7 @@
         }
       ]
     },
-    "Value13": {
+    "Value14": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2914,7 +3220,7 @@
         "max"
       ]
     },
-    "Value14": {
+    "Value15": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -2991,7 +3297,7 @@
         "positions"
       ]
     },
-    "Value15": {
+    "Value16": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -3160,7 +3466,7 @@
         }
       ]
     },
-    "Value16": {
+    "Value17": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -3216,6 +3522,1006 @@
             "reason"
           ]
         }
+      ]
+    },
+    "LayerDetail": {
+      "description": "Extra detail for one layer of one endpoint.",
+      "oneOf": [
+        {
+          "description": "Host hardware: bus IDs, codec, pins, USB interfaces.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "host_hardware"
+            }
+          },
+          "$ref": "#/$defs/HardwareDetail",
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "description": "Kernel driver: module, parameters, power state, jack.",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "kernel_driver"
+            }
+          },
+          "$ref": "#/$defs/DriverDetail",
+          "required": [
+            "kind"
+          ]
+        },
+        {
+          "description": "Platform audio API device state (ALSA on Linux).",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "device"
+            }
+          },
+          "$ref": "#/$defs/DeviceDetail",
+          "required": [
+            "kind"
+          ]
+        }
+      ]
+    },
+    "Value18": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/PinInfo"
+              }
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "PinInfo": {
+      "description": "One codec pin.",
+      "type": "object",
+      "properties": {
+        "node": {
+          "description": "Node id.",
+          "type": "integer",
+          "format": "uint16",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "device": {
+          "description": "Default device, e.g. `line_out`, `speaker`, `hp_out`, `spdif_out`, `digital_out`,\n`mic_in`, `line_in`.",
+          "type": "string"
+        },
+        "connectivity": {
+          "description": "Port connectivity: `jack`, `none`, `fixed` or `both`.",
+          "type": "string"
+        },
+        "max_channels": {
+          "description": "Maximum channels of the pin widget.",
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "hdmi": {
+          "description": "HDMI pin.",
+          "type": "boolean"
+        },
+        "display_port": {
+          "description": "DisplayPort pin.",
+          "type": "boolean"
+        },
+        "hbr": {
+          "description": "High bit-rate audio (HBR) supported on the pin.",
+          "type": "boolean"
+        },
+        "present": {
+          "description": "Presence detected (something plugged in), when the codec reports it.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "node",
+        "device",
+        "connectivity",
+        "max_channels",
+        "hdmi",
+        "display_port",
+        "hbr"
+      ]
+    },
+    "Value19": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/UsbAltSetting"
+              }
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "UsbAltSetting": {
+      "description": "One USB Audio streaming alternate setting.",
+      "type": "object",
+      "properties": {
+        "interface": {
+          "description": "Interface number.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "alt_setting": {
+          "description": "Alternate setting.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "formats": {
+          "description": "Sample formats.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SampleFormat"
+          }
+        },
+        "channels": {
+          "description": "Channel count.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "rates": {
+          "description": "Sample rates.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RateSet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sync": {
+          "description": "Endpoint synchronisation type, e.g. `async`, `adaptive`, `sync`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "interface",
+        "alt_setting",
+        "formats",
+        "channels"
+      ]
+    },
+    "HardwareDetail": {
+      "description": "Host hardware behind an endpoint.",
+      "type": "object",
+      "properties": {
+        "pci_id": {
+          "description": "PCI vendor:device, e.g. `8086:293e`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value2"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usb_id": {
+          "description": "USB vendor:product, e.g. `0d8c:0014`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value2"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usb_speed": {
+          "description": "USB bus speed, e.g. `full`, `high`, `super`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value2"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codec": {
+          "description": "Codec name, e.g. `Realtek ALC897`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value2"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pins": {
+          "description": "Codec pins this endpoint reaches.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value18"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usb_alt_settings": {
+          "description": "USB Audio streaming alternate settings.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value19"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Value20": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Parameter"
+              }
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "Parameter": {
+      "description": "A named parameter.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value as text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    },
+    "Value21": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/JackState"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "JackState": {
+      "description": "A jack's plug state.",
+      "type": "object",
+      "properties": {
+        "control": {
+          "description": "The control that reports it, e.g. `HDMI/DP,pcm=3 Jack`.",
+          "type": "string"
+        },
+        "plugged": {
+          "description": "Something is plugged in.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "control",
+        "plugged"
+      ]
+    },
+    "DriverDetail": {
+      "description": "Kernel driver state for an endpoint's device.",
+      "type": "object",
+      "properties": {
+        "driver": {
+          "description": "Driver name as the audio subsystem reports it, e.g. `HDA-Intel`.",
+          "$ref": "#/$defs/Value2"
+        },
+        "module": {
+          "description": "Kernel module, e.g. `snd_hda_intel`.",
+          "$ref": "#/$defs/Value2"
+        },
+        "parameters": {
+          "description": "Module parameters.",
+          "$ref": "#/$defs/Value20"
+        },
+        "power": {
+          "description": "Runtime power state of the device, e.g. `active`, `suspended`.",
+          "$ref": "#/$defs/Value2"
+        },
+        "jack": {
+          "description": "Jack state for this endpoint, when the driver exposes a jack control.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value21"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "driver",
+        "module",
+        "parameters",
+        "power"
+      ]
+    },
+    "Value22": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/DeviceState"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "DeviceState": {
+      "description": "Device state.",
+      "oneOf": [
+        {
+          "description": "Nobody has it open.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "idle"
+            }
+          },
+          "required": [
+            "state"
+          ]
+        },
+        {
+          "description": "A process has it open.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "in_use"
+            },
+            "owner_pid": {
+              "description": "The owning process, when visible.",
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint32",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "state"
+          ]
+        },
+        {
+          "description": "A sound server manages it; AudioCaps reads it through the server and never opens it.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "managed_by_server"
+            },
+            "server": {
+              "description": "Server name, e.g. `pipewire`.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state",
+            "server"
+          ]
+        }
+      ]
+    },
+    "Value23": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/Subdevices"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "Subdevices": {
+      "description": "Sub-device counts.",
+      "type": "object",
+      "properties": {
+        "total": {
+          "description": "Total.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "available": {
+          "description": "Free (not opened by anyone).",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "total",
+        "available"
+      ]
+    },
+    "Value24": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/CurrentParams"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "CurrentParams": {
+      "description": "Parameters of a running stream.",
+      "type": "object",
+      "properties": {
+        "format": {
+          "description": "Sample format.",
+          "$ref": "#/$defs/SampleFormat"
+        },
+        "channels": {
+          "description": "Channels.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "rate_hz": {
+          "description": "Rate in Hz.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "period_frames": {
+          "description": "Period size in frames.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "buffer_frames": {
+          "description": "Buffer size in frames.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "format",
+        "channels",
+        "rate_hz"
+      ]
+    },
+    "Value25": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/Iec958State"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "Iec958State": {
+      "description": "IEC 958 output state.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "The output is switched on.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "non_audio": {
+          "description": "Channel status says \"non-audio\": compressed passthrough is set up.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "rate_hz": {
+          "description": "Sample rate in the channel status, in Hz.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        }
+      }
+    },
+    "DeviceDetail": {
+      "description": "The device as the platform audio API sees it.",
+      "type": "object",
+      "properties": {
+        "device": {
+          "description": "Device name an application opens directly, e.g. `hw:CARD=PCH,DEV=0`.",
+          "type": "string"
+        },
+        "state": {
+          "description": "Whether the device is free, in use, or managed by a sound server.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value22"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subdevices": {
+          "description": "Sub-devices (hardware streams): total and free.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value23"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current": {
+          "description": "Parameters of the stream currently running, when the device is in use.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value24"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "period_us": {
+          "description": "Period time range in microseconds.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value14"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "iec958": {
+          "description": "IEC 958 (S/PDIF, HDMI) channel status, for digital outputs.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value25"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "device"
       ]
     },
     "EffectiveSet": {
@@ -3293,7 +4599,7 @@
         },
         "latency_us": {
           "description": "End-to-end latency estimate in microseconds.",
-          "$ref": "#/$defs/Value19"
+          "$ref": "#/$defs/Value28"
         }
       },
       "required": [
@@ -3316,19 +4622,19 @@
         },
         "format": {
           "description": "Format carried at this hop.",
-          "$ref": "#/$defs/Value17"
+          "$ref": "#/$defs/Value26"
         },
         "bitrate_bps": {
           "description": "Bit rate carried, in bit/s.",
-          "$ref": "#/$defs/Value18"
+          "$ref": "#/$defs/Value27"
         },
         "ceiling_bps": {
           "description": "Maximum bit rate this hop can carry, in bit/s.",
-          "$ref": "#/$defs/Value18"
+          "$ref": "#/$defs/Value27"
         },
         "latency_us": {
           "description": "Latency added by this hop, in microseconds.",
-          "$ref": "#/$defs/Value19"
+          "$ref": "#/$defs/Value28"
         },
         "losses": {
           "description": "What is lost at this hop.",
@@ -3397,7 +4703,7 @@
         }
       ]
     },
-    "Value17": {
+    "Value26": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -3525,7 +4831,7 @@
         }
       ]
     },
-    "Value18": {
+    "Value27": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -3585,7 +4891,7 @@
         }
       ]
     },
-    "Value19": {
+    "Value28": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
