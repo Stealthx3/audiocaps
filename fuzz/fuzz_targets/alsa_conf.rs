@@ -16,11 +16,13 @@ fuzz_target!(|data: &[u8]| {
             index: 0,
             id: "PCH".into(),
             driver: "HDA-Intel".into(),
+            name: "PCH".into(),
         },
         CardRef {
             index: 1,
             id: "Device".into(),
             driver: "USB-Audio".into(),
+            name: "Device".into(),
         },
     ];
     for (name, stream) in [

@@ -51,9 +51,24 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Parsers for alsa-lib configuration, PCM `info`/`status`, raw MIDI and sequencer clients, and
   HDA converter-to-PCM bindings; fuzz target `alsa_conf`.
 
+- PipeWire backend (native client): audio nodes with their formats, negotiated format, IEC958
+  passthrough codecs, state and volume; devices with profiles and routes; graph clock; defaults;
+  WirePlumber policy (`sm-settings`); Bluetooth codecs from per-codec profiles.
+- PulseAudio backend (libpulse, autospawn off): sinks, sources, cards, profiles, ports,
+  passthrough formats; works against native PulseAudio and pipewire-pulse.
+- Server views on every endpoint, snapshot-level server state, and endpoints that exist only in
+  a server (Bluetooth, virtual, network); Bluetooth addresses in names are hashed.
+- `Runtime::watch` and `audiocaps watch`: hotplug (inotify on `/dev/snd`) and server change events,
+  with the new snapshot and its diff.
+- `audiocaps server-dump` (live, or parsed from `pw-dump` / `pactl -f json`).
+- Schema 1.2.0 (additive): `sound_server` layer detail, `Snapshot.servers`.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in
   `docs/DECISIONS.md`, changelog in `docs/CHANGELOG.md`.
+- Hardware ranges and HDA codec dumps are cached per process and cleared on hotplug, so a free
+  PCM is opened at most once and codecs aren't queried on every probe.
+- ALSA routing resolution handles definitions that are `@func` calls (USB-Audio) and `card_name`.
 - `scripts/check-passive.sh` allows control-device reads and non-blocking PCM opens when no
   sound server runs; it fails on any PCM opened while a server runs.

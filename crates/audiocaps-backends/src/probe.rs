@@ -16,7 +16,7 @@ use std::collections::{BTreeMap, VecDeque};
 
 use audiocaps_model::{
     Direction, EndpointClass, EndpointId, EnvironmentInfo, FieldGroup, LayerKind, ProbeScope,
-    Snapshot,
+    Snapshot, UnknownReason,
 };
 use audiocaps_parse::procfs::{self, CardEntry, SeqPort};
 
@@ -24,6 +24,9 @@ use crate::alsa::dump::{self, AlsaDump, CardDump, DUMP_FORMAT, PcmDump, StreamDi
 use crate::alsa::live;
 use crate::root::SystemRoot;
 use crate::runtime::{self, Backend, ProbeOptions, Task};
+use crate::server::pulse_live::PulseSession;
+use crate::server::pw_live::PwSession;
+use crate::server::{ServerDump, ServerKind, pactl, presence, pwdump};
 use crate::sysfs::{self, CardData, Dir, Wants};
 
 pub(crate) const PROC_PCM: &str = "/proc/asound/pcm";
@@ -38,6 +41,25 @@ pub fn probe(root: &SystemRoot, scope: &ProbeScope) -> Snapshot {
 
 /// Probes `root` within `scope`, running the backends with the deadlines in `opts`.
 pub fn probe_with(root: &SystemRoot, scope: &ProbeScope, opts: &ProbeOptions) -> Snapshot {
+    probe_inner(root, scope, opts, Prefilled::default())
+}
+
+/// Server state a caller already holds (the watch keeps live sessions): those backends don't
+/// run again.
+#[derive(Default)]
+pub(crate) struct Prefilled<'a> {
+    pub pipewire: Option<ServerDump>,
+    pub pulse: Option<ServerDump>,
+    /// An open PulseAudio session to re-query as a task (concurrently with the other backends).
+    pub pulse_session: Option<&'a mut PulseSession>,
+}
+
+pub(crate) fn probe_inner<'a>(
+    root: &'a SystemRoot,
+    scope: &ProbeScope,
+    opts: &ProbeOptions,
+    prefilled: Prefilled<'a>,
+) -> Snapshot {
     let now = root.now_ms();
     let needs_cards =
         !scope.endpoint_classes.is_empty() && !scope.directions.is_empty() || routing_wanted(scope);
@@ -50,7 +72,7 @@ pub fn probe_with(root: &SystemRoot, scope: &ProbeScope, opts: &ProbeOptions) ->
     };
     let found = discover(root, scope, &cards);
     let mut res = Results::default();
-    let mut tasks: Vec<Box<dyn Task<Results> + '_>> = Vec::new();
+    let mut tasks: Vec<Box<dyn Task<Results> + 'a>> = Vec::new();
 
     let want = wants(scope, &found);
     let mut card_work: BTreeMap<u32, Vec<(u32, Dir)>> = BTreeMap::new();
@@ -79,6 +101,35 @@ pub fn probe_with(root: &SystemRoot, scope: &ProbeScope, opts: &ProbeOptions) ->
     if alsa.any() {
         tasks.push(Box::new(AlsaTask::new(root, alsa)));
     }
+    if scope.layers.includes(&LayerKind::SoundServer) {
+        match prefilled.pipewire {
+            Some(d) => {
+                res.pipewire = ServerResult::Read {
+                    dump: Box::new(d),
+                    live: true,
+                }
+            }
+            None => tasks.push(Box::new(ServerTask::new(root, ServerKind::PipeWire))),
+        }
+        match (prefilled.pulse_session, prefilled.pulse) {
+            (Some(session), _) => {
+                session.refresh();
+                tasks.push(Box::new(ServerTask {
+                    root,
+                    kind: ServerKind::PulseAudio,
+                    session: Session::PulseRef(session),
+                    result: None,
+                }));
+            }
+            (None, Some(d)) => {
+                res.pulse = ServerResult::Read {
+                    dump: Box::new(d),
+                    live: true,
+                }
+            }
+            (None, None) => tasks.push(Box::new(ServerTask::new(root, ServerKind::PulseAudio))),
+        }
+    }
     if scope.layers.includes(&LayerKind::Environment) {
         tasks.push(Box::new(EnvTask {
             root,
@@ -102,6 +153,27 @@ pub(crate) struct Results {
     pub alsa_timed_out: bool,
     pub environment: Option<EnvironmentInfo>,
     pub env_timed_out: bool,
+    pub pipewire: ServerResult,
+    pub pulse: ServerResult,
+}
+
+/// What a sound-server backend produced.
+#[derive(Debug, Default)]
+pub(crate) enum ServerResult {
+    /// Not in scope.
+    #[default]
+    NotRun,
+    /// Read, live or from captured output.
+    Read { dump: Box<ServerDump>, live: bool },
+    /// Not connected, with the reason.
+    Skipped {
+        reason: UnknownReason,
+        detail: String,
+    },
+    /// Connected but failed.
+    Failed(String),
+    /// Past the deadline.
+    TimedOut,
 }
 
 /// A discovered endpoint.
@@ -499,7 +571,7 @@ impl Task<Results> for AlsaTask<'_> {
                 self.dump.managing_server = self.managing.clone();
             }
             Some(AlsaItem::Config) => match live::read_config() {
-                Ok(c) => self.dump.config = Some(c),
+                Ok(c) => self.dump.config = Some(c.to_string()),
                 Err(e) => self.dump.config_error = Some(e),
             },
             Some(AlsaItem::Controls(card)) => {
@@ -533,6 +605,136 @@ impl Task<Results> for AlsaTask<'_> {
         out.alsa_missing = self.missing;
         out.alsa_live = self.live;
         out.alsa_timed_out = timed_out;
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+// sound-server tasks
+
+enum Session<'a> {
+    None,
+    Pw(PwSession),
+    Pulse(PulseSession),
+    PulseRef(&'a mut PulseSession),
+}
+
+struct ServerTask<'a> {
+    root: &'a SystemRoot,
+    kind: ServerKind,
+    session: Session<'a>,
+    result: Option<ServerResult>,
+}
+
+impl<'a> ServerTask<'a> {
+    fn new(root: &'a SystemRoot, kind: ServerKind) -> Self {
+        Self {
+            root,
+            kind,
+            session: Session::None,
+            result: None,
+        }
+    }
+
+    fn fixture(&self) -> ServerResult {
+        let cmd = |name: &str| -> Result<serde_json::Value, (UnknownReason, String)> {
+            match self.root.captured_command(name) {
+                Some((_, Some(b))) => serde_json::from_slice(&b)
+                    .map_err(|e| (UnknownReason::ParseError, format!("{name}: {e}"))),
+                Some((c, None)) => Err((
+                    UnknownReason::ServiceNotRunning,
+                    c.skipped
+                        .unwrap_or_else(|| format!("{name} gave no output")),
+                )),
+                None => Err((UnknownReason::NotExposed, format!("{name} not captured"))),
+            }
+        };
+        let parsed = match self.kind {
+            ServerKind::PipeWire => cmd("pw-dump").map(|j| pwdump::parse(&j)),
+            ServerKind::PulseAudio => {
+                cmd("pactl-info").map(|i| pactl::parse(&i, cmd("pactl-list").ok().as_ref()))
+            }
+        };
+        match parsed {
+            Ok(Some(dump)) => ServerResult::Read {
+                dump: Box::new(dump),
+                live: false,
+            },
+            Ok(None) => ServerResult::Skipped {
+                reason: UnknownReason::ParseError,
+                detail: "unexpected output shape".into(),
+            },
+            Err((reason, detail)) => ServerResult::Skipped { reason, detail },
+        }
+    }
+}
+
+impl Task<Results> for ServerTask<'_> {
+    fn backend(&self) -> Backend {
+        match self.kind {
+            ServerKind::PipeWire => Backend::PipeWire,
+            ServerKind::PulseAudio => Backend::PulseAudio,
+        }
+    }
+
+    fn step(&mut self) -> bool {
+        const SLICE: std::time::Duration = std::time::Duration::from_millis(2);
+        if self.result.is_some() {
+            return true;
+        }
+        if !matches!(self.root, SystemRoot::Live) {
+            self.result = Some(self.fixture());
+            return true;
+        }
+        let step = match &mut self.session {
+            Session::None => {
+                let allowed = match self.kind {
+                    ServerKind::PipeWire => presence::pipewire(self.root),
+                    ServerKind::PulseAudio => presence::pulse(self.root),
+                };
+                if let Err(skip) = allowed {
+                    self.result = Some(ServerResult::Skipped {
+                        reason: skip.reason,
+                        detail: skip.detail,
+                    });
+                    return true;
+                }
+                let connected = match self.kind {
+                    ServerKind::PipeWire => PwSession::connect().map(Session::Pw),
+                    ServerKind::PulseAudio => PulseSession::connect().map(Session::Pulse),
+                };
+                match connected {
+                    Ok(s) => self.session = s,
+                    Err(e) => self.result = Some(ServerResult::Failed(e)),
+                }
+                return self.result.is_some();
+            }
+            Session::Pw(s) => s.step(SLICE).map(|done| done.then(|| s.dump())),
+            Session::Pulse(s) => s.step(SLICE).map(|done| done.then(|| s.dump())),
+            Session::PulseRef(s) => s.step(SLICE).map(|done| done.then(|| s.dump())),
+        };
+        match step {
+            Ok(Some(dump)) => {
+                self.result = Some(ServerResult::Read {
+                    dump: Box::new(dump),
+                    live: true,
+                })
+            }
+            Ok(None) => {}
+            Err(e) => self.result = Some(ServerResult::Failed(e)),
+        }
+        self.result.is_some()
+    }
+
+    fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
+        let r = match self.result {
+            Some(r) => r,
+            None if timed_out => ServerResult::TimedOut,
+            None => ServerResult::Failed("ended without a result".into()),
+        };
+        match self.kind {
+            ServerKind::PipeWire => out.pipewire = r,
+            ServerKind::PulseAudio => out.pulse = r,
+        }
     }
 }
 

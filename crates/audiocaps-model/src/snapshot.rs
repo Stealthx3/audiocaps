@@ -34,6 +34,9 @@ pub struct Snapshot {
     /// Routing of the default device, when the routing field group is in scope.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub routing: Option<crate::detail::Routing>,
+    /// Sound servers, when the sound-server layer is in scope.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub servers: Vec<crate::detail::ServerState>,
     /// Endpoints in scope, sorted by id.
     pub endpoints: Vec<Endpoint>,
     /// Findings, when in scope.
@@ -77,7 +80,7 @@ impl Snapshot {
             .map(|id| (*id).clone())
             .collect();
         let sys = |s: &Snapshot| {
-            let mut v = serde_json::json!([s.layers, s.environment, s.routing]);
+            let mut v = serde_json::json!([s.layers, s.environment, s.routing, s.servers]);
             strip_read_times(&mut v);
             v
         };
@@ -110,7 +113,7 @@ pub struct SnapshotDiff {
     pub removed: Vec<crate::endpoint::EndpointId>,
     /// Endpoints whose reported values changed.
     pub changed: Vec<crate::endpoint::EndpointId>,
-    /// System-wide parts (layers, environment, routing) changed.
+    /// System-wide parts (layers, environment, routing, servers) changed.
     pub system_changed: bool,
 }
 
