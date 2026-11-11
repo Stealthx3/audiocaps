@@ -6,7 +6,7 @@
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -qq
-sudo apt-get install -y -qq build-essential pkg-config curl strace alsa-utils dbus-user-session libasound2-dev python3 >/dev/null
+sudo apt-get install -y -qq build-essential pkg-config curl strace alsa-utils dbus-user-session libasound2-dev libpipewire-0.3-dev libpulse-dev clang python3 >/dev/null
 if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
   curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
 fi

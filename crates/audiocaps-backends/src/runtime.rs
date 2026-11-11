@@ -42,6 +42,10 @@ pub enum Backend {
     Sysfs,
     /// Environment: os-release, kernel, sandbox, servers.
     Environment,
+    /// Native PipeWire client.
+    PipeWire,
+    /// PulseAudio client (native PulseAudio or pipewire-pulse).
+    PulseAudio,
 }
 
 /// Probe options.
@@ -89,10 +93,16 @@ impl ProbeOptions {
 
     /// The longest deadline over all backends, or `None` if any backend is unbounded.
     pub fn longest(&self) -> Option<Duration> {
-        [Backend::Alsa, Backend::Sysfs, Backend::Environment]
-            .iter()
-            .map(|b| self.deadline(*b))
-            .try_fold(Duration::ZERO, |acc, d| d.map(|d| acc.max(d)))
+        [
+            Backend::Alsa,
+            Backend::Sysfs,
+            Backend::Environment,
+            Backend::PipeWire,
+            Backend::PulseAudio,
+        ]
+        .iter()
+        .map(|b| self.deadline(*b))
+        .try_fold(Duration::ZERO, |acc, d| d.map(|d| acc.max(d)))
     }
 }
 
@@ -113,6 +123,7 @@ pub(crate) fn run<'a, Out>(
     out: &mut Out,
 ) {
     let start = Instant::now();
+    let trace = std::env::var_os("AUDIOCAPS_WATCH_TRACE").is_some();
     let mut live: Vec<(Box<dyn Task<Out> + 'a>, Option<Instant>)> = tasks
         .into_iter()
         .map(|t| {
@@ -131,6 +142,13 @@ pub(crate) fn run<'a, Out>(
             }
             if live[i].0.step() {
                 let (t, _) = live.swap_remove(i);
+                if trace {
+                    eprintln!(
+                        "  task {:?} done at {:.2} ms",
+                        t.backend(),
+                        start.elapsed().as_secs_f64() * 1e3
+                    );
+                }
                 t.finish(out, false);
                 continue;
             }
@@ -146,11 +164,44 @@ struct Request {
     reply: mpsc::SyncSender<Snapshot>,
 }
 
+/// Generation counter and latest snapshot, shared by the probe thread and watches.
+#[derive(Default)]
+pub(crate) struct Shared {
+    latest: Mutex<Option<Arc<Snapshot>>>,
+    generation: AtomicU64,
+}
+
+impl Shared {
+    pub(crate) fn next_generation(&self) -> u64 {
+        self.generation.fetch_add(1, Ordering::SeqCst) + 1
+    }
+
+    /// Publishes `snap` unless a newer generation is already published.
+    pub(crate) fn publish(&self, snap: Snapshot) -> Arc<Snapshot> {
+        let snap = Arc::new(snap);
+        let mut latest = self.latest.lock().unwrap_or_else(|e| e.into_inner());
+        if latest
+            .as_ref()
+            .is_none_or(|l| l.generation < snap.generation)
+        {
+            *latest = Some(snap.clone());
+        }
+        snap
+    }
+
+    pub(crate) fn latest(&self) -> Option<Arc<Snapshot>> {
+        self.latest
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .clone()
+    }
+}
+
 /// A probe context: the probe thread, the generation counter and the latest snapshot.
 pub struct Runtime {
     tx: Option<mpsc::Sender<Request>>,
-    latest: Mutex<Option<Arc<Snapshot>>>,
-    generation: AtomicU64,
+    shared: Arc<Shared>,
+    root: SystemRoot,
     worker: Option<thread::JoinHandle<()>>,
 }
 
@@ -158,9 +209,11 @@ impl Runtime {
     /// Starts the probe thread for `root`.
     pub fn new(root: SystemRoot) -> std::io::Result<Self> {
         let (tx, rx) = mpsc::channel::<Request>();
+        let thread_root = root.clone();
         let worker = thread::Builder::new()
             .name("audiocaps-probe".into())
             .spawn(move || {
+                let root = thread_root;
                 for req in rx {
                     let mut snap = crate::probe::probe_with(&root, &req.scope, &req.opts);
                     snap.generation = req.generation;
@@ -170,8 +223,8 @@ impl Runtime {
             })?;
         Ok(Self {
             tx: Some(tx),
-            latest: Mutex::new(None),
-            generation: AtomicU64::new(0),
+            shared: Arc::new(Shared::default()),
+            root,
             worker: Some(worker),
         })
     }
@@ -179,7 +232,7 @@ impl Runtime {
     /// Probes `scope` and publishes the result as the latest snapshot. Returns within the longest
     /// backend deadline plus a short grace period, even if a backend call blocks.
     pub fn probe(&self, scope: &ProbeScope, opts: &ProbeOptions) -> Arc<Snapshot> {
-        let generation = self.generation.fetch_add(1, Ordering::SeqCst) + 1;
+        let generation = self.shared.next_generation();
         let (reply, rx) = mpsc::sync_channel(1);
         let sent = self.tx.as_ref().is_some_and(|tx| {
             tx.send(Request {
@@ -201,28 +254,29 @@ impl Runtime {
             }
         };
         match result {
-            Ok(snap) => {
-                let snap = Arc::new(snap);
-                let mut latest = self.latest.lock().unwrap_or_else(|e| e.into_inner());
-                // Never replace a newer generation with an older one.
-                if latest
-                    .as_ref()
-                    .is_none_or(|l| l.generation < snap.generation)
-                {
-                    *latest = Some(snap.clone());
-                }
-                snap
-            }
+            Ok(snap) => self.shared.publish(snap),
             Err(why) => Arc::new(timed_out(scope, generation, why)),
         }
     }
 
     /// The latest published snapshot.
     pub fn latest(&self) -> Option<Arc<Snapshot>> {
-        self.latest
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .clone()
+        self.shared.latest()
+    }
+
+    /// Watches `scope`: delivers a new snapshot and its diff whenever the kernel's sound devices
+    /// or a sound server change. Only the watched scope is re-probed.
+    pub fn watch(
+        &self,
+        scope: &ProbeScope,
+        opts: &ProbeOptions,
+    ) -> std::io::Result<crate::watch::Watch> {
+        crate::watch::Watch::start(
+            self.root.clone(),
+            scope.clone(),
+            opts.clone(),
+            self.shared.clone(),
+        )
     }
 
     /// Probes and returns the new snapshot with its changes against the previous latest one.
@@ -270,6 +324,7 @@ fn timed_out(scope: &ProbeScope, generation: u64, why: &str) -> Snapshot {
         layers,
         environment: None,
         routing: None,
+        servers: vec![],
         endpoints: vec![],
         findings: vec![],
     }

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "generation": 1,
   "taken_at_ms": 1794190241958,
   "source": {
@@ -61,9 +61,7 @@
     {
       "layer": "sound_server",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 4 of the roadmap"
+        "state": "read"
       }
     },
     {
@@ -180,6 +178,244 @@
       "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
     }
   },
+  "servers": [
+    {
+      "server": "pipe_wire",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "pipewire-0",
+          "version": "1.6.11"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "clock": {
+        "state": "known",
+        "value": {
+          "rate_hz": 48000,
+          "allowed_rates_hz": [
+            48000
+          ],
+          "quantum": 1024,
+          "min_quantum": 32,
+          "max_quantum": 2048,
+          "force_rate_hz": 0,
+          "force_quantum": 0
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "default_sink": {
+        "state": "known",
+        "value": "node:game_output",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "default_source": {
+        "state": "known",
+        "value": "alsa:card0/pcm0c",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "policy": {
+        "state": "known",
+        "value": {
+          "manager": "WirePlumber",
+          "settings": [
+            {
+              "name": "bluetooth.autoswitch-to-headset-profile",
+              "value": "false"
+            },
+            {
+              "name": "bluetooth.profile-preference",
+              "value": "quality"
+            },
+            {
+              "name": "bluetooth.use-persistent-storage",
+              "value": "true"
+            },
+            {
+              "name": "device.restore-profile",
+              "value": "true"
+            },
+            {
+              "name": "device.restore-routes",
+              "value": "true"
+            },
+            {
+              "name": "device.routes.default-sink-volume",
+              "value": "0.064"
+            },
+            {
+              "name": "device.routes.default-source-volume",
+              "value": "1.0"
+            },
+            {
+              "name": "device.routes.mute-on-alsa-playback-removed",
+              "value": "false"
+            },
+            {
+              "name": "device.routes.mute-on-bluetooth-playback-removed",
+              "value": "false"
+            },
+            {
+              "name": "linking.allow-moving-streams",
+              "value": "true"
+            },
+            {
+              "name": "linking.follow-default-target",
+              "value": "true"
+            },
+            {
+              "name": "linking.pause-playback",
+              "value": "true"
+            },
+            {
+              "name": "linking.role-based.duck-level",
+              "value": "0.3"
+            },
+            {
+              "name": "monitor.alsa.autodetect-hdmi-channels",
+              "value": "false"
+            },
+            {
+              "name": "monitor.camera-discovery-timeout",
+              "value": "1000"
+            },
+            {
+              "name": "node.features.audio.control-port",
+              "value": "false"
+            },
+            {
+              "name": "node.features.audio.monitor-ports",
+              "value": "true"
+            },
+            {
+              "name": "node.features.audio.mono",
+              "value": "false"
+            },
+            {
+              "name": "node.features.audio.no-dsp",
+              "value": "false"
+            },
+            {
+              "name": "node.restore-default-targets",
+              "value": "true"
+            },
+            {
+              "name": "node.stream.default-capture-volume",
+              "value": "1.0"
+            },
+            {
+              "name": "node.stream.default-media-role",
+              "value": "null"
+            },
+            {
+              "name": "node.stream.default-playback-volume",
+              "value": "1.0"
+            },
+            {
+              "name": "node.stream.restore-props",
+              "value": "true"
+            },
+            {
+              "name": "node.stream.restore-target",
+              "value": "true"
+            }
+          ]
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      }
+    },
+    {
+      "server": "pulse_audio",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "PulseAudio (on PipeWire 1.6.11)",
+          "version": "15.0.0"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "default_sink": {
+        "state": "known",
+        "value": "node:game_output",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "default_source": {
+        "state": "known",
+        "value": "alsa:card0/pcm0c",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794190241958
+        }
+      }
+    }
+  ],
   "endpoints": [
     {
       "id": "alsa:card0/pcm0c",
@@ -227,6 +463,20 @@
             "kind": "alsa_pcm",
             "card": 0,
             "device": 0
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_input.usb-USB_Composite_Device_USB_Composite_Device_0001-01.mono-fallback"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_input.usb-USB_Composite_Device_USB_Composite_Device_0001-01.mono-fallback"
           },
           "confidence": "measured"
         }
@@ -565,11 +815,225 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  8000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 1,
+                "max": 1
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fc"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_input.usb-USB_Composite_Device_USB_Composite_Device_0001-01.mono-fallback",
+                "media_class": "Audio/Source",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:mono-fallback",
+                      "description": "Mono Input",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-input-mic",
+                      "description": "Microphone",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": true
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_input.usb-USB_Composite_Device_USB_Composite_Device_0001-01.mono-fallback",
+                "media_class": "Audio/Source",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 1,
+                    "rate_hz": 8000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": true
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",
@@ -920,8 +1384,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -1274,8 +1738,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -1628,8 +2092,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -1690,6 +2154,20 @@
             "kind": "alsa_pcm",
             "card": 1,
             "device": 9
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3"
           },
           "confidence": "measured"
         }
@@ -2069,11 +2547,353 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s32_le",
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "continuous",
+                "min_hz": 32000,
+                "max_hz": 192000
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 6,
+                "max": 6
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr",
+                    "rl",
+                    "rr",
+                    "fc",
+                    "lfe"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "dts"
+                },
+                {
+                  "codec": "ac3"
+                },
+                {
+                  "codec": "eac3"
+                },
+                {
+                  "codec": "dts_hd"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "idle",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s32_le",
+                    "channels": 6,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-stereo",
+                      "description": "Digital Stereo (HDMI) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-stereo-extra1",
+                      "description": "Digital Stereo (HDMI 2) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-stereo-extra2",
+                      "description": "Digital Stereo (HDMI 3) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-stereo-extra3",
+                      "description": "Digital Stereo (HDMI 4) Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround",
+                      "description": "Digital Surround 5.1 (HDMI) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround71",
+                      "description": "Digital Surround 7.1 (HDMI) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround-extra1",
+                      "description": "Digital Surround 5.1 (HDMI 2) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround71-extra1",
+                      "description": "Digital Surround 7.1 (HDMI 2) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround-extra2",
+                      "description": "Digital Surround 5.1 (HDMI 3) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround71-extra2",
+                      "description": "Digital Surround 7.1 (HDMI 3) Output",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "output:hdmi-surround-extra3",
+                      "description": "Digital Surround 5.1 (HDMI 4) Output",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:hdmi-surround71-extra3",
+                      "description": "Digital Surround 7.1 (HDMI 4) Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "hdmi-output-0",
+                      "description": "HDMI / DisplayPort",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "hdmi-output-1",
+                      "description": "HDMI / DisplayPort 2",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "hdmi-output-2",
+                      "description": "HDMI / DisplayPort 3",
+                      "available": false,
+                      "active": false
+                    },
+                    {
+                      "name": "hdmi-output-3",
+                      "description": "HDMI / DisplayPort 4",
+                      "available": true,
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "idle",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s32_le",
+                    "channels": 6,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",
@@ -2518,8 +3338,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -2975,8 +3795,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -3423,8 +4243,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -3627,6 +4447,914 @@
           "detail": {
             "kind": "device",
             "device": "seq:142:0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "node:browser_output",
+      "class": "virtual",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "virtual"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Browser"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "browser_output"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "browser_output"
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "browser_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 95,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "browser_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "f32_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 95,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "node:game_output",
+      "class": "virtual",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "virtual"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Game"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "game_output"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "game_output"
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "game_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": true
+              },
+              {
+                "server": "pulse_audio",
+                "object": "game_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "f32_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "node:music_output",
+      "class": "virtual",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "virtual"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Music"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "music_output"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "music_output"
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "music_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "music_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "f32_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "node:voice_output",
+      "class": "virtual",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "virtual"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Voice"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794190241958
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "voice_output"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "voice_output"
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "voice_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 95,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "voice_output",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "f32_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 95,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794190241958
+                  }
+                },
+                "is_default": false
+              }
+            ]
           }
         }
       ]

@@ -13,7 +13,7 @@ use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
 use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 3)
+audiocaps — AudioCaps command-line tool (phase 4)
 
 USAGE:
   audiocaps capture [--out DIR] [--label NAME]
@@ -30,8 +30,16 @@ USAGE:
       Probe the live system through the runtime (per-backend deadlines, 150 ms default) and
       print the last snapshot as JSON. --endpoint limits the scope to those endpoints;
       --repeat probes N times and prints each probe's time to stderr; --quiet skips the JSON.
+  audiocaps watch [--endpoint ID]... [--count N]
+      Watch the live system and print one line per update: what triggered it, what changed and
+      the time from the event to the new snapshot. Stops after N updates (default: never).
   audiocaps alsa-dump
       Print what the ALSA backend reads on this system (same passive rules as a probe).
+  audiocaps server-dump <pipewire|pulse>
+  audiocaps server-dump pw-dump <FILE>
+  audiocaps server-dump pactl <INFO-FILE> <LIST-FILE>
+      Print what the PipeWire or PulseAudio backend reads live (same passive rules as a probe),
+      or the same record parsed from `pw-dump` / `pactl -f json` output.
   audiocaps schema
       Print the JSON schema of the snapshot (v1).
 ";
@@ -57,6 +65,8 @@ fn main() -> ExitCode {
             );
             Ok(())
         }
+        Some("server-dump") => cmd_server_dump(&args[1..]),
+        Some("watch") => cmd_watch(&args[1..]),
         Some("schema") => {
             print!("{}", audiocaps_model::schema::snapshot_schema());
             Ok(())
@@ -128,6 +138,94 @@ fn cmd_probe(args: &[String]) -> Result<(), String> {
             serde_json::to_string_pretty(&*snap).expect("snapshot serializes")
         );
     }
+    Ok(())
+}
+
+fn cmd_watch(args: &[String]) -> Result<(), String> {
+    let mut scope = ProbeScope::everything();
+    let mut count: Option<u32> = None;
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        match a.as_str() {
+            "--endpoint" => {
+                let id = it.next().ok_or("--endpoint needs an id")?;
+                scope = scope.with_endpoint(EndpointId(id.clone()));
+            }
+            "--count" => {
+                count = Some(
+                    it.next()
+                        .and_then(|n| n.parse().ok())
+                        .ok_or("--count needs a number")?,
+                )
+            }
+            other => return Err(format!("unknown option {other}")),
+        }
+    }
+    let rt = Runtime::new(SystemRoot::Live).map_err(|e| e.to_string())?;
+    let watch = rt
+        .watch(&scope, &ProbeOptions::default())
+        .map_err(|e| e.to_string())?;
+    let mut seen = 0u32;
+    while let Some(ev) = watch.recv() {
+        let initial = ev.diff.from_generation == 0;
+        println!(
+            "update gen {}: {:?}, {} endpoints, +{} -{} ~{}{}, latency {:.2} ms",
+            ev.snapshot.generation,
+            ev.causes,
+            ev.snapshot.endpoints.len(),
+            ev.diff.added.len(),
+            ev.diff.removed.len(),
+            ev.diff.changed.len(),
+            if ev.diff.system_changed {
+                " +system"
+            } else {
+                ""
+            },
+            ev.latency.as_secs_f64() * 1000.0
+        );
+        use std::io::Write;
+        let _ = std::io::stdout().flush();
+        if !initial {
+            seen += 1;
+        }
+        if count.is_some_and(|c| seen >= c) {
+            break;
+        }
+    }
+    Ok(())
+}
+
+fn cmd_server_dump(args: &[String]) -> Result<(), String> {
+    use audiocaps_backends::server::{self, ServerKind, pactl, pwdump};
+    let read = |p: &String| -> Result<serde_json::Value, String> {
+        let b = std::fs::read(p).map_err(|e| format!("{p}: {e}"))?;
+        serde_json::from_slice(&b).map_err(|e| format!("{p}: {e}"))
+    };
+    let dump = match args {
+        [k] if k == "pipewire" => server::read_live(
+            &SystemRoot::Live,
+            ServerKind::PipeWire,
+            std::time::Duration::from_secs(3),
+        )?,
+        [k] if k == "pulse" => server::read_live(
+            &SystemRoot::Live,
+            ServerKind::PulseAudio,
+            std::time::Duration::from_secs(3),
+        )?,
+        [k, f] if k == "pw-dump" => pwdump::parse(&read(f)?).ok_or("not pw-dump output")?,
+        [k, i, l] if k == "pactl" => {
+            pactl::parse(&read(i)?, Some(&read(l)?)).ok_or("not pactl output")?
+        }
+        _ => {
+            return Err(
+                "usage: server-dump <pipewire|pulse> | pw-dump FILE | pactl INFO LIST".into(),
+            );
+        }
+    };
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&dump).expect("dump serializes")
+    );
     Ok(())
 }
 

@@ -36,7 +36,7 @@ pub const SANDBOX_UNKNOWN: &str = "a host sound server (hidden by the sandbox)";
 
 fn live(root: &SystemRoot) -> Option<String> {
     let found = live_found(root);
-    let sandboxed = root.exists("/.flatpak-info") || std::env::var_os("SNAP_NAME").is_some();
+    let sandboxed = sandboxed(root);
     match found {
         Some(s) => Some(s),
         None if sandboxed => Some(SANDBOX_UNKNOWN.into()),
@@ -83,4 +83,25 @@ fn fixture(root: &SystemRoot) -> Option<String> {
     } else {
         None
     }
+}
+
+/// Whether a process with one of these names is visible in `/proc`.
+pub fn process_running(root: &SystemRoot, names: &[&str]) -> bool {
+    root.read_dir("/proc")
+        .map(|entries| {
+            entries
+                .iter()
+                .filter(|e| e.name.bytes().all(|b| b.is_ascii_digit()))
+                .take(MAX_PIDS)
+                .any(|e| {
+                    root.read_string(&format!("/proc/{}/comm", e.name))
+                        .is_ok_and(|c| names.contains(&c.trim()))
+                })
+        })
+        .unwrap_or(false)
+}
+
+/// Whether the process runs inside Flatpak or Snap.
+pub fn sandboxed(root: &SystemRoot) -> bool {
+    root.exists("/.flatpak-info") || std::env::var_os("SNAP_NAME").is_some()
 }

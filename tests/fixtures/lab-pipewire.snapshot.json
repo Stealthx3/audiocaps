@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "generation": 1,
   "taken_at_ms": 1794362583122,
   "source": {
@@ -61,9 +61,7 @@
     {
       "layer": "sound_server",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 4 of the roadmap"
+        "state": "read"
       }
     },
     {
@@ -206,6 +204,224 @@
       }
     }
   },
+  "servers": [
+    {
+      "server": "pipe_wire",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "pipewire-0",
+          "version": "1.4.2"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794362583122
+        }
+      },
+      "clock": {
+        "state": "known",
+        "value": {
+          "rate_hz": 48000,
+          "allowed_rates_hz": [
+            48000
+          ],
+          "quantum": 1024,
+          "min_quantum": 1024,
+          "max_quantum": 2048,
+          "force_rate_hz": 0,
+          "force_quantum": 0
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794362583122
+        }
+      },
+      "default_sink": {
+        "state": "known",
+        "value": "alsa:card1/pcm0p",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794362583122
+        }
+      },
+      "default_source": {
+        "state": "known",
+        "value": "alsa:card3/pcm0c",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794362583122
+        }
+      },
+      "policy": {
+        "state": "known",
+        "value": {
+          "manager": "WirePlumber",
+          "settings": [
+            {
+              "name": "bluetooth.autoswitch-to-headset-profile",
+              "value": "true"
+            },
+            {
+              "name": "bluetooth.use-persistent-storage",
+              "value": "true"
+            },
+            {
+              "name": "device.restore-profile",
+              "value": "true"
+            },
+            {
+              "name": "device.restore-routes",
+              "value": "true"
+            },
+            {
+              "name": "device.routes.default-sink-volume",
+              "value": "0.064"
+            },
+            {
+              "name": "device.routes.default-source-volume",
+              "value": "1.0"
+            },
+            {
+              "name": "linking.allow-moving-streams",
+              "value": "true"
+            },
+            {
+              "name": "linking.follow-default-target",
+              "value": "true"
+            },
+            {
+              "name": "linking.role-based.duck-level",
+              "value": "0.3"
+            },
+            {
+              "name": "monitor.camera-discovery-timeout",
+              "value": "1000"
+            },
+            {
+              "name": "node.features.audio.control-port",
+              "value": "false"
+            },
+            {
+              "name": "node.features.audio.monitor-ports",
+              "value": "true"
+            },
+            {
+              "name": "node.features.audio.no-dsp",
+              "value": "false"
+            },
+            {
+              "name": "node.filter.forward-format",
+              "value": "false"
+            },
+            {
+              "name": "node.restore-default-targets",
+              "value": "true"
+            },
+            {
+              "name": "node.stream.default-capture-volume",
+              "value": "1.0"
+            },
+            {
+              "name": "node.stream.default-media-role",
+              "value": "null"
+            },
+            {
+              "name": "node.stream.default-playback-volume",
+              "value": "1.0"
+            },
+            {
+              "name": "node.stream.restore-props",
+              "value": "true"
+            },
+            {
+              "name": "node.stream.restore-target",
+              "value": "true"
+            }
+          ]
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794362583122
+        }
+      }
+    },
+    {
+      "server": "pulse_audio",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "PulseAudio (on PipeWire 1.4.2)",
+          "version": "15.0.0"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794362583122
+        }
+      },
+      "default_sink": {
+        "state": "known",
+        "value": "alsa:card1/pcm0p",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794362583122
+        }
+      },
+      "default_source": {
+        "state": "known",
+        "value": "alsa:card3/pcm0c",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794362583122
+        }
+      }
+    }
+  ],
   "endpoints": [
     {
       "id": "alsa:card0/midi0",
@@ -587,6 +803,20 @@
             "device": 0
           },
           "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_output.usb-QEMU_QEMU_USB_Audio_1-0000_00_02.1_00.0-4-00.analog-stereo"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_output.usb-QEMU_QEMU_USB_Audio_1-0000_00_02.1_00.0-4-00.analog-stereo"
+          },
+          "confidence": "measured"
         }
       ],
       "layers": [
@@ -919,11 +1149,298 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  48000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_output.usb-QEMU_QEMU_USB_Audio_1-0000_00_02.1_00.0-4-00.analog-stereo",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "active": true
+                    },
+                    {
+                      "name": "output:iec958-stereo",
+                      "description": "Digital Stereo (IEC958) Output",
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-output",
+                      "description": "Analog Output",
+                      "active": true
+                    },
+                    {
+                      "name": "iec958-stereo-output",
+                      "description": "Digital Output (S/PDIF)",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": true
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_output.usb-QEMU_QEMU_USB_Audio_1-0000_00_02.1_00.0-4-00.analog-stereo",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:iec958-stereo",
+                      "description": "Digital Stereo (IEC958) Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-output",
+                      "description": "Analog Output",
+                      "active": true
+                    },
+                    {
+                      "name": "iec958-stereo-output",
+                      "description": "Digital Output (S/PDIF)",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 40,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": true
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",
@@ -982,6 +1499,20 @@
             "kind": "alsa_pcm",
             "card": 2,
             "device": 0
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_input.pci-0000_00_1b.0.analog-stereo"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_input.pci-0000_00_1b.0.analog-stereo"
           },
           "confidence": "measured"
         }
@@ -1352,11 +1883,300 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "continuous",
+                "min_hz": 16000,
+                "max_hz": 96000
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_input.pci-0000_00_1b.0.analog-stereo",
+                "media_class": "Audio/Source",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-input-linein",
+                      "description": "Line In",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_input.pci-0000_00_1b.0.analog-stereo",
+                "media_class": "Audio/Source",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-input-linein",
+                      "description": "Line In",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",
@@ -1415,6 +2235,20 @@
             "kind": "alsa_pcm",
             "card": 2,
             "device": 0
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_output.pci-0000_00_1b.0.analog-stereo"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_output.pci-0000_00_1b.0.analog-stereo"
           },
           "confidence": "measured"
         }
@@ -1785,11 +2619,300 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "continuous",
+                "min_hz": 16000,
+                "max_hz": 96000
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_output.pci-0000_00_1b.0.analog-stereo",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-output-lineout",
+                      "description": "Line Out",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_output.pci-0000_00_1b.0.analog-stereo",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-output-lineout",
+                      "description": "Line Out",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 40,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",
@@ -1848,6 +2971,20 @@
             "kind": "alsa_pcm",
             "card": 3,
             "device": 0
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_input.pci-0000_08_01.0.analog-stereo"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_input.pci-0000_08_01.0.analog-stereo"
           },
           "confidence": "measured"
         }
@@ -2218,11 +3355,300 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "continuous",
+                "min_hz": 16000,
+                "max_hz": 96000
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_input.pci-0000_08_01.0.analog-stereo",
+                "media_class": "Audio/Source",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-input-linein",
+                      "description": "Line In",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": true
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_input.pci-0000_08_01.0.analog-stereo",
+                "media_class": "Audio/Source",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-input-linein",
+                      "description": "Line In",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": true
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",
@@ -2281,6 +3707,20 @@
             "kind": "alsa_pcm",
             "card": 3,
             "device": 0
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "alsa_output.pci-0000_08_01.0.analog-stereo"
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pulse_device",
+            "name": "alsa_output.pci-0000_08_01.0.analog-stereo"
           },
           "confidence": "measured"
         }
@@ -2651,11 +4091,300 @@
         {
           "layer": "sound_server",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "continuous",
+                "min_hz": 16000,
+                "max_hz": 96000
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794362583122
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "alsa_output.pci-0000_08_01.0.analog-stereo",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-output-lineout",
+                      "description": "Line Out",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 100,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": false
+              },
+              {
+                "server": "pulse_audio",
+                "object": "alsa_output.pci-0000_08_01.0.analog-stereo",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "suspended",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "output:analog-stereo+input:analog-stereo",
+                      "description": "Analog Stereo Duplex",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "output:analog-stereo",
+                      "description": "Analog Stereo Output",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "input:analog-stereo",
+                      "description": "Analog Stereo Input",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "pro-audio",
+                      "description": "Pro Audio",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "analog-output-lineout",
+                      "description": "Line Out",
+                      "active": true
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 40,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pactl-list"
+                    },
+                    "read_at_ms": 1794362583122
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
         },
         {
           "layer": "wireless",

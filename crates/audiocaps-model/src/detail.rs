@@ -9,7 +9,8 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::caps::{Range, RateSet, SampleFormat};
+use crate::caps::{CodecCapability, Range, RateSet, SampleFormat};
+use crate::snapshot::SoundServer;
 use crate::value::Value;
 
 /// Extra detail for one layer of one endpoint.
@@ -22,6 +23,8 @@ pub enum LayerDetail {
     KernelDriver(DriverDetail),
     /// Platform audio API device state (ALSA on Linux).
     Device(DeviceDetail),
+    /// Sound-server views of the endpoint, one per server API.
+    SoundServer(ServerDetail),
 }
 
 /// Host hardware behind an endpoint.
@@ -256,4 +259,140 @@ pub enum MidiKind {
     Raw,
     /// A sequencer port (kernel or application client).
     Sequencer,
+}
+
+/// How sound servers present an endpoint.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct ServerDetail {
+    /// One view per server API (native PipeWire, PulseAudio API).
+    pub views: Vec<ServerView>,
+}
+
+/// One server's view of an endpoint (a PipeWire node, a PulseAudio sink or source).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct ServerView {
+    /// Server API.
+    pub server: SoundServer,
+    /// Node, sink or source name (Bluetooth addresses hashed).
+    pub object: String,
+    /// Media class, e.g. `Audio/Sink`.
+    pub media_class: String,
+    /// State: `running`, `idle`, `suspended`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub state: Option<Value<String>>,
+    /// Format the server runs the device at now.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current: Option<Value<CurrentParams>>,
+    /// Profiles of the owning device, with the active one marked.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub profiles: Option<Value<Vec<ProfileState>>>,
+    /// Routes (ports) of the owning device in this direction, with the active one marked.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub routes: Option<Value<Vec<RouteState>>>,
+    /// Compressed formats the server is set to pass through.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub passthrough: Option<Value<Vec<CodecCapability>>>,
+    /// Volume and mute.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub volume: Option<Value<VolumeState>>,
+    /// The endpoint is the server's default sink or source.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub is_default: Option<bool>,
+}
+
+/// A device profile.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ProfileState {
+    /// Name, e.g. `output:hdmi-surround`.
+    pub name: String,
+    /// Description.
+    pub description: String,
+    /// Availability, when the server knows it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub available: Option<bool>,
+    /// The active profile.
+    pub active: bool,
+}
+
+/// A route (port).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct RouteState {
+    /// Name, e.g. `hdmi-output-0`.
+    pub name: String,
+    /// Description.
+    pub description: String,
+    /// Availability (plugged), when the server knows it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub available: Option<bool>,
+    /// The active route.
+    pub active: bool,
+}
+
+/// Volume and mute.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct VolumeState {
+    /// Volume in percent as mixers show it (100 = unity).
+    pub percent: u32,
+    /// Muted.
+    pub muted: bool,
+}
+
+/// A sound server's global state.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct ServerState {
+    /// Server API.
+    pub server: SoundServer,
+    /// Whether the server could be read.
+    pub availability: crate::endpoint::Availability,
+    /// Name and version as the server reports them.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub info: Option<Value<crate::snapshot::ServerInfo>>,
+    /// Graph clock (PipeWire).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub clock: Option<Value<ClockSettings>>,
+    /// Default sink (endpoint id).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_sink: Option<Value<String>>,
+    /// Default source (endpoint id).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_source: Option<Value<String>>,
+    /// Session manager and its policy settings (WirePlumber `sm-settings`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub policy: Option<Value<Policy>>,
+}
+
+/// PipeWire graph clock settings.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ClockSettings {
+    /// Graph rate in Hz.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rate_hz: Option<u32>,
+    /// Rates the graph may switch to.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub allowed_rates_hz: Vec<u32>,
+    /// Quantum in frames.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub quantum: Option<u32>,
+    /// Minimum quantum.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub min_quantum: Option<u32>,
+    /// Maximum quantum.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_quantum: Option<u32>,
+    /// Forced rate (0 = not forced).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub force_rate_hz: Option<u32>,
+    /// Forced quantum (0 = not forced).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub force_quantum: Option<u32>,
+}
+
+/// Session manager policy.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct Policy {
+    /// Session manager, e.g. `WirePlumber`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub manager: Option<String>,
+    /// Settings, e.g. `bluetooth.autoswitch-to-headset-profile = true`.
+    pub settings: Vec<Parameter>,
 }

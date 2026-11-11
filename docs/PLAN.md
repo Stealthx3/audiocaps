@@ -42,11 +42,11 @@ Open items (not phase tasks):
 
 ## Phase 4 — PipeWire, WirePlumber, Pulse
 
-- [ ] **4.1** PipeWire backend: nodes, routes, formats, IEC958 codecs, clock
-- [ ] **4.2** WirePlumber policy and Bluetooth codec settings
-- [ ] **4.3** PulseAudio backend without auto-spawn
-- [ ] **4.4** Hotplug and server change events
-- [ ] **4.5** Gate: matches pw-dump and pactl; hotplug under 20 ms
+- [x] **4.1** PipeWire backend: nodes, routes, formats, IEC958 codecs, clock
+- [x] **4.2** WirePlumber policy and Bluetooth codec settings
+- [x] **4.3** PulseAudio backend without auto-spawn
+- [x] **4.4** Hotplug and server change events
+- [x] **4.5** Gate: matches pw-dump and pactl; hotplug under 20 ms
 
 ## Phase 5 — Bluetooth, JACK, sandbox
 

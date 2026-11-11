@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "generation": 1,
   "taken_at_ms": 1794000000000,
   "source": {
@@ -65,9 +65,7 @@
     {
       "layer": "sound_server",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 4 of the roadmap"
+        "state": "read"
       }
     },
     {
@@ -173,6 +171,38 @@
       "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
     }
   },
+  "servers": [
+    {
+      "server": "pipe_wire",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pw-dump not installed"
+      }
+    },
+    {
+      "server": "pulse_audio",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "pulseaudio",
+          "version": "17.0"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pactl-list"
+          },
+          "read_at_ms": 1794000000000
+        }
+      }
+    }
+  ],
   "endpoints": [
     {
       "id": "alsa:card0/pcm0c",
@@ -354,8 +384,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -550,8 +580,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -751,8 +781,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -952,8 +982,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
@@ -1153,8 +1183,8 @@
           "layer": "sound_server",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 4 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "no sound server exposes this device (profile off, or unmanaged)"
           },
           "caps": {}
         },
