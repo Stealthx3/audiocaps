@@ -26,6 +26,9 @@ tar = "0.4"
 flate2 = "1"
 expect-test = "1"
 alsa = "0.12"
+pipewire = "0.10"
+libpulse-binding = { version = "2.30", default-features = false }
+nix = { version = "0.31", default-features = false, features = ["inotify", "poll"] }
 
 [workspace.lints.rust]
 unsafe_code = "deny"

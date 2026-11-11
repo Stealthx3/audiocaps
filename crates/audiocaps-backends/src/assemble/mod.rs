@@ -16,9 +16,12 @@ use audiocaps_parse::hda::{DefaultDevice, HdaCodec, Node, PortConnectivity};
 use audiocaps_parse::procfs::{CardEntry, StreamDirection, UsbStream};
 
 use crate::alsa::dump::{ControlDump, HwRanges, NotOpened, PcmResult, StreamDir};
-use crate::probe::{Found, Kind, PROC_PCM, Results};
+mod server;
+
+use crate::probe::{Found, Kind, PROC_PCM, Results, ServerResult};
 use crate::root::SystemRoot;
 use crate::sysfs::{CardData, Dir};
+use server::ServerIndex;
 
 /// Builds the snapshot.
 pub(crate) fn snapshot(
@@ -36,6 +39,7 @@ pub(crate) fn snapshot(
         },
     };
     let ctx = Ctx {
+        servers: ServerIndex::new(&res.pipewire, &res.pulse),
         root,
         scope,
         now,
@@ -66,7 +70,18 @@ pub(crate) fn snapshot(
         && scope.layers.includes(&LayerKind::AlsaUserspace))
     .then(|| ctx.routing());
     let mut endpoints: Vec<Endpoint> = found.iter().map(|f| ctx.endpoint(f)).collect();
+    let known: Vec<_> = found.iter().map(|f| f.id.clone()).collect();
+    endpoints.extend(ctx.server_only_endpoints(&known));
     endpoints.sort_by(|a, b| a.id.cmp(&b.id));
+    let servers = if scope.layers.includes(&LayerKind::SoundServer) {
+        ctx.server_states()
+    } else {
+        vec![]
+    };
+    let environment = environment.map(|mut e| {
+        ctx.live_presence(&mut e);
+        e
+    });
     let mut snapshot = Snapshot {
         schema_version: SCHEMA_VERSION.to_string(),
         generation: 1,
@@ -77,11 +92,47 @@ pub(crate) fn snapshot(
         layers,
         environment,
         routing,
+        servers,
         endpoints,
         findings: vec![],
     };
     snapshot.redact(&RedactionPolicy::default());
     snapshot
+}
+
+type Chains = (alsa_conf::Chain, alsa_conf::Chain);
+
+static ROUTING_CACHE: std::sync::Mutex<Option<(u64, Chains)>> = std::sync::Mutex::new(None);
+
+/// Resolves the `default` chains, cached by configuration text and cards (parsing the
+/// configuration and the per-card files is the slowest part of a probe).
+fn resolve_cached(text: &str, cards: &[CardRef], root: &SystemRoot) -> Result<Chains, String> {
+    use std::hash::{Hash, Hasher};
+    let mut h = std::collections::hash_map::DefaultHasher::new();
+    text.hash(&mut h);
+    for c in cards {
+        (c.index, &c.id, &c.driver, &c.name).hash(&mut h);
+    }
+    if let SystemRoot::Fixture(f) = root {
+        f.name().hash(&mut h);
+    }
+    let key = h.finish();
+    let mut cache = ROUTING_CACHE.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some((k, c)) = cache.as_ref()
+        && *k == key
+    {
+        return Ok(c.clone());
+    }
+    let mut tree = alsa_conf::parse(text).map_err(|e| format!("{e:?}"))?;
+    // alsa-lib loads the per-card definitions lazily; build them from the same files.
+    let loader = |p: &str| root.read_string(p).ok();
+    alsa_conf::load_cards(&mut tree, cards, &loader);
+    let chains = (
+        alsa_conf::resolve_pcm(&tree, "default", Stream::Playback, cards),
+        alsa_conf::resolve_pcm(&tree, "default", Stream::Capture, cards),
+    );
+    *cache = Some((key, chains.clone()));
+    Ok(chains)
 }
 
 fn timeout<T>() -> Value<T> {
@@ -114,6 +165,7 @@ fn prov(layer: LayerKind, source: Source, at: u64) -> Provenance {
 }
 
 struct Ctx<'a> {
+    servers: ServerIndex<'a>,
     root: &'a SystemRoot,
     scope: &'a ProbeScope,
     now: u64,
@@ -162,8 +214,71 @@ impl Ctx<'_> {
             },
             LayerKind::Environment => Availability::Partial,
             LayerKind::SinkChain => not_implemented(6),
-            LayerKind::SoundServer => not_implemented(4),
+            LayerKind::SoundServer => {
+                let rs = [&self.res.pipewire, &self.res.pulse];
+                if rs.iter().any(|r| matches!(r, ServerResult::Read { .. })) {
+                    Availability::Read
+                } else if rs.iter().any(|r| matches!(r, ServerResult::TimedOut)) {
+                    unknown_layer(UnknownReason::Timeout, "server backend deadline")
+                } else {
+                    match rs.iter().find_map(|r| match r {
+                        ServerResult::Skipped { reason, detail } => Some((*reason, detail.clone())),
+                        ServerResult::Failed(e) => Some((UnknownReason::ReadError, e.clone())),
+                        _ => None,
+                    }) {
+                        Some((r, d)) => unknown_layer(r, d),
+                        None => unknown_layer(UnknownReason::ServiceNotRunning, "no sound server"),
+                    }
+                }
+            }
             LayerKind::Wireless => not_implemented(5),
+        }
+    }
+
+    /// On the live system, server presence comes from the server backends that ran.
+    fn live_presence(&self, env: &mut audiocaps_model::EnvironmentInfo) {
+        use audiocaps_model::{ServerInfo, ServerPresence, SoundServer};
+        let mut live = vec![];
+        for (r, api) in [
+            (&self.res.pipewire, SoundServer::PipeWire),
+            (&self.res.pulse, SoundServer::PulseAudio),
+        ] {
+            if let ServerResult::Read { dump, live: true } = r {
+                let p = prov(
+                    LayerKind::SoundServer,
+                    Source::ServerParam {
+                        server: format!("{api:?}").to_ascii_lowercase(),
+                        object: dump.name.clone(),
+                        key: "info".into(),
+                    },
+                    self.now,
+                );
+                live.push(ServerPresence {
+                    server: api,
+                    info: Value::measured(
+                        ServerInfo {
+                            name: dump.name.clone(),
+                            version: dump.version.clone(),
+                        },
+                        p.clone(),
+                    ),
+                });
+                if let Some(sm) = &dump.session_manager {
+                    live.push(ServerPresence {
+                        server: SoundServer::WirePlumber,
+                        info: Value::measured(
+                            ServerInfo {
+                                name: sm.clone(),
+                                version: None,
+                            },
+                            p,
+                        ),
+                    });
+                }
+            }
+        }
+        if !live.is_empty() {
+            env.servers = live;
         }
     }
 
@@ -202,16 +317,6 @@ impl Ctx<'_> {
             .as_ref()
             .and_then(|d| d.config.as_deref())
             .unwrap_or("");
-        let mut tree = match alsa_conf::parse(text) {
-            Ok(t) => t,
-            Err(e) => {
-                let v = Value::unknown(UnknownReason::ParseError, Some(format!("{e:?}")));
-                return Routing {
-                    default_playback: v.clone(),
-                    default_capture: v,
-                };
-            }
-        };
         let cards: Vec<CardRef> = self
             .cards
             .iter()
@@ -219,27 +324,34 @@ impl Ctx<'_> {
                 index: c.index,
                 id: c.id.clone(),
                 driver: c.driver.clone(),
+                name: c.name.clone(),
             })
             .collect();
-        // alsa-lib loads the per-card definitions lazily; build them from the same files.
-        let loader = |p: &str| self.root.read_string(p).ok();
-        alsa_conf::load_cards(&mut tree, &cards, &loader);
-        let chain = |stream| {
-            let c = alsa_conf::resolve_pcm(&tree, "default", stream, &cards);
+        let chains = match resolve_cached(text, &cards, self.root) {
+            Ok(c) => c,
+            Err(e) => {
+                let v = Value::unknown(UnknownReason::ParseError, Some(e));
+                return Routing {
+                    default_playback: v.clone(),
+                    default_capture: v,
+                };
+            }
+        };
+        let chain = |c: &alsa_conf::Chain| {
             let mut stages: Vec<RouteStage> = c
                 .stages
-                .into_iter()
+                .iter()
                 .map(|s| RouteStage {
-                    name: s.name,
-                    kind: s.kind,
-                    card: s.card,
+                    name: s.name.clone(),
+                    kind: s.kind.clone(),
+                    card: s.card.clone(),
                     device: s.device,
                     rate_hz: s.rate,
                 })
                 .collect();
-            if let Some(why) = c.stopped {
+            if let Some(why) = &c.stopped {
                 stages.push(RouteStage {
-                    name: why,
+                    name: why.clone(),
                     kind: "unresolved".into(),
                     card: None,
                     device: None,
@@ -256,8 +368,8 @@ impl Ctx<'_> {
             )
         };
         Routing {
-            default_playback: chain(Stream::Playback),
-            default_capture: chain(Stream::Capture),
+            default_playback: chain(&chains.0),
+            default_capture: chain(&chains.1),
         }
     }
 
@@ -297,6 +409,7 @@ impl Ctx<'_> {
                 id: CorrelationId::AlsaPcm { card, device },
                 confidence: Confidence::Measured,
             });
+            correlation.extend(self.server_correlation(&f.id));
         }
         let transport = hw
             .as_ref()
@@ -319,7 +432,7 @@ impl Ctx<'_> {
                     self.alsa_layer(data, card, device, dir, transport.known())
                 }
                 LayerKind::SinkChain => plain(layer, not_implemented(6)),
-                LayerKind::SoundServer => plain(layer, not_implemented(4)),
+                LayerKind::SoundServer => self.server_layer(&f.id),
                 LayerKind::Wireless => plain(layer, not_implemented(5)),
                 LayerKind::Environment => unreachable!(),
             });

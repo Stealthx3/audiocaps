@@ -85,6 +85,22 @@ impl CardData {
     }
 }
 
+type CodecKey = (u32, String, String);
+type Codecs = Vec<(String, HdaCodec)>;
+
+/// Parsed codec dumps by card (index, id, name). Reading `codec#N` makes the HDA driver query the
+/// codec over its bus (slow, and it can wake a suspended codec); the topology doesn't change while
+/// the card exists, so each dump is read once. Cleared on kernel hotplug events.
+static CODEC_CACHE: std::sync::Mutex<Vec<(CodecKey, Codecs)>> = std::sync::Mutex::new(Vec::new());
+
+/// Forgets cached hardware data (after a hotplug event).
+pub(crate) fn invalidate_cache() {
+    CODEC_CACHE
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clear();
+}
+
 /// Reads one card. `pcms` lists the PCM devices of the card that are in scope.
 pub(crate) fn read_card(
     root: &SystemRoot,
@@ -107,12 +123,39 @@ pub(crate) fn read_card(
             .filter(|s| !s.is_empty());
     }
     if want.hardware {
-        for e in &listing {
-            if e.name.starts_with("codec#") && e.kind == EntryKind::File {
-                if let Ok(t) = root.read_string(&format!("{base}/{}", e.name)) {
-                    d.codecs.push((e.name.clone(), hda::parse_codec(&t)));
+        let key = d
+            .entry
+            .as_ref()
+            .filter(|_| matches!(root, SystemRoot::Live))
+            .map(|e| (index, e.id.clone(), e.name.clone()));
+        let cached = key.as_ref().and_then(|k| {
+            CODEC_CACHE
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .iter()
+                .find(|(ck, _)| ck == k)
+                .map(|(_, v)| v.clone())
+        });
+        match cached {
+            Some(c) => d.codecs = c,
+            None => {
+                for e in &listing {
+                    if e.name.starts_with("codec#")
+                        && e.kind == EntryKind::File
+                        && let Ok(t) = root.read_string(&format!("{base}/{}", e.name))
+                    {
+                        d.codecs.push((e.name.clone(), hda::parse_codec(&t)));
+                    }
                 }
-            } else if let Some(n) = e.name.strip_prefix("stream")
+                if let Some(k) = key {
+                    let mut cache = CODEC_CACHE.lock().unwrap_or_else(|e| e.into_inner());
+                    cache.retain(|(ck, _)| ck.0 != k.0);
+                    cache.push((k, d.codecs.clone()));
+                }
+            }
+        }
+        for e in &listing {
+            if let Some(n) = e.name.strip_prefix("stream")
                 && let Ok(dev) = n.parse::<u32>()
                 && let Ok(t) = root.read_string(&format!("{base}/{}", e.name))
             {

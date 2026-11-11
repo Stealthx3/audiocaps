@@ -8,8 +8,9 @@
 #              period and buffer time)
 #   busy       a PCM that is playing is never opened by a probe, its playback runs to the end
 #              with no underruns, and the probe reports it in use with the running parameters
-#   race       probes in a tight loop while another process starts playback on the same free
-#              device again and again; counts how often its open failed with EBUSY
+#   race       one process probes in a tight loop (as an application would) while another starts
+#              playback on the same free device again and again; counts EBUSY failures. Ranges
+#              are cached per process, so only the first probe opens the device.
 #   server     with a sound server running (start one first: capture-stack.sh pipewire), probes
 #              open no PCM at all, also while the server plays
 #   routing    the resolved `default` chains match what alsa-lib builds (`aplay -v` / `arecord -v`
@@ -133,7 +134,7 @@ check_race() {
   audiocaps alsa-dump > "$work/dump.json"
   read -r card dev < <(first_free_playback "$work/dump.json") || { say "race: no free playback PCM"; return 1; }
   say "race: 100 playback starts on hw:$card,$dev while probes run in a loop"
-  ( for _ in $(seq 1 40); do audiocaps probe --repeat 50 --quiet 2>/dev/null; done ) &
+  audiocaps probe --repeat 100000 --quiet 2>/dev/null &
   local ppid=$!
   local busy=0 ok=0
   for _ in $(seq 1 100); do
@@ -197,6 +198,9 @@ for key, path in (("default_playback", sys.argv[2]), ("default_capture", sys.arg
     last = stages[-1]
     # alsa-lib inserts conversion plugins (route, rate, linear) inside plug only as needed.
     real_core = [r for r in real if r not in ("Route conversion PCM", "Rate conversion PCM", "Linear conversion PCM")]
+    if hw is None and not real:
+        print(f"  {key}: alsa-lib can't open default in this direction (no such PCM); ours {[x['kind'] for x in stages]} -> n/a")
+        continue
     ok = ours == real_core and hw is not None and last["kind"] == "hw" and str(last.get("device", 0)) == hw.group(2)
     print(f"  {key}: ours {[x['kind'] for x in stages]} | alsa-lib {real_core} hw {hw.groups() if hw else None} -> {'ok' if ok else 'MISMATCH'}")
     bad += not ok
