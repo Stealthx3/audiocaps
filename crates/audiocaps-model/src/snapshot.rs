@@ -31,6 +31,9 @@ pub struct Snapshot {
     /// Environment layer, when in scope.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub environment: Option<EnvironmentInfo>,
+    /// Routing of the default device, when the routing field group is in scope.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub routing: Option<crate::detail::Routing>,
     /// Endpoints in scope, sorted by id.
     pub endpoints: Vec<Endpoint>,
     /// Findings, when in scope.
@@ -43,6 +46,81 @@ impl Snapshot {
     pub fn redact(&mut self, policy: &RedactionPolicy) {
         self.endpoints.redact(policy);
         self.redaction = policy.clone();
+    }
+
+    /// What changed from `older` to this snapshot, by endpoint. Read times are ignored, so a
+    /// re-read of the same state is no change.
+    pub fn diff(&self, older: &Snapshot) -> SnapshotDiff {
+        use std::collections::BTreeMap;
+        let old: BTreeMap<_, _> = older.endpoints.iter().map(|e| (&e.id, e)).collect();
+        let new: BTreeMap<_, _> = self.endpoints.iter().map(|e| (&e.id, e)).collect();
+        let strip = |e: &Endpoint| {
+            let mut v = serde_json::to_value(e).unwrap_or_default();
+            strip_read_times(&mut v);
+            v
+        };
+        let mut diff = SnapshotDiff {
+            from_generation: older.generation,
+            to_generation: self.generation,
+            ..SnapshotDiff::default()
+        };
+        for (id, e) in &new {
+            match old.get(id) {
+                None => diff.added.push((*id).clone()),
+                Some(o) if strip(o) != strip(e) => diff.changed.push((*id).clone()),
+                Some(_) => {}
+            }
+        }
+        diff.removed = old
+            .keys()
+            .filter(|id| !new.contains_key(*id))
+            .map(|id| (*id).clone())
+            .collect();
+        let sys = |s: &Snapshot| {
+            let mut v = serde_json::json!([s.layers, s.environment, s.routing]);
+            strip_read_times(&mut v);
+            v
+        };
+        diff.system_changed = sys(self) != sys(older);
+        diff
+    }
+}
+
+fn strip_read_times(v: &mut serde_json::Value) {
+    match v {
+        serde_json::Value::Object(m) => {
+            m.remove("read_at_ms");
+            m.values_mut().for_each(strip_read_times);
+        }
+        serde_json::Value::Array(a) => a.iter_mut().for_each(strip_read_times),
+        _ => {}
+    }
+}
+
+/// Changes between two snapshots of the same probe context.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct SnapshotDiff {
+    /// Generation of the older snapshot.
+    pub from_generation: u64,
+    /// Generation of the newer snapshot.
+    pub to_generation: u64,
+    /// Endpoints that appeared.
+    pub added: Vec<crate::endpoint::EndpointId>,
+    /// Endpoints that disappeared.
+    pub removed: Vec<crate::endpoint::EndpointId>,
+    /// Endpoints whose reported values changed.
+    pub changed: Vec<crate::endpoint::EndpointId>,
+    /// System-wide parts (layers, environment, routing) changed.
+    pub system_changed: bool,
+}
+
+impl SnapshotDiff {
+    /// Whether nothing changed.
+    pub fn is_empty(&self) -> bool {
+        self.added.is_empty()
+            && self.removed.is_empty()
+            && self.changed.is_empty()
+            && !self.system_changed
     }
 }
 

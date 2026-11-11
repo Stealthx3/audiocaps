@@ -1,10 +1,10 @@
 state: RUNNING
-owner_pid   : 5350
-trigger_time: 1017.474329137
-tstamp      : 1020.578843719
-delay       : 3337
-avail       : 1071
-avail_max   : 1071
+owner_pid   : 2778
+trigger_time: 455.113088338
+tstamp      : 458.293444738
+delay       : 4461
+avail       : 960
+avail_max   : 960
 -----
-hw_ptr      : 137740
-appl_ptr    : 141077
+hw_ptr      : 153264
+appl_ptr    : 157101

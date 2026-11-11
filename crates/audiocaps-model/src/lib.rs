@@ -10,6 +10,7 @@
 //! [`endpoint::CorrelationId`] variants and [`value::Source`] locators.
 
 pub mod caps;
+pub mod detail;
 pub mod endpoint;
 pub mod finding;
 pub mod path;
@@ -20,6 +21,7 @@ pub mod snapshot;
 pub mod value;
 
 pub use caps::*;
+pub use detail::*;
 pub use endpoint::*;
 pub use finding::*;
 pub use path::*;
@@ -30,4 +32,4 @@ pub use value::*;
 
 /// Version of the JSON schema this crate produces. Within major version 1, changes are additive
 /// only (new optional fields, new enum variants); see `schema/README.md`.
-pub const SCHEMA_VERSION: &str = "1.0.0";
+pub const SCHEMA_VERSION: &str = "1.1.0";

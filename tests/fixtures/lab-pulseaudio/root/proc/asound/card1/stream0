@@ -1,0 +1,16 @@
+QEMU QEMU USB Audio at usb-0000:02:00.0-4, full speed : USB Audio
+
+Playback:
+  Status: Running
+    Interface = 1
+    Altset = 1
+    Packet Size = 192
+    Momentary freq = 48000 Hz (0x30.0000)
+  Interface 1
+    Altset 1
+    Format: S16_LE
+    Channels: 2
+    Endpoint: 0x01 (1 OUT) (SYNC)
+    Rates: 48000
+    Bits: 16
+    Channel map: FL FR

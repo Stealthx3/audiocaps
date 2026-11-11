@@ -2,6 +2,6 @@ access: MMAP_INTERLEAVED
 format: S16_LE
 subformat: STD
 channels: 2
-rate: 44100 (44100/1)
-period_size: 1102
-buffer_size: 4408
+rate: 48000 (48000/1)
+period_size: 1199
+buffer_size: 4797

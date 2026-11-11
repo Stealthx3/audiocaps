@@ -1,2 +1,4 @@
- 0 snd_hda_intel
- 1 snd_hda_intel
+ 0 snd_virmidi
+ 1 snd_usb_audio
+ 2 snd_hda_intel
+ 3 snd_hda_intel

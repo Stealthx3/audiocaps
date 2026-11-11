@@ -3,8 +3,8 @@
 
 use serde::{Deserialize, Serialize};
 
-/// Current capture format version.
-pub const CAPTURE_FORMAT: u32 = 1;
+/// Current capture format version. Format 2 (phase 3) adds the ALSA dump (`commands/alsa.json`).
+pub const CAPTURE_FORMAT: u32 = 2;
 
 /// Describes one capture.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

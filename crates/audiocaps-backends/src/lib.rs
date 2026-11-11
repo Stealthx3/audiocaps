@@ -3,14 +3,22 @@
 //!
 //! - [`root::SystemRoot`]: every reader works on the live system or a captured fixture tree.
 //! - [`manifest`]: the capture manifest shared with the capture tool.
-//! - [`probe::probe`]: the scoped probe that builds a [`audiocaps_model::Snapshot`].
+//! - [`runtime::Runtime`]: the probe thread with per-backend deadlines and snapshot generations.
+//! - [`probe::probe`]: one scoped probe without deadlines (fixtures, tests, tools).
+//! - [`alsa`]: the ALSA backend (alsa-lib reader and its serializable dump).
 //!
-//! Subsystem backends (ALSA, PipeWire, PulseAudio, BlueZ, JACK) arrive in phases 3–5, each as its
-//! own module reading through `SystemRoot` or its native client library.
+//! PipeWire, PulseAudio, BlueZ and JACK backends arrive in phases 4–5.
 
+pub mod alsa;
+mod assemble;
+mod environment;
 pub mod manifest;
 pub mod probe;
 pub mod root;
+pub mod runtime;
+pub mod servers;
+mod sysfs;
 
-pub use probe::probe;
+pub use probe::{probe, probe_with};
 pub use root::SystemRoot;
+pub use runtime::{Backend, ProbeOptions, Runtime};

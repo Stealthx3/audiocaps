@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
-//! ALSA procfs text: cards, pcm, USB stream files, hw_params, and os-release.
+//! ALSA procfs text: cards, pcm, PCM info/status, USB stream files, hw_params, raw MIDI,
+//! sequencer clients, and os-release.
 //! The first byte picks the parser so one corpus covers all of them.
 #![no_main]
 
@@ -11,11 +12,15 @@ fuzz_target!(|data: &[u8]| {
         return;
     };
     let text = String::from_utf8_lossy(rest);
-    match sel % 5 {
+    match sel % 9 {
         0 => drop(procfs::parse_cards(&text)),
         1 => drop(procfs::parse_pcm(&text)),
         2 => drop(procfs::parse_usb_stream(&text)),
         3 => drop(procfs::parse_hw_params(&text)),
+        4 => drop(procfs::parse_pcm_info(&text)),
+        5 => drop(procfs::parse_pcm_status(&text)),
+        6 => drop(procfs::parse_rawmidi(&text)),
+        7 => drop(procfs::parse_seq_clients(&text)),
         _ => drop(os_release::parse(&text)),
     }
 });
