@@ -1,0 +1,5 @@
+[Application]
+name=org.example.Viewer
+
+[Context]
+sockets=wayland;

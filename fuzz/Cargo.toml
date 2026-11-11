@@ -63,3 +63,10 @@ path = "fuzz_targets/alsa_conf.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "bt_codec"
+path = "fuzz_targets/bt_codec.rs"
+test = false
+doc = false
+bench = false

@@ -34,7 +34,7 @@ while `capture` runs if needed.
 
 ## ALSA gate checks (phase 3)
 - `scripts/gate-alsa.sh <check>...` runs inside the capture VM: `hw-params`, `busy`, `race`, `routing`, `midi`, `timing` without a server (revert `phase3`), `server` after `capture-stack.sh pipewire|pulseaudio`.
-- `scripts/gate-server.sh <check>...` (phase 4) runs after `capture-stack.sh pipewire|pulseaudio`: `pipewire`, `pulse` (live backend vs `pw-dump` / `pactl`), `passive`, `hotplug` (server changes); `hotplug` without a server measures kernel hotplug with snd-dummy.
+- `scripts/gate-server.sh <check>...` (phase 4) runs after `capture-stack.sh pipewire|pulseaudio`: `pipewire`, `pulse` (live backend vs `pw-dump` / `pactl`), `passive`, `hotplug` (server changes); `hotplug` without a server measures kernel hotplug with snd-dummy; `jack` and `bluez` (phase 5) need jackd2 and bluez installed.
 - The QEMU USB Audio device blocks live snapshots: shut the VM down before `lab.sh snap`.
 - Import captures in the build VM and re-bless goldens in the same `lab.sh run`, then sync back at once; clear the host fixture directory first (sync-back doesn't delete).
 
@@ -59,3 +59,4 @@ while `capture` runs if needed.
 - 2026-11-10 — main: 24 h fuzz run finished clean; phase 2 gate met.
 - 2026-11-11 — capture: snapshot `phase3` (shut off) from `usb-audio` + phase 3 CLI, libasound2-dev, python3, snd-virmidi (2 devices) and snd-seq-dummy at boot. Recaptured alsa-only, pipewire and pulseaudio (capture format 2).
 - 2026-11-11 — capture: snapshot `phase4` from `phase3` + libpipewire-0.3-dev, libpulse-dev, clang; VirMIDI pinned to index 10 (at index 0 it made `default` unopenable).
+- 2026-11-11 — main: libjack-jackd2-dev added (jack-sys needs jack.pc at build time). capture: jackd2 and bluez installed for the phase 5 checks (not in a snapshot).

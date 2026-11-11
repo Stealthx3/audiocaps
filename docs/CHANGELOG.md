@@ -63,12 +63,24 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `audiocaps server-dump` (live, or parsed from `pw-dump` / `pactl -f json`).
 - Schema 1.2.0 (additive): `sound_server` layer detail, `Snapshot.servers`.
 
+- BlueZ backend over D-Bus (zbus): devices, the codecs their stream endpoints advertise, and the
+  negotiated transport codec; never activates bluetoothd. The wireless layer merges advertised,
+  host-supported and negotiated codecs, so gaps (e.g. LDAC advertised but missing on the host)
+  show directly. Bluetooth-only endpoints when no server exposes a device.
+- JACK backend: libjack loaded at run time, `JackNoStartServer`, never activated; rate, buffer
+  size and physical ports with latency. The capture tool saves it (`commands/jack.json`).
+- Sandbox detection: Flatpak permissions from `/.flatpak-info`, Snap plugs inferred from what the
+  snap can reach; each missing permission names the layers it hides and the exact fix, and
+  unreadable layers say which permission is missing.
+- Schema 1.3.0 (additive): wireless layer detail, permission gaps, JACK ports.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in
   `docs/DECISIONS.md`, changelog in `docs/CHANGELOG.md`.
 - Hardware ranges and HDA codec dumps are cached per process and cleared on hotplug, so a free
   PCM is opened at most once and codecs aren't queried on every probe.
+- Bluetooth node names from a sound server are treated as personal (masked on export).
 - ALSA routing resolution handles definitions that are `@func` calls (USB-Audio) and `card_name`.
 - `scripts/check-passive.sh` allows control-device reads and non-blocking PCM opens when no
   sound server runs; it fails on any PCM opened while a server runs.

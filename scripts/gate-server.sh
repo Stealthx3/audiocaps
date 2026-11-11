@@ -8,6 +8,10 @@
 #              state, volume)
 #   pulse      the live PulseAudio backend matches `pactl -f json info/list`
 #   passive    probes under strace open no PCM device while the server runs
+#   jack       without a JACK server: reported service_not_running and no jackd is started;
+#              with `jackd -d dummy -r 48000 -p 256`: rate, buffer and ports match
+#   bluez      with bluez installed but bluetoothd stopped: the probe reports it not running and
+#              does not D-Bus-activate it
 #   hotplug    time from a server change (a null sink added/removed through the server) and from a
 #              kernel hotplug (the snd-dummy card loaded/unloaded in the guest) to the new
 #              snapshot from `audiocaps watch`; every change must arrive in under 20 ms
@@ -124,12 +128,55 @@ sys.exit(0 if ok else 1)
 PY
 }
 
+check_jack() {
+  pkill -x jackd 2>/dev/null || true; sleep 0.5
+  audiocaps probe > "$work/nojack.json"
+  local started=0; pgrep -x jackd >/dev/null && started=1
+  jackd -d dummy -r 48000 -p 256 > "$work/jackd.log" 2>&1 &
+  local jpid=$!
+  sleep 2
+  audiocaps probe > "$work/jack.json"
+  kill "$jpid" 2>/dev/null || true; wait "$jpid" 2>/dev/null || true
+  python3 - "$work/nojack.json" "$work/jack.json" "$started" <<'PY'
+import json, sys
+def jack(p):
+    s = json.load(open(p))
+    return next((x for x in s.get("servers", []) if x["server"] == "jack"), None)
+a, b, started = jack(sys.argv[1]), jack(sys.argv[2]), sys.argv[3] == "1"
+print("  no server:", a["availability"])
+print("  dummy server:", b["availability"], b.get("clock", {}).get("value"), b.get("ports", {}).get("value"))
+ok = (a["availability"].get("reason") == "service_not_running" and not started
+      and b["availability"]["state"] == "read" and b["clock"]["value"]["rate_hz"] == 48000
+      and b["clock"]["value"]["quantum"] == 256 and len(b["ports"]["value"]) >= 1)
+print(f"jack: {'ok' if ok else 'FAILED'} (jackd started by the probe: {started})")
+sys.exit(0 if ok else 1)
+PY
+}
+
+check_bluez() {
+  sudo systemctl stop bluetooth 2>/dev/null || true
+  sleep 0.5
+  audiocaps probe > "$work/bt.json"
+  local state; state="$(systemctl is-active bluetooth 2>/dev/null || true)"
+  python3 - "$work/bt.json" "$state" <<'PY'
+import json, sys
+s = json.load(open(sys.argv[1])); state = sys.argv[2]
+w = next(l for l in s["layers"] if l["layer"] == "wireless")
+print("  wireless layer:", w["availability"], "| bluetooth.service after probe:", state)
+ok = w["availability"].get("reason") == "service_not_running" and state != "active"
+print(f"bluez: {'ok' if ok else 'FAILED'}")
+sys.exit(0 if ok else 1)
+PY
+}
+
 for c in "$@"; do
   case "$c" in
     pipewire) check_pipewire || fail=1 ;;
     pulse) check_pulse || fail=1 ;;
     passive) check_passive || fail=1 ;;
     hotplug) check_hotplug || fail=1 ;;
+    jack) check_jack || fail=1 ;;
+    bluez) check_bluez || fail=1 ;;
     *) echo "unknown check $c" >&2; exit 2 ;;
   esac
 done

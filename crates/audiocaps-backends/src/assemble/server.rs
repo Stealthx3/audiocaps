@@ -295,6 +295,7 @@ impl Ctx<'_> {
                     p("sm-settings"),
                 )
             }),
+            ports: None,
         }
     }
 
@@ -434,7 +435,7 @@ impl Ctx<'_> {
 
     /// Bluetooth codecs from the device's per-codec profiles (`a2dp-sink-ldac`) and the node's
     /// negotiated codec (`api.bluez5.codec`).
-    fn bt_codecs(&self, v: &ViewSrc<'_>) -> Value<Vec<BluetoothCodecState>> {
+    pub(crate) fn bt_codecs(&self, v: &ViewSrc<'_>) -> Value<Vec<BluetoothCodecState>> {
         let n = v.node;
         let dev = self.device_of(v.dump, n);
         let negotiated = n.props.get("api.bluez5.codec").map(|c| bt_codec(c));
@@ -635,16 +636,18 @@ impl Ctx<'_> {
             if self.layer(LayerKind::SoundServer) {
                 layers.push(self.server_layer(id));
             }
+            let bt_address = n.props.get("api.bluez5.address").cloned();
             if class == EndpointClass::Bluetooth && self.layer(LayerKind::Wireless) {
-                layers.push(LayerCapabilities {
-                    layer: LayerKind::Wireless,
-                    availability: super::not_implemented(5),
-                    caps: CapabilitySet::default(),
-                    detail: None,
-                });
+                let host = self.bt_codecs(&views[0]);
+                layers.push(
+                    self.wireless_layer(bt_address.as_deref(), host.known().map(|v| v.as_slice())),
+                );
             }
             let mut correlation = vec![];
             if identity {
+                if let Some(a) = &bt_address {
+                    correlation.push(super::wireless::bluez_key(a));
+                }
                 for v in views {
                     let name = mask_bt(&v.node.name);
                     correlation.push(CorrelationKey {
@@ -667,7 +670,16 @@ impl Ctx<'_> {
                     } else {
                         mask_bt(&n.description)
                     };
-                    Value::measured(EndpointName::Plain(name), src())
+                    // A Bluetooth node's description is the device alias the user chose.
+                    let name = if class == EndpointClass::Bluetooth {
+                        EndpointName::Personal(audiocaps_model::Sensitive::new(
+                            audiocaps_model::SensitiveKind::DeviceName,
+                            name,
+                        ))
+                    } else {
+                        EndpointName::Plain(name)
+                    };
+                    Value::measured(name, src())
                 }),
                 correlation,
                 sink: None,
@@ -678,6 +690,16 @@ impl Ctx<'_> {
             });
         }
         out
+    }
+
+    /// Bluetooth addresses of server nodes (to skip them in the BlueZ-only list).
+    pub(crate) fn server_bt_addresses(&self) -> Vec<String> {
+        self.servers
+            .by_endpoint
+            .values()
+            .flat_map(|v| v.iter())
+            .filter_map(|v| v.node.props.get("api.bluez5.address").cloned())
+            .collect()
     }
 
     /// Correlation keys for an ALSA endpoint's server nodes.
@@ -717,6 +739,7 @@ fn blank(server: SoundServer, reason: UnknownReason, detail: String) -> ServerSt
         default_sink: None,
         default_source: None,
         policy: None,
+        ports: None,
     }
 }
 

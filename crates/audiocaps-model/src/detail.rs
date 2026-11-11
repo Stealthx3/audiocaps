@@ -25,6 +25,8 @@ pub enum LayerDetail {
     Device(DeviceDetail),
     /// Sound-server views of the endpoint, one per server API.
     SoundServer(ServerDetail),
+    /// Wireless link (Bluetooth device and transport).
+    Wireless(BluetoothDetail),
 }
 
 /// Host hardware behind an endpoint.
@@ -359,6 +361,60 @@ pub struct ServerState {
     /// Session manager and its policy settings (WirePlumber `sm-settings`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<Value<Policy>>,
+    /// Physical ports (JACK).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ports: Option<Value<Vec<PortGroup>>>,
+}
+
+/// Ports of one client and direction (JACK).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct PortGroup {
+    /// Client name, e.g. `system`.
+    pub client: String,
+    /// `playback` (the app writes to it) or `capture`.
+    pub direction: String,
+    /// Number of ports (channels).
+    pub channels: u32,
+    /// Latency range in frames.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub latency_frames: Option<Range>,
+}
+
+/// A Bluetooth device and its audio transport.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct BluetoothDetail {
+    /// Connected.
+    pub connected: Value<bool>,
+    /// Audio profiles the device offers (`a2dp_sink`, `hfp_hf`, `pacs`, …).
+    #[serde(default)]
+    pub profiles: Vec<String>,
+    /// The active audio transport, when one is set up.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub transport: Option<Value<BluetoothTransport>>,
+}
+
+/// An active Bluetooth audio transport.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct BluetoothTransport {
+    /// Profile, e.g. `a2dp_sink`, `hfp_hf`.
+    pub profile: String,
+    /// Codec in use.
+    pub codec: crate::caps::BluetoothCodec,
+    /// Transport state: `idle`, `pending`, `active`.
+    pub state: String,
+}
+
+/// A sandbox permission the app lacks, with the layers it hides and the exact fix.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct PermissionGap {
+    /// The permission, e.g. `--socket=pulseaudio`, `alsa` (Snap plug).
+    pub permission: String,
+    /// Layers it hides.
+    pub layers: Vec<crate::scope::LayerKind>,
+    /// What the user or packager runs or adds, e.g. `flatpak override --user --socket=pulseaudio <app>`.
+    pub fix: String,
+    /// Needed for basic operation (else it only adds detail).
+    pub required: bool,
 }
 
 /// PipeWire graph clock settings.

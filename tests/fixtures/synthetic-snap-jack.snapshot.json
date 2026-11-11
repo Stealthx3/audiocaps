@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.3.0",
+  "generation": 1,
+  "taken_at_ms": 1794500000000,
+  "source": {
+    "kind": "fixture",
+    "name": "synthetic-snap-jack"
+  },
+  "scope": {
+    "endpoint_classes": {
+      "select": "all"
+    },
+    "directions": {
+      "select": "all"
+    },
+    "endpoints": {
+      "select": "all"
+    },
+    "layers": {
+      "select": "all"
+    },
+    "fields": {
+      "select": "all"
+    },
+    "access_paths": {
+      "select": "all"
+    }
+  },
+  "redaction": {
+    "serials": "hash",
+    "bluetooth_addresses": "hash",
+    "device_names": "mask"
+  },
+  "layers": [
+    {
+      "layer": "sink_chain",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 6 of the roadmap"
+      }
+    },
+    {
+      "layer": "host_hardware",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/sys/class/sound: No such file or directory (os error 2); missing hardware-observe: snap connect <snap>:hardware-observe"
+      }
+    },
+    {
+      "layer": "kernel_driver",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/sys/module: No such file or directory (os error 2); missing hardware-observe: snap connect <snap>:hardware-observe"
+      }
+    },
+    {
+      "layer": "alsa_userspace",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/proc/asound/pcm: No such file or directory (os error 2)"
+      }
+    },
+    {
+      "layer": "sound_server",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pw-dump not installed"
+      }
+    },
+    {
+      "layer": "wireless",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "org.bluez not running; not activating it"
+      }
+    },
+    {
+      "layer": "environment",
+      "availability": {
+        "state": "partial"
+      }
+    }
+  ],
+  "environment": {
+    "os": {
+      "state": "known",
+      "value": {
+        "id": "debian",
+        "version_id": "13",
+        "family": "debian"
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/etc/os-release"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "kernel": {
+      "state": "known",
+      "value": "6.12.0-synthetic",
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/proc/sys/kernel/osrelease"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "sandbox": {
+      "state": "known",
+      "value": {
+        "kind": "snap",
+        "missing": [
+          {
+            "permission": "hardware-observe",
+            "layers": [
+              "host_hardware",
+              "kernel_driver"
+            ],
+            "fix": "snap connect <snap>:hardware-observe",
+            "required": false
+          }
+        ]
+      },
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "derived",
+          "from": "SNAP_NAME and the sockets, devices and files the snap can reach"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "servers": [
+      {
+        "server": "pipe_wire",
+        "info": {
+          "state": "unknown",
+          "reason": "library_missing",
+          "detail": "pw-dump not installed"
+        }
+      },
+      {
+        "server": "pulse_audio",
+        "info": {
+          "state": "unknown",
+          "reason": "library_missing",
+          "detail": "pactl not installed"
+        }
+      }
+    ]
+  },
+  "routing": {
+    "default_playback": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    },
+    "default_capture": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    }
+  },
+  "servers": [
+    {
+      "server": "pipe_wire",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pw-dump not installed"
+      }
+    },
+    {
+      "server": "pulse_audio",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pactl not installed"
+      }
+    },
+    {
+      "server": "jack",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "jack"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "jack"
+          },
+          "read_at_ms": 1794500000000
+        }
+      },
+      "clock": {
+        "state": "known",
+        "value": {
+          "rate_hz": 48000,
+          "quantum": 256
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "jack"
+          },
+          "read_at_ms": 1794500000000
+        }
+      },
+      "ports": {
+        "state": "known",
+        "value": [
+          {
+            "client": "system",
+            "direction": "capture",
+            "channels": 2,
+            "latency_frames": {
+              "min": 256,
+              "max": 256
+            }
+          },
+          {
+            "client": "system",
+            "direction": "playback",
+            "channels": 2,
+            "latency_frames": {
+              "min": 512,
+              "max": 512
+            }
+          }
+        ],
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "jack"
+          },
+          "read_at_ms": 1794500000000
+        }
+      }
+    }
+  ],
+  "endpoints": []
+}

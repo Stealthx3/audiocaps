@@ -1,0 +1,8 @@
+[Application]
+name=org.example.Player
+runtime=runtime/org.freedesktop.Platform/x86_64/25.08
+
+[Context]
+shared=network;ipc;
+sockets=x11;wayland;pulseaudio;
+devices=dri;

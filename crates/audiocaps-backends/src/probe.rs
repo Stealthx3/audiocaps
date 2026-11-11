@@ -130,6 +130,36 @@ pub(crate) fn probe_inner<'a>(
             (None, None) => tasks.push(Box::new(ServerTask::new(root, ServerKind::PulseAudio))),
         }
     }
+    if scope.layers.includes(&LayerKind::Wireless) {
+        tasks.push(Box::new(OneShot {
+            backend: Backend::Bluez,
+            run: Some(Box::new(move |out: &mut Results| {
+                out.bluez = Some(read_bluez(root));
+            })),
+            on_timeout: Box::new(|out: &mut Results| {
+                out.bluez = Some(Outcome::Unknown {
+                    reason: UnknownReason::Timeout,
+                    detail: "bluez backend deadline".into(),
+                })
+            }),
+            pending: None,
+        }));
+    }
+    if scope.layers.includes(&LayerKind::SoundServer) {
+        tasks.push(Box::new(OneShot {
+            backend: Backend::Jack,
+            run: Some(Box::new(move |out: &mut Results| {
+                out.jack = Some(read_jack(root));
+            })),
+            on_timeout: Box::new(|out: &mut Results| {
+                out.jack = Some(Outcome::Unknown {
+                    reason: UnknownReason::Timeout,
+                    detail: "jack backend deadline".into(),
+                })
+            }),
+            pending: None,
+        }));
+    }
     if scope.layers.includes(&LayerKind::Environment) {
         tasks.push(Box::new(EnvTask {
             root,
@@ -155,6 +185,22 @@ pub(crate) struct Results {
     pub env_timed_out: bool,
     pub pipewire: ServerResult,
     pub pulse: ServerResult,
+    /// BlueZ: `None` when not in scope.
+    pub bluez: Option<Outcome<crate::bluez::BluezDump>>,
+    /// JACK: `None` when not in scope.
+    pub jack: Option<Outcome<crate::jack::JackDump>>,
+}
+
+/// What a simple backend produced.
+#[derive(Debug)]
+pub(crate) enum Outcome<T> {
+    /// Read; `live` is false for captured data.
+    Read { value: T, live: bool },
+    /// Not read, with the reason.
+    Unknown {
+        reason: UnknownReason,
+        detail: String,
+    },
 }
 
 /// What a sound-server backend produced.
@@ -735,6 +781,96 @@ impl Task<Results> for ServerTask<'_> {
             ServerKind::PipeWire => out.pipewire = r,
             ServerKind::PulseAudio => out.pulse = r,
         }
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+// one-step backends (BlueZ, JACK)
+
+type Fill<'a> = Box<dyn FnOnce(&mut Results) + 'a>;
+
+/// A backend that reads everything in one step.
+struct OneShot<'a> {
+    backend: Backend,
+    run: Option<Fill<'a>>,
+    on_timeout: Box<dyn Fn(&mut Results) + 'a>,
+    /// Results computed in `step`, applied in `finish`.
+    pending: Option<Results>,
+}
+
+impl Task<Results> for OneShot<'_> {
+    fn backend(&self) -> Backend {
+        self.backend
+    }
+
+    fn step(&mut self) -> bool {
+        if let Some(run) = self.run.take() {
+            let mut r = Results::default();
+            run(&mut r);
+            self.pending = Some(r);
+        }
+        true
+    }
+
+    fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
+        match self.pending {
+            Some(r) => {
+                if r.bluez.is_some() {
+                    out.bluez = r.bluez;
+                }
+                if r.jack.is_some() {
+                    out.jack = r.jack;
+                }
+            }
+            None if timed_out => (self.on_timeout)(out),
+            None => {}
+        }
+    }
+}
+
+fn captured_json(
+    root: &SystemRoot,
+    name: &str,
+) -> Result<serde_json::Value, (UnknownReason, String)> {
+    match root.captured_command(name) {
+        Some((_, Some(b))) => serde_json::from_slice(&b)
+            .map_err(|e| (UnknownReason::ParseError, format!("{name}: {e}"))),
+        Some((c, None)) => Err((
+            UnknownReason::ServiceNotRunning,
+            c.skipped
+                .unwrap_or_else(|| format!("{name} gave no output")),
+        )),
+        None => Err((UnknownReason::NotExposed, format!("{name} not captured"))),
+    }
+}
+
+fn read_bluez(root: &SystemRoot) -> Outcome<crate::bluez::BluezDump> {
+    let r = match root {
+        SystemRoot::Live => crate::bluez::read_live().map(|v| (v, true)),
+        SystemRoot::Fixture(_) => captured_json(root, "bluez").and_then(|j| {
+            crate::bluez::from_busctl(&j)
+                .map(|v| (v, false))
+                .ok_or((UnknownReason::ParseError, "unexpected busctl output".into()))
+        }),
+    };
+    match r {
+        Ok((value, live)) => Outcome::Read { value, live },
+        Err((reason, detail)) => Outcome::Unknown { reason, detail },
+    }
+}
+
+fn read_jack(root: &SystemRoot) -> Outcome<crate::jack::JackDump> {
+    let r = match root {
+        SystemRoot::Live => crate::jack::read_live().map(|v| (v, true)),
+        SystemRoot::Fixture(_) => captured_json(root, crate::jack::CAPTURE_NAME).and_then(|j| {
+            serde_json::from_value(j)
+                .map(|v| (v, false))
+                .map_err(|e| (UnknownReason::ParseError, e.to_string()))
+        }),
+    };
+    match r {
+        Ok((value, live)) => Outcome::Read { value, live },
+        Err((reason, detail)) => Outcome::Unknown { reason, detail },
     }
 }
 
