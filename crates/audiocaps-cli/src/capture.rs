@@ -320,6 +320,31 @@ fn alsa_dump(st: &mut Staging) -> CapturedCommand {
     rec
 }
 
+/// Runs the library's JACK reader in-process (never starts a server) and stores its record.
+fn jack_dump(st: &mut Staging) -> CapturedCommand {
+    use audiocaps_backends::jack;
+    let mut rec = CapturedCommand {
+        name: jack::CAPTURE_NAME.into(),
+        argv: vec!["(in-process)".into(), "audiocaps jack reader".into()],
+        exit_code: None,
+        output_file: None,
+        skipped: None,
+    };
+    match jack::read_live() {
+        Ok(d) => {
+            let mut s = serde_json::to_string_pretty(&d).unwrap_or_default();
+            s.push('\n');
+            let file = format!("{}.json", jack::CAPTURE_NAME);
+            if fs::write(st.dir.join("commands").join(&file), st.redactor.text(&s)).is_ok() {
+                rec.exit_code = Some(0);
+                rec.output_file = Some(file);
+            }
+        }
+        Err((_, why)) => rec.skipped = Some(why),
+    }
+    rec
+}
+
 fn which(bin: &str) -> bool {
     std::env::var_os("PATH")
         .map(|p| std::env::split_paths(&p).any(|d| d.join(bin).is_file()))
@@ -337,6 +362,7 @@ fn commands(st: &mut Staging) -> Vec<CapturedCommand> {
     };
 
     out.push(alsa_dump(st));
+    out.push(jack_dump(st));
     if which("pw-dump") {
         out.push(run_command(st, "pw-dump", &["pw-dump"], &[]));
     } else {

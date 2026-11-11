@@ -1,0 +1,593 @@
+{
+  "schema_version": "1.3.0",
+  "generation": 1,
+  "taken_at_ms": 1794500000000,
+  "source": {
+    "kind": "fixture",
+    "name": "synthetic-bt-ldac-gap"
+  },
+  "scope": {
+    "endpoint_classes": {
+      "select": "all"
+    },
+    "directions": {
+      "select": "all"
+    },
+    "endpoints": {
+      "select": "all"
+    },
+    "layers": {
+      "select": "all"
+    },
+    "fields": {
+      "select": "all"
+    },
+    "access_paths": {
+      "select": "all"
+    }
+  },
+  "redaction": {
+    "serials": "hash",
+    "bluetooth_addresses": "hash",
+    "device_names": "mask"
+  },
+  "layers": [
+    {
+      "layer": "sink_chain",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_implemented",
+        "detail": "read from phase 6 of the roadmap"
+      }
+    },
+    {
+      "layer": "host_hardware",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/sys/class/sound: No such file or directory (os error 2)"
+      }
+    },
+    {
+      "layer": "kernel_driver",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/sys/module: No such file or directory (os error 2)"
+      }
+    },
+    {
+      "layer": "alsa_userspace",
+      "availability": {
+        "state": "unknown",
+        "reason": "not_exposed",
+        "detail": "/proc/asound/pcm: No such file or directory (os error 2)"
+      }
+    },
+    {
+      "layer": "sound_server",
+      "availability": {
+        "state": "read"
+      }
+    },
+    {
+      "layer": "wireless",
+      "availability": {
+        "state": "read"
+      }
+    },
+    {
+      "layer": "environment",
+      "availability": {
+        "state": "partial"
+      }
+    }
+  ],
+  "environment": {
+    "os": {
+      "state": "known",
+      "value": {
+        "id": "debian",
+        "version_id": "13",
+        "family": "debian"
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/etc/os-release"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "kernel": {
+      "state": "known",
+      "value": "6.12.0-synthetic",
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/proc/sys/kernel/osrelease"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "sandbox": {
+      "state": "known",
+      "value": {
+        "kind": "none"
+      },
+      "confidence": "measured",
+      "provenance": {
+        "layer": "environment",
+        "source": {
+          "kind": "file",
+          "path": "/.flatpak-info"
+        },
+        "read_at_ms": 1794500000000
+      }
+    },
+    "servers": [
+      {
+        "server": "pipe_wire",
+        "info": {
+          "state": "known",
+          "value": {
+            "name": "pipewire-0",
+            "version": "1.4.2"
+          },
+          "confidence": "measured",
+          "provenance": {
+            "layer": "sound_server",
+            "source": {
+              "kind": "command",
+              "name": "pw-dump"
+            },
+            "read_at_ms": 1794500000000
+          }
+        }
+      },
+      {
+        "server": "pulse_audio",
+        "info": {
+          "state": "unknown",
+          "reason": "library_missing",
+          "detail": "pactl not installed"
+        }
+      }
+    ]
+  },
+  "routing": {
+    "default_playback": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    },
+    "default_capture": {
+      "state": "unknown",
+      "reason": "not_exposed",
+      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+    }
+  },
+  "servers": [
+    {
+      "server": "pipe_wire",
+      "availability": {
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "pipewire-0",
+          "version": "1.4.2"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794500000000
+        }
+      },
+      "clock": {
+        "state": "known",
+        "value": {
+          "rate_hz": 48000
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794500000000
+        }
+      }
+    },
+    {
+      "server": "pulse_audio",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "pactl not installed"
+      }
+    },
+    {
+      "server": "jack",
+      "availability": {
+        "state": "unknown",
+        "reason": "service_not_running",
+        "detail": "no JACK server running; not starting one"
+      }
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "node:bluez_output.bt-3582af60.1",
+      "class": "bluetooth",
+      "direction": "playback",
+      "transport": {
+        "state": "known",
+        "value": "bluetooth",
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794500000000
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "personal": {
+            "kind": "device_name",
+            "redacted": "redacted"
+          }
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "pw-dump"
+          },
+          "read_at_ms": 1794500000000
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "bluez_device",
+            "address": {
+              "kind": "bluetooth_address",
+              "redacted": "sha256:3582af60bbeaf050"
+            }
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "pipewire_node",
+            "name": "bluez_output.bt-3582af60.1"
+          },
+          "confidence": "measured"
+        }
+      ],
+      "layers": [
+        {
+          "layer": "sound_server",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794500000000
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  48000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794500000000
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794500000000
+              }
+            },
+            "channel_maps": {
+              "state": "known",
+              "value": [
+                {
+                  "positions": [
+                    "fl",
+                    "fr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794500000000
+              }
+            },
+            "passthrough": {
+              "state": "unknown",
+              "reason": "not_exposed",
+              "detail": "the server lists no passthrough formats for this node"
+            },
+            "bluetooth_codecs": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "sbc",
+                  "advertised_by_device": true,
+                  "available_on_host": true,
+                  "negotiated": true
+                },
+                {
+                  "codec": "aac",
+                  "advertised_by_device": true,
+                  "available_on_host": true,
+                  "negotiated": false
+                },
+                {
+                  "codec": "msbc",
+                  "advertised_by_device": true,
+                  "available_on_host": true,
+                  "negotiated": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sound_server",
+                "source": {
+                  "kind": "command",
+                  "name": "pw-dump"
+                },
+                "read_at_ms": 1794500000000
+              }
+            }
+          },
+          "detail": {
+            "kind": "sound_server",
+            "views": [
+              {
+                "server": "pipe_wire",
+                "object": "bluez_output.bt-3582af60.1",
+                "media_class": "Audio/Sink",
+                "state": {
+                  "state": "known",
+                  "value": "idle",
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794500000000
+                  }
+                },
+                "current": {
+                  "state": "known",
+                  "value": {
+                    "format": "s16_le",
+                    "channels": 2,
+                    "rate_hz": 48000
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794500000000
+                  }
+                },
+                "profiles": {
+                  "state": "known",
+                  "value": [
+                    {
+                      "name": "off",
+                      "description": "Off",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "a2dp-sink-sbc",
+                      "description": "High Fidelity Playback (A2DP Sink, codec SBC)",
+                      "available": true,
+                      "active": true
+                    },
+                    {
+                      "name": "a2dp-sink-aac",
+                      "description": "High Fidelity Playback (A2DP Sink, codec AAC)",
+                      "available": true,
+                      "active": false
+                    },
+                    {
+                      "name": "headset-head-unit-msbc",
+                      "description": "Headset Head Unit (HSP/HFP, codec mSBC)",
+                      "available": true,
+                      "active": false
+                    }
+                  ],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794500000000
+                  }
+                },
+                "routes": {
+                  "state": "known",
+                  "value": [],
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794500000000
+                  }
+                },
+                "volume": {
+                  "state": "known",
+                  "value": {
+                    "percent": 67,
+                    "muted": false
+                  },
+                  "confidence": "measured",
+                  "provenance": {
+                    "layer": "sound_server",
+                    "source": {
+                      "kind": "command",
+                      "name": "pw-dump"
+                    },
+                    "read_at_ms": 1794500000000
+                  }
+                },
+                "is_default": false
+              }
+            ]
+          }
+        },
+        {
+          "layer": "wireless",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "bluetooth_codecs": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "ldac",
+                  "advertised_by_device": true,
+                  "available_on_host": false,
+                  "negotiated": false
+                },
+                {
+                  "codec": "aac",
+                  "advertised_by_device": true,
+                  "available_on_host": true,
+                  "negotiated": false
+                },
+                {
+                  "codec": "sbc",
+                  "advertised_by_device": true,
+                  "available_on_host": true,
+                  "negotiated": true
+                },
+                {
+                  "codec": "msbc",
+                  "advertised_by_device": false,
+                  "available_on_host": true,
+                  "negotiated": false
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "wireless",
+                "source": {
+                  "kind": "command",
+                  "name": "bluez"
+                },
+                "read_at_ms": 1794500000000
+              }
+            }
+          },
+          "detail": {
+            "kind": "wireless",
+            "connected": {
+              "state": "known",
+              "value": true,
+              "confidence": "measured",
+              "provenance": {
+                "layer": "wireless",
+                "source": {
+                  "kind": "command",
+                  "name": "bluez"
+                },
+                "read_at_ms": 1794500000000
+              }
+            },
+            "profiles": [
+              "a2dp_sink",
+              "hfp_hf"
+            ],
+            "transport": {
+              "state": "known",
+              "value": {
+                "profile": "a2dp_sink",
+                "codec": "sbc",
+                "state": "active"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "wireless",
+                "source": {
+                  "kind": "command",
+                  "name": "bluez"
+                },
+                "read_at_ms": 1794500000000
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

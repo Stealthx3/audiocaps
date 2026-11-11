@@ -46,6 +46,10 @@ pub enum Backend {
     PipeWire,
     /// PulseAudio client (native PulseAudio or pipewire-pulse).
     PulseAudio,
+    /// BlueZ over D-Bus.
+    Bluez,
+    /// JACK client (never starts a server).
+    Jack,
 }
 
 /// Probe options.
@@ -99,6 +103,8 @@ impl ProbeOptions {
             Backend::Environment,
             Backend::PipeWire,
             Backend::PulseAudio,
+            Backend::Bluez,
+            Backend::Jack,
         ]
         .iter()
         .map(|b| self.deadline(*b))

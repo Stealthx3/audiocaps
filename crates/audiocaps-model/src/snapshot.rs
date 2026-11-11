@@ -201,12 +201,18 @@ pub enum Sandbox {
         /// Granted permissions relevant to audio, as written in `/.flatpak-info`.
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         granted: Vec<String>,
+        /// Permissions the app lacks, with the layers they hide and the fix.
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        missing: Vec<crate::detail::PermissionGap>,
     },
     /// Snap.
     Snap {
-        /// Connected plugs relevant to audio.
+        /// Connected plugs relevant to audio (inferred from what the snap can reach).
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         connected: Vec<String>,
+        /// Plugs the snap lacks, with the layers they hide and the fix.
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        missing: Vec<crate::detail::PermissionGap>,
     },
 }
 

@@ -1,0 +1,49 @@
+{
+  "format": 2,
+  "tool_version": "0.1.0",
+  "captured_at_ms": 1794500000000,
+  "sandbox": {
+    "snap": false,
+    "flatpak": false
+  },
+  "file_count": 2,
+  "commands": [
+    {
+      "name": "pw-dump",
+      "argv": [
+        "synthetic"
+      ],
+      "exit_code": 0,
+      "output_file": "pw-dump.json"
+    },
+    {
+      "name": "pactl-info",
+      "argv": [],
+      "skipped": "pactl not installed"
+    },
+    {
+      "name": "pactl-list",
+      "argv": [],
+      "skipped": "pactl not installed"
+    },
+    {
+      "name": "bluez",
+      "argv": [
+        "synthetic"
+      ],
+      "exit_code": 0,
+      "output_file": "bluez.json"
+    },
+    {
+      "name": "jack",
+      "argv": [],
+      "skipped": "no JACK server running; not starting one"
+    }
+  ],
+  "redaction": [
+    "synthetic fixture written by hand; contains no real system data"
+  ],
+  "notes": [
+    "Hand-written: Bluetooth headphones that advertise LDAC, AAC and SBC while the host offers only SBC and AAC (libldac missing); SBC negotiated."
+  ]
+}

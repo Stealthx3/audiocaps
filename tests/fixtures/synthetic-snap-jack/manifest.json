@@ -1,0 +1,41 @@
+{
+  "format": 2,
+  "tool_version": "0.1.0",
+  "captured_at_ms": 1794500000000,
+  "sandbox": {
+    "snap": true,
+    "flatpak": false
+  },
+  "file_count": 2,
+  "commands": [
+    {
+      "name": "pw-dump",
+      "argv": [],
+      "skipped": "pw-dump not installed"
+    },
+    {
+      "name": "pactl-info",
+      "argv": [],
+      "skipped": "pactl not installed"
+    },
+    {
+      "name": "bluez",
+      "argv": [],
+      "skipped": "org.bluez not running; not activating it"
+    },
+    {
+      "name": "jack",
+      "argv": [
+        "synthetic"
+      ],
+      "exit_code": 0,
+      "output_file": "jack.json"
+    }
+  ],
+  "redaction": [
+    "synthetic fixture written by hand; contains no real system data"
+  ],
+  "notes": [
+    "Hand-written: strict snap without the hardware-observe plug (no /sys/class/sound), JACK2 at 48 kHz / 256 frames."
+  ]
+}
