@@ -187,6 +187,15 @@ pub struct SinkRecord {
     pub sync_delay_ms: Value<u16>,
     /// Devices behind the sink (ARC/eARC receiver, TV behind a receiver), when known.
     pub downstream: Value<Vec<SinkIdentity>>,
+    /// HDMI link limits and latency the sink states (HDMI and HDMI Forum VSDBs).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub link: Option<Value<crate::detail::HdmiLink>>,
+    /// The CEC bus, when the application asked for CEC.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cec: Option<Value<crate::detail::CecBus>>,
+    /// Quirk-data entries that matched this sink, with their effects.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub quirks: Vec<crate::detail::AppliedQuirk>,
 }
 
 /// Identity of a sink.

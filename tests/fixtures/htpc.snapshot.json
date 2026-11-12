@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.4.0",
   "generation": 1,
   "taken_at_ms": 1794190241958,
   "source": {
@@ -35,9 +35,7 @@
     {
       "layer": "sink_chain",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 6 of the roadmap"
+        "state": "partial"
       }
     },
     {
@@ -492,8 +490,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },
@@ -1107,8 +1105,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "a sink is connected to this card, but nothing binds its ELD to this PCM (no ELD control in the data and no stream open)"
           },
           "caps": {}
         },
@@ -1461,8 +1459,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "a sink is connected to this card, but nothing binds its ELD to this PCM (no ELD control in the data and no stream open)"
           },
           "caps": {}
         },
@@ -1815,8 +1813,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "a sink is connected to this card, but nothing binds its ELD to this PCM (no ELD control in the data and no stream open)"
           },
           "caps": {}
         },
@@ -2176,17 +2174,342 @@
             "name": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3"
           },
           "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "drm_connector",
+            "name": "card1-HDMI-A-2"
+          },
+          "confidence": "inferred"
         }
       ],
+      "sink": {
+        "identity": {
+          "manufacturer_id": {
+            "state": "known",
+            "value": "HEC",
+            "confidence": "measured",
+            "provenance": {
+              "layer": "sink_chain",
+              "source": {
+                "kind": "file",
+                "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+              },
+              "read_at_ms": 1794190241958
+            }
+          },
+          "manufacturer_name": {
+            "state": "known",
+            "value": "Hisense",
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "sink_chain",
+              "source": {
+                "kind": "table",
+                "name": "pnp"
+              },
+              "read_at_ms": 1794190241958
+            }
+          },
+          "product_code": {
+            "state": "known",
+            "value": 41008,
+            "confidence": "measured",
+            "provenance": {
+              "layer": "sink_chain",
+              "source": {
+                "kind": "file",
+                "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+              },
+              "read_at_ms": 1794190241958
+            }
+          },
+          "model_name": {
+            "state": "known",
+            "value": "HISENSE",
+            "confidence": "measured",
+            "provenance": {
+              "layer": "sink_chain",
+              "source": {
+                "kind": "file",
+                "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+              },
+              "read_at_ms": 1794190241958
+            }
+          },
+          "sink_key": {
+            "state": "known",
+            "value": "HEC-a030",
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "sink_chain",
+              "source": {
+                "kind": "derived",
+                "from": "manufacturer, product and serial"
+              },
+              "read_at_ms": 1794190241958
+            }
+          }
+        },
+        "audio_descriptors": {
+          "state": "known",
+          "value": [
+            {
+              "codec": "eac3",
+              "max_channels": 8,
+              "rates_hz": [
+                44100,
+                48000
+              ]
+            },
+            {
+              "codec": "ac3",
+              "max_channels": 6,
+              "rates_hz": [
+                32000,
+                44100,
+                48000
+              ],
+              "max_bitrate_kbps": 640
+            },
+            {
+              "codec": "dts",
+              "max_channels": 6,
+              "rates_hz": [
+                44100,
+                48000,
+                88200,
+                96000
+              ],
+              "max_bitrate_kbps": 1536
+            },
+            {
+              "codec": "dts_hd",
+              "max_channels": 8,
+              "rates_hz": [
+                44100,
+                48000,
+                88200,
+                96000,
+                176400,
+                192000
+              ],
+              "flags": [
+                "needs_hbr"
+              ]
+            },
+            {
+              "codec": "lpcm",
+              "max_channels": 8,
+              "rates_hz": [
+                32000,
+                44100,
+                48000,
+                88200,
+                96000,
+                176400,
+                192000
+              ],
+              "bit_depths": [
+                16,
+                20,
+                24
+              ]
+            }
+          ],
+          "confidence": "measured",
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "file",
+              "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+            },
+            "read_at_ms": 1794190241958
+          }
+        },
+        "speaker_allocation": {
+          "state": "known",
+          "value": [
+            "fl",
+            "fr",
+            "lfe",
+            "fc",
+            "rl",
+            "rr",
+            "rc",
+            "flc",
+            "frc",
+            "rlc",
+            "rrc",
+            {
+              "other": "flw"
+            },
+            {
+              "other": "frw"
+            },
+            {
+              "other": "flh"
+            },
+            {
+              "other": "frh"
+            },
+            "tc",
+            {
+              "other": "fch"
+            }
+          ],
+          "confidence": "measured",
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "file",
+              "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+            },
+            "read_at_ms": 1794190241958
+          }
+        },
+        "sync_delay_ms": {
+          "state": "known",
+          "value": 0,
+          "confidence": "measured",
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "file",
+              "path": "/proc/asound/card1/eld#0.3"
+            },
+            "read_at_ms": 1794190241958
+          }
+        },
+        "downstream": {
+          "state": "unknown",
+          "reason": "not_requested",
+          "detail": "devices behind the sink are read over CEC, which the application did not request"
+        },
+        "link": {
+          "state": "known",
+          "value": {
+            "physical_address": 8192,
+            "max_tmds_mhz": 600,
+            "supports_ai": false
+          },
+          "confidence": "measured",
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "file",
+              "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+            },
+            "read_at_ms": 1794190241958
+          }
+        }
+      },
       "layers": [
         {
           "layer": "sink_chain",
           "availability": {
-            "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "state": "read"
           },
-          "caps": {}
+          "caps": {
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  176400,
+                  192000
+                ]
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sink_chain",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 8
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sink_chain",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+                },
+                "read_at_ms": 1794190241958
+              }
+            },
+            "passthrough": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "eac3",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000
+                  ]
+                },
+                {
+                  "codec": "ac3",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    32000,
+                    44100,
+                    48000
+                  ],
+                  "max_bitrate_kbps": 640
+                },
+                {
+                  "codec": "dts",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000
+                  ],
+                  "max_bitrate_kbps": 1536
+                },
+                {
+                  "codec": "dts_hd",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000,
+                    176400,
+                    192000
+                  ],
+                  "flags": [
+                    "needs_hbr"
+                  ]
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "sink_chain",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+                },
+                "read_at_ms": 1794190241958
+              }
+            }
+          }
         },
         {
           "layer": "host_hardware",
@@ -2967,8 +3290,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },
@@ -3415,8 +3738,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },
@@ -3872,8 +4195,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },

@@ -6,6 +6,7 @@
 use std::collections::BTreeMap;
 
 use audiocaps_model::Parameter;
+use audiocaps_parse::eld::{EldText, parse_eld_text};
 use audiocaps_parse::hda::{self, HdaCodec};
 use audiocaps_parse::procfs::{self, CardEntry, HwParams, PcmInfo, PcmStatus, RawMidi, UsbStream};
 
@@ -24,6 +25,8 @@ pub(crate) struct Wants {
     pub pcm_state: bool,
     /// Raw MIDI devices.
     pub midi: bool,
+    /// Sink data: ELD text per card.
+    pub sink: bool,
 }
 
 /// PCM direction key.
@@ -76,6 +79,10 @@ pub(crate) struct CardData {
     pub power: Option<String>,
     pub pcms: BTreeMap<(u32, Dir), PcmProc>,
     pub midi: BTreeMap<u32, RawMidi>,
+    /// Kernel ELD text per pin (`eld#C.P` file name, parsed).
+    pub elds: Vec<(String, EldText)>,
+    /// Sysfs path of the card's bus device (e.g. `/sys/devices/pci0000:00/…/0000:09:00.1`).
+    pub bus_path: Option<String>,
 }
 
 impl CardData {
@@ -234,6 +241,16 @@ pub(crate) fn read_card(
             d.pcms.insert((device, dir), p);
         }
     }
+    if want.sink {
+        for e in &listing {
+            if e.name.starts_with("eld#")
+                && let Ok(t) = root.read_string(&format!("{base}/{}", e.name))
+            {
+                d.elds.push((e.name.clone(), parse_eld_text(&t)));
+            }
+        }
+        d.bus_path = device_path(root, &format!("/sys/class/sound/card{index}"));
+    }
     if want.midi {
         for e in &listing {
             if let Some(n) = e.name.strip_prefix("midi")
@@ -254,4 +271,83 @@ pub(crate) fn midi_devices(root: &SystemRoot, index: u32) -> Vec<u32> {
         .iter()
         .filter_map(|e| e.name.strip_prefix("midi").and_then(|n| n.parse().ok()))
         .collect()
+}
+
+/// Resolves `/sys/class/<x>/<name>` to its device directory's parent bus device, e.g.
+/// `/sys/devices/pci0000:00/0000:00:03.1/0000:09:00.1` for a sound card or DRM card.
+pub(crate) fn device_path(root: &SystemRoot, class_entry: &str) -> Option<String> {
+    let target = root.read_link(class_entry).ok()?;
+    let parent = class_entry.rsplit_once('/')?.0;
+    let mut parts: Vec<&str> = parent.split('/').filter(|p| !p.is_empty()).collect();
+    for c in target.split('/') {
+        match c {
+            ".." => {
+                parts.pop();
+            }
+            "" | "." => {}
+            x => parts.push(x),
+        }
+    }
+    // …/<bus device>/sound/cardN or …/<bus device>/drm/cardN[/cardN-HDMI-A-1]
+    let i = parts.iter().rposition(|p| *p == "sound" || *p == "drm")?;
+    Some(format!("/{}", parts[..i].join("/")))
+}
+
+/// A DRM connector with its EDID.
+#[derive(Debug, Clone)]
+pub(crate) struct DrmConnector {
+    /// Name, e.g. `card1-HDMI-A-2`.
+    pub name: String,
+    /// `connected`, `disconnected`.
+    pub status: Option<String>,
+    /// Raw EDID (empty when nothing is connected).
+    pub edid: Vec<u8>,
+    /// Bus device of the GPU.
+    pub bus_path: Option<String>,
+}
+
+/// Reads DRM connectors (`/sys/class/drm/cardN-*`): status and EDID. These are the kernel's
+/// cached copies; nothing is read over DDC.
+pub(crate) fn read_drm(root: &SystemRoot) -> Vec<DrmConnector> {
+    let mut out = vec![];
+    let Ok(entries) = root.read_dir("/sys/class/drm") else {
+        return out;
+    };
+    for e in entries.iter().filter(|e| e.name.contains('-')) {
+        let base = format!("/sys/class/drm/{}", e.name);
+        let edid = root.read(&format!("{base}/edid")).unwrap_or_default();
+        out.push(DrmConnector {
+            name: e.name.clone(),
+            status: root
+                .read_string(&format!("{base}/status"))
+                .ok()
+                .map(|s| s.trim().to_string()),
+            edid,
+            bus_path: device_path(root, &base),
+        });
+    }
+    out
+}
+
+/// Whether two bus devices are functions of one PCI device (`…:09:00.0` and `…:09:00.1`).
+pub(crate) fn same_slot(a: &str, b: &str) -> bool {
+    let slot = |p: &str| p.rsplit_once('.').map(|(s, _)| s.to_string());
+    slot(a).is_some() && slot(a) == slot(b)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn slots() {
+        assert!(same_slot(
+            "/sys/devices/pci0000:00/0000:09:00.0",
+            "/sys/devices/pci0000:00/0000:09:00.1"
+        ));
+        assert!(!same_slot(
+            "/sys/devices/pci0000:00/0000:09:00.0",
+            "/sys/devices/pci0000:00/0000:0a:00.1"
+        ));
+    }
 }

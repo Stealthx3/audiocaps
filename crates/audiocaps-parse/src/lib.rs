@@ -9,6 +9,8 @@
 //! - [`usb`] — USB Audio Class descriptors (sysfs `descriptors`).
 //! - [`procfs`] — ALSA card and PCM lists, PCM `info`/`status`, USB `stream#` files, `hw_params`,
 //!   raw MIDI devices, sequencer clients.
+//! - [`ids`] — PNP manufacturer and CEC vendor name tables.
+//! - [`cec`] — CEC message payloads.
 //! - [`bt`] — Bluetooth audio codec and profile identification from BlueZ data.
 //! - [`alsa_conf`] — alsa-lib configuration syntax and PCM plugin-chain resolution.
 //! - [`os_release`] — `/etc/os-release`.
@@ -18,9 +20,11 @@
 
 pub mod alsa_conf;
 pub mod bt;
+pub mod cec;
 pub mod edid;
 pub mod eld;
 pub mod hda;
+pub mod ids;
 pub mod os_release;
 pub mod procfs;
 pub mod sad;
