@@ -138,6 +138,10 @@ pub(crate) fn as_u32(v: &Value) -> Option<u32> {
 fn device(o: &Value) -> Option<Device> {
     let info = &o["info"];
     let p = &info["props"];
+    // Audio devices only, as the live client binds them (cameras are devices too).
+    if p["media.class"].as_str() != Some("Audio/Device") {
+        return None;
+    }
     let params = &info["params"];
     let mut dev = Device {
         id: as_u32(&o["id"])?,
@@ -370,7 +374,7 @@ mod tests {
              {"subject":0,"key":"clock.allowed-rates","value":"[ 44100 48000 ]"},{"subject":0,"key":"clock.quantum","value":1024}]},
           {"id":38,"type":"PipeWire:Interface:Metadata","props":{"metadata.name":"default"},"metadata":[
              {"subject":0,"key":"default.audio.sink","type":"Spa:String:JSON","value":{"name":"alsa_output.x"}}]},
-          {"id":42,"type":"PipeWire:Interface:Device","info":{"props":{"device.name":"alsa_card.x","device.api":"alsa","api.alsa.card":1},
+          {"id":42,"type":"PipeWire:Interface:Device","info":{"props":{"device.name":"alsa_card.x","device.api":"alsa","media.class":"Audio/Device","api.alsa.card":1},
              "params":{"EnumProfile":[{"index":1,"name":"output:hdmi-stereo","description":"HDMI","available":"no"}],
                        "Profile":[{"index":1,"name":"output:hdmi-stereo"}],
                        "EnumRoute":[{"index":0,"direction":"Output","name":"hdmi-output-0","description":"HDMI","available":"no","devices":[3]}],

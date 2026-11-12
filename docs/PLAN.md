@@ -61,7 +61,7 @@ Open items (not phase tasks):
 - [x] **6.2** ALSA PCM ↔ DRM connector ↔ server node correlation
 - [x] **6.3** Optional CEC reads
 - [x] **6.4** Quirk data packs
-- [ ] **6.5** Gate: production rig identified; receiver matches its spec sheet
+- [x] **6.5** Gate: production rig identified; receiver matches its spec sheet
 
 ## Phase 7 — Path reports and rule engine
 
