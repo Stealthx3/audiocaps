@@ -74,12 +74,26 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   unreadable layers say which permission is missing.
 - Schema 1.3.0 (additive): wireless layer detail, permission gaps, JACK ports.
 
+- Sink records for HDMI/DP outputs: identity (PNP id and name, product, model, hashed serial,
+  stable sink key), short audio descriptors, speaker allocation, sync delay and HDMI link limits
+  (TMDS/FRL, latency, physical address), from the ALSA ELD control, the kernel's ELD text and the
+  DRM connector's EDID.
+- Correlation of ALSA PCM, DRM connector and sound-server node.
+- CEC, opt-in (`ProbeOptions::with_cec`, `--cec`): devices on the bus, an audio system's
+  descriptors behind the TV; configured adapters only, query messages only. `audiocaps cec-dump`.
+- Quirk packs: bundled, `/usr/share/audiocaps/quirks.d`, `/etc/audiocaps/quirks.d` and the
+  application's directories, later ones overriding by id; first entry: Denon AVR-S660H.
+- New HTPC fixture (capture format 2) and a synthetic eARC + CEC fixture.
+- Schema 1.4.0 (additive): sink link, CEC bus, applied quirks.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in
   `docs/DECISIONS.md`, changelog in `docs/CHANGELOG.md`.
 - Hardware ranges and HDA codec dumps are cached per process and cleared on hotplug, so a free
   PCM is opened at most once and codecs aren't queried on every probe.
+- The native PipeWire client no longer fails when PipeWire 1.6 reports an error for one object
+  (e.g. no Format on a suspended node); only core errors end the session.
 - Bluetooth node names from a sound server are treated as personal (masked on export).
 - ALSA routing resolution handles definitions that are `@func` calls (USB-Audio) and `card_name`.
 - `scripts/check-passive.sh` allows control-device reads and non-blocking PCM opens when no

@@ -1,0 +1,24 @@
+{
+  "rate": 48000,
+  "buffer_frames": 1024,
+  "ports": [
+    {
+      "client": "Navi 48 HDMI/DP Audio Controller Digital Surround 5.1 (HDMI 4) [HISENSE]",
+      "direction": "playback",
+      "channels": 6,
+      "latency": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "client": "USB Composite Device Mono",
+      "direction": "capture",
+      "channels": 1,
+      "latency": [
+        1024,
+        1024
+      ]
+    }
+  ]
+}

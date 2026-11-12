@@ -165,3 +165,71 @@ fn app_quirk_dir_overrides_bundled() {
     assert_eq!(q.description, "app override");
     assert!(q.origin.ends_with("app.json"));
 }
+
+/// Gate 6.5 on the production rig capture (HTPC, PC -> Hisense TV -> Denon AVR-S660H on eARC).
+#[test]
+fn production_rig_identified() {
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/htpc");
+    let s = probe_with(
+        &SystemRoot::fixture(dir).unwrap(),
+        &ProbeScope::everything(),
+        &ProbeOptions::unbounded().with_cec(),
+    );
+    let e = s
+        .endpoints
+        .iter()
+        .find(|e| e.sink.is_some())
+        .expect("an HDMI sink");
+    assert_eq!(e.id.0, "alsa:card1/pcm9p");
+    let sink = e.sink.as_ref().unwrap();
+    // The TV: identified from the ELD control (bound to PCM 9) and its EDID on the same GPU.
+    assert_eq!(
+        sink.identity.manufacturer_name.known().map(String::as_str),
+        Some("Hisense")
+    );
+    assert_eq!(sink.identity.product_code.known(), Some(&0xa030));
+    assert!(matches!(
+        &sink.audio_descriptors,
+        Value::Known { provenance, .. } if matches!(&provenance.source, audiocaps_model::Source::Command { name } if name == "alsa")
+    ));
+    assert!(e.correlation.iter().any(
+        |k| matches!(&k.id, CorrelationId::DrmConnector { name } if name == "card1-HDMI-A-2")
+    ));
+    assert!(
+        e.correlation
+            .iter()
+            .any(|k| matches!(&k.id, CorrelationId::PipewireNode { .. }))
+    );
+    // No CEC adapter on this GPU: what sits behind the TV is unknown, not absent.
+    assert!(matches!(
+        sink.downstream,
+        Value::Unknown {
+            reason: UnknownReason::NotExposed,
+            ..
+        }
+    ));
+    // What the TV forwards over eARC vs the receiver's spec sheet: everything but TrueHD.
+    let sads = sink.audio_descriptors.known().unwrap();
+    let has = |c: Codec| sads.iter().any(|x| x.codec == c);
+    for c in [
+        Codec::Ac3,
+        Codec::Eac3,
+        Codec::Dts,
+        Codec::DtsHd,
+        Codec::Lpcm,
+    ] {
+        assert!(has(c.clone()), "{c:?}");
+    }
+    assert!(!has(Codec::TrueHd), "the TV does not forward TrueHD");
+    let pcm = sads.iter().find(|c| c.codec == Codec::Lpcm).unwrap();
+    assert_eq!(pcm.max_channels, Some(8));
+    assert_eq!(pcm.bit_depths, vec![16, 20, 24]);
+    assert!(
+        sads.iter()
+            .find(|c| c.codec == Codec::Dts)
+            .unwrap()
+            .rates_hz
+            .contains(&96000)
+    );
+    assert!(sads.iter().all(|c| !c.flags.contains(&CodecFlag::Atmos)));
+}

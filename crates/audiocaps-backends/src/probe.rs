@@ -908,11 +908,22 @@ fn read_cec(root: &SystemRoot) -> Outcome<crate::cec::CecDump> {
             "CEC device nodes aren't reachable from a sandbox without --device=all".into(),
         )),
         SystemRoot::Live => crate::cec::read_live().map(|v| (v, true)),
-        SystemRoot::Fixture(_) => captured_json(root, crate::cec::CAPTURE_NAME).and_then(|j| {
-            serde_json::from_value(j)
-                .map(|v| (v, false))
-                .map_err(|e| (UnknownReason::ParseError, e.to_string()))
-        }),
+        SystemRoot::Fixture(_) => match root.captured_command(crate::cec::CAPTURE_NAME) {
+            Some((c, None)) => {
+                let why = c.skipped.unwrap_or_else(|| "no CEC output".into());
+                let reason = if why.contains("not requested") {
+                    UnknownReason::NotRequested
+                } else {
+                    UnknownReason::NotExposed
+                };
+                Err((reason, why))
+            }
+            _ => captured_json(root, crate::cec::CAPTURE_NAME).and_then(|j| {
+                serde_json::from_value(j)
+                    .map(|v| (v, false))
+                    .map_err(|e| (UnknownReason::ParseError, e.to_string()))
+            }),
+        },
     };
     match r {
         Ok((value, live)) => Outcome::Read { value, live },

@@ -13,7 +13,7 @@ use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
 use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 4)
+audiocaps — AudioCaps command-line tool (phase 6)
 
 USAGE:
   audiocaps capture [--out DIR] [--label NAME] [--cec]

@@ -452,9 +452,13 @@ impl Ctx<'_> {
         let record = SinkRecord {
             identity,
             audio_descriptors: Value::measured(sads, sads_src.clone()),
-            speaker_allocation: match spk_mask {
+            // 0: the sink states none. 0xffff in the kernel's text is its stand-in for "none".
+            speaker_allocation: match spk_mask.filter(|m| *m != 0 && *m != 0xffff) {
                 Some(m) => Value::measured(speakers(m), sads_src.clone()),
-                None => Value::unknown(UnknownReason::NotExposed, None),
+                None => Value::unknown(
+                    UnknownReason::NotExposed,
+                    Some("the sink states no speaker allocation".into()),
+                ),
             },
             sync_delay_ms: match sync {
                 Some(v) => Value::measured(v, p_eld.clone()),
