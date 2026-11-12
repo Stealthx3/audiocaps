@@ -92,6 +92,9 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `docs/DECISIONS.md`, changelog in `docs/CHANGELOG.md`.
 - Hardware ranges and HDA codec dumps are cached per process and cleared on hotplug, so a free
   PCM is opened at most once and codecs aren't queried on every probe.
+- BlueZ, JACK and CEC reads run on helper threads, so a blocking call (e.g. opening a
+  pipewire-jack client) can't push another backend past its deadline.
+- The `pw-dump` parser keeps audio devices only, as the live client does.
 - The native PipeWire client no longer fails when PipeWire 1.6 reports an error for one object
   (e.g. no Format on a suspended node); only core errors end the session.
 - Bluetooth node names from a sound server are treated as personal (masked on export).

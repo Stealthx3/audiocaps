@@ -136,15 +136,17 @@ pub(crate) fn probe_inner<'a>(
         if opts.cec {
             tasks.push(Box::new(OneShot {
                 backend: Backend::Cec,
-                run: Some(Box::new(move |out: &mut Results| {
-                    out.cec = Some(read_cec(root));
-                })),
+                run: Some({
+                    let root = root.clone();
+                    Box::new(move |out: &mut Results| out.cec = Some(read_cec(&root)))
+                }),
                 on_timeout: Box::new(|out: &mut Results| {
                     out.cec = Some(Outcome::Unknown {
                         reason: UnknownReason::Timeout,
                         detail: "cec backend deadline".into(),
                     })
                 }),
+                rx: None,
                 pending: None,
             }));
         }
@@ -152,30 +154,34 @@ pub(crate) fn probe_inner<'a>(
     if scope.layers.includes(&LayerKind::Wireless) {
         tasks.push(Box::new(OneShot {
             backend: Backend::Bluez,
-            run: Some(Box::new(move |out: &mut Results| {
-                out.bluez = Some(read_bluez(root));
-            })),
+            run: Some({
+                let root = root.clone();
+                Box::new(move |out: &mut Results| out.bluez = Some(read_bluez(&root)))
+            }),
             on_timeout: Box::new(|out: &mut Results| {
                 out.bluez = Some(Outcome::Unknown {
                     reason: UnknownReason::Timeout,
                     detail: "bluez backend deadline".into(),
                 })
             }),
+            rx: None,
             pending: None,
         }));
     }
     if scope.layers.includes(&LayerKind::SoundServer) {
         tasks.push(Box::new(OneShot {
             backend: Backend::Jack,
-            run: Some(Box::new(move |out: &mut Results| {
-                out.jack = Some(read_jack(root));
-            })),
+            run: Some({
+                let root = root.clone();
+                Box::new(move |out: &mut Results| out.jack = Some(read_jack(&root)))
+            }),
             on_timeout: Box::new(|out: &mut Results| {
                 out.jack = Some(Outcome::Unknown {
                     reason: UnknownReason::Timeout,
                     detail: "jack backend deadline".into(),
                 })
             }),
+            rx: None,
             pending: None,
         }));
     }
@@ -826,14 +832,17 @@ impl Task<Results> for ServerTask<'_> {
 // ---------------------------------------------------------------------------------------------
 // one-step backends (BlueZ, JACK)
 
-type Fill<'a> = Box<dyn FnOnce(&mut Results) + 'a>;
+type Fill = Box<dyn FnOnce(&mut Results) + Send>;
 
-/// A backend that reads everything in one step.
+/// A backend whose read is one blocking library call (libjack, D-Bus, CEC ioctls). It runs on a
+/// helper thread so it can't hold up the other backends; the executor only polls for the result.
+/// Past its deadline the result is dropped and the helper finishes in the background.
 struct OneShot<'a> {
     backend: Backend,
-    run: Option<Fill<'a>>,
+    run: Option<Fill>,
     on_timeout: Box<dyn Fn(&mut Results) + 'a>,
-    /// Results computed in `step`, applied in `finish`.
+    rx: Option<std::sync::mpsc::Receiver<Results>>,
+    /// Results received, applied in `finish`.
     pending: Option<Results>,
 }
 
@@ -844,11 +853,30 @@ impl Task<Results> for OneShot<'_> {
 
     fn step(&mut self) -> bool {
         if let Some(run) = self.run.take() {
-            let mut r = Results::default();
-            run(&mut r);
-            self.pending = Some(r);
+            let (tx, rx) = std::sync::mpsc::channel();
+            let spawned = std::thread::Builder::new()
+                .name("audiocaps-backend".into())
+                .spawn(move || {
+                    let mut r = Results::default();
+                    run(&mut r);
+                    let _ = tx.send(r);
+                });
+            if spawned.is_err() {
+                return true;
+            }
+            self.rx = Some(rx);
         }
-        true
+        match self.rx.as_ref().map(|rx| rx.try_recv()) {
+            Some(Ok(r)) => {
+                self.pending = Some(r);
+                true
+            }
+            Some(Err(std::sync::mpsc::TryRecvError::Empty)) => {
+                std::thread::sleep(std::time::Duration::from_micros(200));
+                false
+            }
+            _ => true,
+        }
     }
 
     fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {

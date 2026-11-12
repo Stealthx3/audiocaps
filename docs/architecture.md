@@ -96,6 +96,9 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
 - Each completed probe gets the next generation number and becomes `latest()` (an `Arc` swap);
   `Snapshot::diff` lists added, removed and changed endpoints between generations (read times are
   ignored). Queries on a snapshot never lock.
+- Backends whose read is one blocking library call (BlueZ over D-Bus, libjack, CEC ioctls) run
+  on a helper thread; the executor polls for their result, so a slow call can't eat another
+  backend's deadline. Past its deadline the result is dropped and the helper ends on its own.
 - `probe(root, scope)` is the same pipeline without deadlines, for fixtures, tests and tools.
 
 ## Probe pipeline (phase 3)
