@@ -9,7 +9,7 @@
       "m"
     ],
     "info": {
-      "cookie": 4210697972,
+      "cookie": 3385632456,
       "user-name": "redacted-user",
       "host-name": "redacted-host",
       "version": "1.6.11",
@@ -22,7 +22,7 @@
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
         "application.process.host": "redacted-host",
-        "application.process.id": 3333,
+        "application.process.id": 3317,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
@@ -1063,14 +1063,14 @@
         "application.name": "WirePlumber",
         "application.process.binary": "wireplumber",
         "application.process.host": "redacted-host",
-        "application.process.id": 3334,
+        "application.process.id": 3318,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "application.version": "0.5.18",
         "clock.power-of-two-quantum": true,
         "config.name": "null",
         "context.modules.allow-empty": true,
-        "core.name": "pipewire-redacted-user-3334",
+        "core.name": "pipewire-redacted-user-3318",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -1096,11 +1096,11 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3334,
+        "pipewire.sec.pid": 3318,
         "pipewire.sec.socket": "pipewire-0-manager",
         "pipewire.sec.uid": 1000,
         "remote.name": "[pipewire-0-manager,pipewire-0]",
-        "session.services": "[policy.device.profile, api.libcamera, audio, policy.linking.role-based, bluetooth.audio, api.bluez, bluetooth.midi, policy.device.routes, policy.default-nodes, api.alsa, api.alsa-seq, video-capture, policy.linking.standard, midi, api.v4l2]",
+        "session.services": "[bluetooth.audio, policy.device.profile, api.alsa-seq, audio, api.alsa, bluetooth.midi, api.libcamera, policy.linking.role-based, policy.device.routes, policy.linking.standard, policy.default-nodes, video-capture, api.v4l2, api.bluez, midi]",
         "settings.check-quantum": false,
         "settings.check-rate": false,
         "wireplumber.daemon": true,
@@ -1127,7 +1127,7 @@
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
         "application.process.host": "redacted-host",
-        "application.process.id": 3333,
+        "application.process.id": 3317,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
@@ -1158,7 +1158,7 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3333,
+        "pipewire.sec.pid": 3317,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -1185,7 +1185,7 @@
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
         "application.process.host": "redacted-host",
-        "application.process.id": 3333,
+        "application.process.id": 3317,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
@@ -1216,7 +1216,7 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3333,
+        "pipewire.sec.pid": 3317,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -1243,7 +1243,7 @@
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
         "application.process.host": "redacted-host",
-        "application.process.id": 3333,
+        "application.process.id": 3317,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
@@ -1274,7 +1274,7 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3333,
+        "pipewire.sec.pid": 3317,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -1318,8 +1318,8 @@
         "node.autoconnect": true,
         "node.description": "Game",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-29",
-        "node.link-group": "loopback-3333-29",
+        "node.group": "loopback-3317-29",
+        "node.link-group": "loopback-3317-29",
         "node.loop.name": "data-loop.0",
         "node.name": "playback.game_output",
         "node.passive": true,
@@ -1836,8 +1836,8 @@
         "node.autoconnect": true,
         "node.description": "Game",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-29",
-        "node.link-group": "loopback-3333-29",
+        "node.group": "loopback-3317-29",
+        "node.link-group": "loopback-3317-29",
         "node.loop.name": "data-loop.0",
         "node.name": "game_output",
         "node.virtual": true,
@@ -2319,7 +2319,7 @@
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
         "application.process.host": "redacted-host",
-        "application.process.id": 3333,
+        "application.process.id": 3317,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
@@ -2350,7 +2350,7 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3333,
+        "pipewire.sec.pid": 3317,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -2394,8 +2394,8 @@
         "node.autoconnect": true,
         "node.description": "Voice",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-30",
-        "node.link-group": "loopback-3333-30",
+        "node.group": "loopback-3317-30",
+        "node.link-group": "loopback-3317-30",
         "node.loop.name": "data-loop.0",
         "node.name": "playback.game_output",
         "node.passive": true,
@@ -2908,8 +2908,8 @@
         "node.autoconnect": true,
         "node.description": "Voice",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-30",
-        "node.link-group": "loopback-3333-30",
+        "node.group": "loopback-3317-30",
+        "node.link-group": "loopback-3317-30",
         "node.loop.name": "data-loop.0",
         "node.name": "voice_output",
         "node.virtual": true,
@@ -3404,8 +3404,8 @@
         "node.autoconnect": true,
         "node.description": "Browser",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-31",
-        "node.link-group": "loopback-3333-31",
+        "node.group": "loopback-3317-31",
+        "node.link-group": "loopback-3317-31",
         "node.loop.name": "data-loop.0",
         "node.name": "playback.game_output",
         "node.passive": true,
@@ -3918,8 +3918,8 @@
         "node.autoconnect": true,
         "node.description": "Browser",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-31",
-        "node.link-group": "loopback-3333-31",
+        "node.group": "loopback-3317-31",
+        "node.link-group": "loopback-3317-31",
         "node.loop.name": "data-loop.0",
         "node.name": "browser_output",
         "node.virtual": true,
@@ -4414,8 +4414,8 @@
         "node.autoconnect": true,
         "node.description": "Music",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-32",
-        "node.link-group": "loopback-3333-32",
+        "node.group": "loopback-3317-32",
+        "node.link-group": "loopback-3317-32",
         "node.loop.name": "data-loop.0",
         "node.name": "playback.game_output",
         "node.passive": true,
@@ -4928,8 +4928,8 @@
         "node.autoconnect": true,
         "node.description": "Music",
         "node.driver-id": 89,
-        "node.group": "loopback-3333-32",
-        "node.link-group": "loopback-3333-32",
+        "node.group": "loopback-3317-32",
+        "node.link-group": "loopback-3317-32",
         "node.loop.name": "data-loop.0",
         "node.name": "music_output",
         "node.virtual": true,
@@ -5962,16 +5962,16 @@
         "key": "restore.stream.Output/Audio.media.role:Notification",
         "type": "Spa:String:JSON",
         "value": {
-          "mute": false,
+          "volumes": [
+            1.0,
+            1.0
+          ],
           "channels": [
             "FL",
             "FR"
           ],
-          "volume": 1.0,
-          "volumes": [
-            1.0,
-            1.0
-          ]
+          "mute": false,
+          "volume": 1.0
         }
       }
     ]
@@ -5995,14 +5995,14 @@
         "application.name": "WirePlumber [client]",
         "application.process.binary": "wireplumber",
         "application.process.host": "redacted-host",
-        "application.process.id": 3334,
+        "application.process.id": 3318,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "application.version": "0.5.18",
         "clock.power-of-two-quantum": true,
         "config.name": "null",
         "context.modules.allow-empty": true,
-        "core.name": "pipewire-redacted-user-3334",
+        "core.name": "pipewire-redacted-user-3318",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -6028,7 +6028,7 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3334,
+        "pipewire.sec.pid": 3318,
         "pipewire.sec.socket": "pipewire-0-manager",
         "pipewire.sec.uid": 1000,
         "remote.name": "[pipewire-0-manager,pipewire-0]",
@@ -9110,12 +9110,12 @@
         "application.name": "pipewire",
         "application.process.binary": "pipewire",
         "application.process.host": "redacted-host",
-        "application.process.id": 3499,
+        "application.process.id": 3489,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
         "config.name": "pipewire-pulse.conf",
-        "core.name": "pipewire-redacted-user-3499",
+        "core.name": "pipewire-redacted-user-3489",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -9140,7 +9140,7 @@
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3499,
+        "pipewire.sec.pid": 3489,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -9167,11 +9167,11 @@
         "application.name": "uresourced",
         "application.process.binary": "uresourced",
         "application.process.host": "redacted-host",
-        "application.process.id": 34664,
+        "application.process.id": 6101,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
-        "core.name": "pipewire-redacted-user-34664",
+        "core.name": "pipewire-redacted-user-6101",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -9190,13 +9190,13 @@
         "mem.warn-mlock": false,
         "module.id": 2,
         "object.id": 134,
-        "object.serial": 246,
+        "object.serial": 221,
         "pipewire.access": "unrestricted",
         "pipewire.access.effective": "unrestricted",
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 34664,
+        "pipewire.sec.pid": 6101,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -9205,7 +9205,7 @@
     }
   },
   {
-    "id": 132,
+    "id": 131,
     "type": "PipeWire:Interface:Device",
     "version": 3,
     "permissions": [
@@ -9247,10 +9247,10 @@
         "device.icon-name": "audio-card-analog-usb",
         "device.name": "alsa_card.usb-USB_Composite_Device_USB_Composite_Device_0001-01",
         "device.nick": "USB Composite Device",
-        "device.plugged.usec": 11102692,
+        "device.plugged.usec": 11132087,
         "device.product.id": "0x1025",
         "device.product.name": "USB Composite Device",
-        "device.serial": "redacted-serial-3150a8de",
+        "device.serial": "redacted-serial-c58de712",
         "device.string": 0,
         "device.subsystem": "sound",
         "device.sysfs.path": "/devices/pci0000:00/0000:00:01.2/0000:02:00.0/usb1/1-3/1-3:1.1/sound/card0",
@@ -9258,9 +9258,9 @@
         "device.vendor.name": "Nordic Semiconductor ASA",
         "factory.id": 15,
         "media.class": "Audio/Device",
-        "object.id": 132,
+        "object.id": 131,
         "object.path": "alsa:acp:Device",
-        "object.serial": 262,
+        "object.serial": 770,
         "spa.object.id": 2
       },
       "params": {
@@ -9409,7 +9409,7 @@
     }
   },
   {
-    "id": 99,
+    "id": 132,
     "type": "PipeWire:Interface:Device",
     "version": 3,
     "permissions": [
@@ -9450,7 +9450,7 @@
         "device.icon-name": "audio-card-analog-pci",
         "device.name": "alsa_card.pci-0000_0b_00.4",
         "device.nick": "HD-Audio Generic",
-        "device.plugged.usec": 11330688,
+        "device.plugged.usec": 11333832,
         "device.product.id": "0x1487",
         "device.product.name": "Starship/Matisse HD Audio Controller",
         "device.string": 2,
@@ -9460,9 +9460,9 @@
         "device.vendor.name": "Advanced Micro Devices, Inc. [AMD]",
         "factory.id": 15,
         "media.class": "Audio/Device",
-        "object.id": 99,
+        "object.id": 132,
         "object.path": "alsa:acp:Generic",
-        "object.serial": 263,
+        "object.serial": 771,
         "spa.object.id": 6
       },
       "params": {
@@ -9713,7 +9713,7 @@
     }
   },
   {
-    "id": 65,
+    "id": 78,
     "type": "PipeWire:Interface:Device",
     "version": 3,
     "permissions": [
@@ -9754,7 +9754,7 @@
         "device.icon-name": "audio-card-analog-pci",
         "device.name": "alsa_card.pci-0000_09_00.1",
         "device.nick": "HDA ATI HDMI",
-        "device.plugged.usec": 11300105,
+        "device.plugged.usec": 11346401,
         "device.product.id": "0xab40",
         "device.product.name": "Navi 48 HDMI/DP Audio Controller",
         "device.string": 1,
@@ -9764,9 +9764,9 @@
         "device.vendor.name": "Advanced Micro Devices, Inc. [AMD/ATI]",
         "factory.id": 15,
         "media.class": "Audio/Device",
-        "object.id": 65,
+        "object.id": 78,
         "object.path": "alsa:acp:HDMI",
-        "object.serial": 264,
+        "object.serial": 772,
         "spa.object.id": 4
       },
       "params": {
@@ -10249,7 +10249,7 @@
     }
   },
   {
-    "id": 94,
+    "id": 64,
     "type": "PipeWire:Interface:Device",
     "version": 3,
     "permissions": [
@@ -10279,21 +10279,21 @@
         "device.devids": "[ 20736 ]",
         "device.enum.api": "udev",
         "device.name": "v4l2_device._sys_devices_virtual_video4linux_video0",
-        "device.plugged.usec": 10722230,
+        "device.plugged.usec": 10728497,
         "device.product.name": "OBS Virtual Camera",
         "device.subsystem": "video4linux",
         "device.sysfs.path": "/devices/virtual/video4linux/video0",
         "factory.id": 15,
         "media.class": "Video/Device",
-        "object.id": 94,
+        "object.id": 64,
         "object.path": "v4l2:/dev/video0",
-        "object.serial": 265
+        "object.serial": 773
       },
       "params": {}
     }
   },
   {
-    "id": 64,
+    "id": 95,
     "type": "PipeWire:Interface:Node",
     "version": 3,
     "permissions": [
@@ -10328,8 +10328,8 @@
         "node.description": "redacted-name",
         "node.loop.name": "data-loop.0",
         "node.name": "bluez_midi.server",
-        "object.id": 64,
-        "object.serial": 266
+        "object.id": 95,
+        "object.serial": 774
       },
       "params": {
         "PropInfo": [
@@ -10375,10 +10375,10 @@
       ],
       "props": {
         "format.dsp": "8 bit raw midi",
-        "node.id": 64,
+        "node.id": 95,
         "object.id": 106,
         "object.path": "bluez_midi.server:input_0",
-        "object.serial": 267,
+        "object.serial": 775,
         "port.alias": "in",
         "port.direction": "in",
         "port.group": "group.0",
@@ -10443,10 +10443,10 @@
       ],
       "props": {
         "format.dsp": "8 bit raw midi",
-        "node.id": 64,
+        "node.id": 95,
         "object.id": 88,
         "object.path": "bluez_midi.server:output_0",
-        "object.serial": 268,
+        "object.serial": 776,
         "port.alias": "out",
         "port.direction": "out",
         "port.group": "group.0",
@@ -10548,7 +10548,7 @@
         "device.bus": "usb",
         "device.class": "sound",
         "device.icon-name": "audio-card-analog",
-        "device.id": 132,
+        "device.id": 131,
         "device.profile.description": "Mono",
         "device.profile.name": "mono-fallback",
         "device.routes": 1,
@@ -10564,7 +10564,7 @@
         "node.pause-on-idle": false,
         "object.id": 107,
         "object.path": "alsa:acp:Device:1:capture",
-        "object.serial": 269,
+        "object.serial": 777,
         "port.group": "capture",
         "priority.driver": 2100,
         "priority.session": 2100,
@@ -11311,7 +11311,7 @@
         "device.bus": "pci",
         "device.class": "sound",
         "device.icon-name": "audio-card-analog",
-        "device.id": 65,
+        "device.id": 78,
         "device.profile.description": "Digital Surround 5.1 (HDMI 4)",
         "device.profile.name": "hdmi-surround-extra3",
         "device.routes": 1,
@@ -11329,7 +11329,7 @@
         "node.pause-on-idle": false,
         "object.id": 89,
         "object.path": "alsa:acp:HDMI:14:playback",
-        "object.serial": 270,
+        "object.serial": 778,
         "port.group": "playback",
         "priority.driver": 600,
         "priority.session": 600,
@@ -12130,7 +12130,7 @@
         "node.id": 107,
         "object.id": 108,
         "object.path": "alsa:acp:Device:1:capture:capture_0",
-        "object.serial": 271,
+        "object.serial": 779,
         "port.alias": "USB Composite Device:capture_MONO",
         "port.direction": "out",
         "port.group": "capture",
@@ -12210,117 +12210,12 @@
         "node.id": 89,
         "object.id": 90,
         "object.path": "alsa:acp:HDMI:14:playback:playback_0",
-        "object.serial": 272,
+        "object.serial": 780,
         "port.alias": "HISENSE:playback_FL",
         "port.direction": "in",
         "port.group": "playback",
         "port.id": 0,
         "port.name": "playback_FL",
-        "port.physical": true,
-        "port.terminal": true
-      },
-      "params": {
-        "EnumFormat": [
-          {
-            "mediaType": "audio",
-            "mediaSubtype": "dsp",
-            "format": "F32P"
-          }
-        ],
-        "Meta": [
-          {
-            "type": "Header",
-            "size": 32
-          }
-        ],
-        "IO": [
-          {
-            "id": "Buffers",
-            "size": 8
-          },
-          {
-            "id": "AsyncBuffers",
-            "size": 16
-          }
-        ],
-        "Format": [
-          {
-            "mediaType": "audio",
-            "mediaSubtype": "dsp",
-            "format": "F32P"
-          }
-        ],
-        "Buffers": [
-          {
-            "buffers": {
-              "default": 1,
-              "min": 1,
-              "max": 32
-            },
-            "blocks": 1,
-            "size": {
-              "default": 32768,
-              "min": 64,
-              "max": 2147483647
-            },
-            "stride": 4
-          }
-        ],
-        "Latency": [
-          {
-            "direction": "Input",
-            "minQuantum": 1.0,
-            "maxQuantum": 1.0,
-            "minRate": 0,
-            "maxRate": 0,
-            "minNs": 0,
-            "maxNs": 0
-          },
-          {
-            "direction": "Output",
-            "minQuantum": 0.0,
-            "maxQuantum": 0.0,
-            "minRate": 0,
-            "maxRate": 0,
-            "minNs": 0,
-            "maxNs": 0
-          }
-        ],
-        "Tag": [
-          {
-            "direction": "Output"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "id": 70,
-    "type": "PipeWire:Interface:Port",
-    "version": 3,
-    "permissions": [
-      "r",
-      "x",
-      "m"
-    ],
-    "info": {
-      "direction": "input",
-      "change-mask": [
-        "props",
-        "params"
-      ],
-      "props": {
-        "audio.channel": "FR",
-        "format.dsp": "32 bit float mono audio",
-        "node.id": 89,
-        "object.id": 70,
-        "object.path": "alsa:acp:HDMI:14:playback:playback_1",
-        "object.serial": 273,
-        "port.alias": "HISENSE:playback_FR",
-        "port.direction": "in",
-        "port.group": "playback",
-        "port.id": 1,
-        "port.name": "playback_FR",
         "port.physical": true,
         "port.terminal": true
       },
@@ -12415,17 +12310,17 @@
         "params"
       ],
       "props": {
-        "audio.channel": "RL",
+        "audio.channel": "FR",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
         "object.id": 109,
-        "object.path": "alsa:acp:HDMI:14:playback:playback_2",
-        "object.serial": 274,
-        "port.alias": "HISENSE:playback_RL",
+        "object.path": "alsa:acp:HDMI:14:playback:playback_1",
+        "object.serial": 781,
+        "port.alias": "HISENSE:playback_FR",
         "port.direction": "in",
         "port.group": "playback",
-        "port.id": 2,
-        "port.name": "playback_RL",
+        "port.id": 1,
+        "port.name": "playback_FR",
         "port.physical": true,
         "port.terminal": true
       },
@@ -12505,7 +12400,7 @@
     }
   },
   {
-    "id": 71,
+    "id": 70,
     "type": "PipeWire:Interface:Port",
     "version": 3,
     "permissions": [
@@ -12520,17 +12415,17 @@
         "params"
       ],
       "props": {
-        "audio.channel": "RR",
+        "audio.channel": "RL",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
-        "object.id": 71,
-        "object.path": "alsa:acp:HDMI:14:playback:playback_3",
-        "object.serial": 275,
-        "port.alias": "HISENSE:playback_RR",
+        "object.id": 70,
+        "object.path": "alsa:acp:HDMI:14:playback:playback_2",
+        "object.serial": 782,
+        "port.alias": "HISENSE:playback_RL",
         "port.direction": "in",
         "port.group": "playback",
-        "port.id": 3,
-        "port.name": "playback_RR",
+        "port.id": 2,
+        "port.name": "playback_RL",
         "port.physical": true,
         "port.terminal": true
       },
@@ -12625,17 +12520,17 @@
         "params"
       ],
       "props": {
-        "audio.channel": "FC",
+        "audio.channel": "RR",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
         "object.id": 91,
-        "object.path": "alsa:acp:HDMI:14:playback:playback_4",
-        "object.serial": 276,
-        "port.alias": "HISENSE:playback_FC",
+        "object.path": "alsa:acp:HDMI:14:playback:playback_3",
+        "object.serial": 783,
+        "port.alias": "HISENSE:playback_RR",
         "port.direction": "in",
         "port.group": "playback",
-        "port.id": 4,
-        "port.name": "playback_FC",
+        "port.id": 3,
+        "port.name": "playback_RR",
         "port.physical": true,
         "port.terminal": true
       },
@@ -12715,7 +12610,7 @@
     }
   },
   {
-    "id": 69,
+    "id": 71,
     "type": "PipeWire:Interface:Port",
     "version": 3,
     "permissions": [
@@ -12730,17 +12625,17 @@
         "params"
       ],
       "props": {
-        "audio.channel": "LFE",
+        "audio.channel": "FC",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
-        "object.id": 69,
-        "object.path": "alsa:acp:HDMI:14:playback:playback_5",
-        "object.serial": 277,
-        "port.alias": "HISENSE:playback_LFE",
+        "object.id": 71,
+        "object.path": "alsa:acp:HDMI:14:playback:playback_4",
+        "object.serial": 784,
+        "port.alias": "HISENSE:playback_FC",
         "port.direction": "in",
         "port.group": "playback",
-        "port.id": 5,
-        "port.name": "playback_LFE",
+        "port.id": 4,
+        "port.name": "playback_FC",
         "port.physical": true,
         "port.terminal": true
       },
@@ -12829,24 +12724,25 @@
       "m"
     ],
     "info": {
-      "direction": "output",
+      "direction": "input",
       "change-mask": [
         "props",
         "params"
       ],
       "props": {
-        "audio.channel": "FL",
+        "audio.channel": "LFE",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
         "object.id": 110,
-        "object.path": "alsa:acp:HDMI:14:playback:monitor_0",
-        "object.serial": 278,
-        "port.alias": "HISENSE:monitor_FL",
-        "port.direction": "out",
+        "object.path": "alsa:acp:HDMI:14:playback:playback_5",
+        "object.serial": 785,
+        "port.alias": "HISENSE:playback_LFE",
+        "port.direction": "in",
         "port.group": "playback",
-        "port.id": 0,
-        "port.monitor": true,
-        "port.name": "monitor_FL"
+        "port.id": 5,
+        "port.name": "playback_LFE",
+        "port.physical": true,
+        "port.terminal": true
       },
       "params": {
         "EnumFormat": [
@@ -12869,16 +12765,37 @@
           },
           {
             "id": "AsyncBuffers",
-            "size": 8
+            "size": 16
           }
         ],
-        "Format": [],
-        "Buffers": [],
+        "Format": [
+          {
+            "mediaType": "audio",
+            "mediaSubtype": "dsp",
+            "format": "F32P"
+          }
+        ],
+        "Buffers": [
+          {
+            "buffers": {
+              "default": 1,
+              "min": 1,
+              "max": 32
+            },
+            "blocks": 1,
+            "size": {
+              "default": 32768,
+              "min": 64,
+              "max": 2147483647
+            },
+            "stride": 4
+          }
+        ],
         "Latency": [
           {
             "direction": "Input",
-            "minQuantum": 0.0,
-            "maxQuantum": 0.0,
+            "minQuantum": 1.0,
+            "maxQuantum": 1.0,
             "minRate": 0,
             "maxRate": 0,
             "minNs": 0,
@@ -12903,7 +12820,7 @@
     }
   },
   {
-    "id": 63,
+    "id": 69,
     "type": "PipeWire:Interface:Port",
     "version": 3,
     "permissions": [
@@ -12918,18 +12835,18 @@
         "params"
       ],
       "props": {
-        "audio.channel": "FR",
+        "audio.channel": "FL",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
-        "object.id": 63,
-        "object.path": "alsa:acp:HDMI:14:playback:monitor_1",
-        "object.serial": 279,
-        "port.alias": "HISENSE:monitor_FR",
+        "object.id": 69,
+        "object.path": "alsa:acp:HDMI:14:playback:monitor_0",
+        "object.serial": 786,
+        "port.alias": "HISENSE:monitor_FL",
         "port.direction": "out",
         "port.group": "playback",
-        "port.id": 1,
+        "port.id": 0,
         "port.monitor": true,
-        "port.name": "monitor_FR"
+        "port.name": "monitor_FL"
       },
       "params": {
         "EnumFormat": [
@@ -13001,18 +12918,18 @@
         "params"
       ],
       "props": {
-        "audio.channel": "RL",
+        "audio.channel": "FR",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
         "object.id": 92,
-        "object.path": "alsa:acp:HDMI:14:playback:monitor_2",
-        "object.serial": 280,
-        "port.alias": "HISENSE:monitor_RL",
+        "object.path": "alsa:acp:HDMI:14:playback:monitor_1",
+        "object.serial": 787,
+        "port.alias": "HISENSE:monitor_FR",
         "port.direction": "out",
         "port.group": "playback",
-        "port.id": 2,
+        "port.id": 1,
         "port.monitor": true,
-        "port.name": "monitor_RL"
+        "port.name": "monitor_FR"
       },
       "params": {
         "EnumFormat": [
@@ -13069,7 +12986,7 @@
     }
   },
   {
-    "id": 87,
+    "id": 63,
     "type": "PipeWire:Interface:Port",
     "version": 3,
     "permissions": [
@@ -13084,18 +13001,18 @@
         "params"
       ],
       "props": {
-        "audio.channel": "RR",
+        "audio.channel": "RL",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
-        "object.id": 87,
-        "object.path": "alsa:acp:HDMI:14:playback:monitor_3",
-        "object.serial": 281,
-        "port.alias": "HISENSE:monitor_RR",
+        "object.id": 63,
+        "object.path": "alsa:acp:HDMI:14:playback:monitor_2",
+        "object.serial": 788,
+        "port.alias": "HISENSE:monitor_RL",
         "port.direction": "out",
         "port.group": "playback",
-        "port.id": 3,
+        "port.id": 2,
         "port.monitor": true,
-        "port.name": "monitor_RR"
+        "port.name": "monitor_RL"
       },
       "params": {
         "EnumFormat": [
@@ -13167,12 +13084,95 @@
         "params"
       ],
       "props": {
-        "audio.channel": "FC",
+        "audio.channel": "RR",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
         "object.id": 111,
+        "object.path": "alsa:acp:HDMI:14:playback:monitor_3",
+        "object.serial": 789,
+        "port.alias": "HISENSE:monitor_RR",
+        "port.direction": "out",
+        "port.group": "playback",
+        "port.id": 3,
+        "port.monitor": true,
+        "port.name": "monitor_RR"
+      },
+      "params": {
+        "EnumFormat": [
+          {
+            "mediaType": "audio",
+            "mediaSubtype": "dsp",
+            "format": "F32P"
+          }
+        ],
+        "Meta": [
+          {
+            "type": "Header",
+            "size": 32
+          }
+        ],
+        "IO": [
+          {
+            "id": "Buffers",
+            "size": 8
+          },
+          {
+            "id": "AsyncBuffers",
+            "size": 8
+          }
+        ],
+        "Format": [],
+        "Buffers": [],
+        "Latency": [
+          {
+            "direction": "Input",
+            "minQuantum": 0.0,
+            "maxQuantum": 0.0,
+            "minRate": 0,
+            "maxRate": 0,
+            "minNs": 0,
+            "maxNs": 0
+          },
+          {
+            "direction": "Output",
+            "minQuantum": 0.0,
+            "maxQuantum": 0.0,
+            "minRate": 0,
+            "maxRate": 0,
+            "minNs": 0,
+            "maxNs": 0
+          }
+        ],
+        "Tag": [
+          {
+            "direction": "Output"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 87,
+    "type": "PipeWire:Interface:Port",
+    "version": 3,
+    "permissions": [
+      "r",
+      "x",
+      "m"
+    ],
+    "info": {
+      "direction": "output",
+      "change-mask": [
+        "props",
+        "params"
+      ],
+      "props": {
+        "audio.channel": "FC",
+        "format.dsp": "32 bit float mono audio",
+        "node.id": 89,
+        "object.id": 87,
         "object.path": "alsa:acp:HDMI:14:playback:monitor_4",
-        "object.serial": 282,
+        "object.serial": 790,
         "port.alias": "HISENSE:monitor_FC",
         "port.direction": "out",
         "port.group": "playback",
@@ -13235,7 +13235,7 @@
     }
   },
   {
-    "id": 76,
+    "id": 93,
     "type": "PipeWire:Interface:Port",
     "version": 3,
     "permissions": [
@@ -13253,9 +13253,9 @@
         "audio.channel": "LFE",
         "format.dsp": "32 bit float mono audio",
         "node.id": 89,
-        "object.id": 76,
+        "object.id": 93,
         "object.path": "alsa:acp:HDMI:14:playback:monitor_5",
-        "object.serial": 283,
+        "object.serial": 791,
         "port.alias": "HISENSE:monitor_LFE",
         "port.direction": "out",
         "port.group": "playback",
@@ -13318,7 +13318,7 @@
     }
   },
   {
-    "id": 78,
+    "id": 76,
     "type": "PipeWire:Interface:Link",
     "version": 3,
     "permissions": [
@@ -13350,8 +13350,8 @@
         "link.output.node": 42,
         "link.output.port": 100,
         "link.passive": true,
-        "object.id": 78,
-        "object.serial": 284
+        "object.id": 76,
+        "object.serial": 792
       }
     }
   },
@@ -13366,44 +13366,6 @@
     "info": {
       "output-node-id": 42,
       "output-port-id": 101,
-      "input-node-id": 89,
-      "input-port-id": 70,
-      "change-mask": [
-        "state",
-        "format",
-        "props"
-      ],
-      "state": "paused",
-      "error": null,
-      "format": {
-        "mediaType": "audio",
-        "mediaSubtype": "dsp",
-        "format": "F32P"
-      },
-      "props": {
-        "client.id": 37,
-        "factory.id": 21,
-        "link.input.node": 89,
-        "link.input.port": 70,
-        "link.output.node": 42,
-        "link.output.port": 101,
-        "link.passive": true,
-        "object.id": 77,
-        "object.serial": 285
-      }
-    }
-  },
-  {
-    "id": 95,
-    "type": "PipeWire:Interface:Link",
-    "version": 3,
-    "permissions": [
-      "r",
-      "x"
-    ],
-    "info": {
-      "output-node-id": 42,
-      "output-port-id": 102,
       "input-node-id": 89,
       "input-port-id": 109,
       "change-mask": [
@@ -13424,15 +13386,15 @@
         "link.input.node": 89,
         "link.input.port": 109,
         "link.output.node": 42,
-        "link.output.port": 102,
+        "link.output.port": 101,
         "link.passive": true,
-        "object.id": 95,
-        "object.serial": 286
+        "object.id": 77,
+        "object.serial": 793
       }
     }
   },
   {
-    "id": 93,
+    "id": 96,
     "type": "PipeWire:Interface:Link",
     "version": 3,
     "permissions": [
@@ -13441,9 +13403,9 @@
     ],
     "info": {
       "output-node-id": 42,
-      "output-port-id": 103,
+      "output-port-id": 102,
       "input-node-id": 89,
-      "input-port-id": 71,
+      "input-port-id": 70,
       "change-mask": [
         "state",
         "format",
@@ -13460,17 +13422,17 @@
         "client.id": 37,
         "factory.id": 21,
         "link.input.node": 89,
-        "link.input.port": 71,
+        "link.input.port": 70,
         "link.output.node": 42,
-        "link.output.port": 103,
+        "link.output.port": 102,
         "link.passive": true,
-        "object.id": 93,
-        "object.serial": 287
+        "object.id": 96,
+        "object.serial": 794
       }
     }
   },
   {
-    "id": 98,
+    "id": 94,
     "type": "PipeWire:Interface:Link",
     "version": 3,
     "permissions": [
@@ -13479,7 +13441,7 @@
     ],
     "info": {
       "output-node-id": 42,
-      "output-port-id": 104,
+      "output-port-id": 103,
       "input-node-id": 89,
       "input-port-id": 91,
       "change-mask": [
@@ -13500,15 +13462,15 @@
         "link.input.node": 89,
         "link.input.port": 91,
         "link.output.node": 42,
-        "link.output.port": 104,
+        "link.output.port": 103,
         "link.passive": true,
-        "object.id": 98,
-        "object.serial": 288
+        "object.id": 94,
+        "object.serial": 795
       }
     }
   },
   {
-    "id": 96,
+    "id": 65,
     "type": "PipeWire:Interface:Link",
     "version": 3,
     "permissions": [
@@ -13517,9 +13479,9 @@
     ],
     "info": {
       "output-node-id": 42,
-      "output-port-id": 105,
+      "output-port-id": 104,
       "input-node-id": 89,
-      "input-port-id": 69,
+      "input-port-id": 71,
       "change-mask": [
         "state",
         "format",
@@ -13536,17 +13498,55 @@
         "client.id": 37,
         "factory.id": 21,
         "link.input.node": 89,
-        "link.input.port": 69,
+        "link.input.port": 71,
         "link.output.node": 42,
-        "link.output.port": 105,
+        "link.output.port": 104,
         "link.passive": true,
-        "object.id": 96,
-        "object.serial": 289
+        "object.id": 65,
+        "object.serial": 796
       }
     }
   },
   {
-    "id": 97,
+    "id": 129,
+    "type": "PipeWire:Interface:Link",
+    "version": 3,
+    "permissions": [
+      "r",
+      "x"
+    ],
+    "info": {
+      "output-node-id": 42,
+      "output-port-id": 105,
+      "input-node-id": 89,
+      "input-port-id": 110,
+      "change-mask": [
+        "state",
+        "format",
+        "props"
+      ],
+      "state": "paused",
+      "error": null,
+      "format": {
+        "mediaType": "audio",
+        "mediaSubtype": "dsp",
+        "format": "F32P"
+      },
+      "props": {
+        "client.id": 37,
+        "factory.id": 21,
+        "link.input.node": 89,
+        "link.input.port": 110,
+        "link.output.node": 42,
+        "link.output.port": 105,
+        "link.passive": true,
+        "object.id": 129,
+        "object.serial": 797
+      }
+    }
+  },
+  {
+    "id": 136,
     "type": "PipeWire:Interface:Client",
     "version": 3,
     "permissions": [
@@ -13564,11 +13564,11 @@
         "application.name": "gamescope",
         "application.process.binary": "gamescope",
         "application.process.host": "redacted-host",
-        "application.process.id": 37617,
+        "application.process.id": 14973,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
-        "core.name": "pipewire-redacted-user-37617",
+        "core.name": "pipewire-redacted-user-14973",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -13586,14 +13586,14 @@
         "mem.allow-mlock": true,
         "mem.warn-mlock": false,
         "module.id": 2,
-        "object.id": 97,
-        "object.serial": 290,
+        "object.id": 136,
+        "object.serial": 798,
         "pipewire.access": "unrestricted",
         "pipewire.access.effective": "unrestricted",
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 37617,
+        "pipewire.sec.pid": 14973,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "settings.check-quantum": false,
@@ -13603,7 +13603,7 @@
     }
   },
   {
-    "id": 135,
+    "id": 143,
     "type": "PipeWire:Interface:Node",
     "version": 3,
     "permissions": [
@@ -13628,7 +13628,7 @@
       "error": null,
       "props": {
         "adapt.follower.spa-node": "",
-        "client.id": 97,
+        "client.id": 136,
         "clock.quantum-limit": 8192,
         "factory.id": 9,
         "library.name": "videoconvert/libspa-videoconvert",
@@ -13640,9 +13640,9 @@
         "node.loop.name": "",
         "node.name": "gamescope",
         "node.want-driver": true,
-        "object.id": 135,
+        "object.id": 143,
         "object.register": false,
-        "object.serial": 291,
+        "object.serial": 799,
         "port.group": "stream.0",
         "stream.is-live": true
       },
@@ -13827,7 +13827,7 @@
     }
   },
   {
-    "id": 131,
+    "id": 99,
     "type": "PipeWire:Interface:Port",
     "version": 3,
     "permissions": [
@@ -13842,10 +13842,10 @@
         "params"
       ],
       "props": {
-        "node.id": 135,
-        "object.id": 131,
+        "node.id": 143,
+        "object.id": 99,
         "object.path": "gamescope:capture_0",
-        "object.serial": 292,
+        "object.serial": 800,
         "port.alias": "gamescope:capture_1",
         "port.direction": "out",
         "port.group": "stream.0",
@@ -14037,7 +14037,7 @@
     }
   },
   {
-    "id": 149,
+    "id": 97,
     "type": "PipeWire:Interface:Client",
     "version": 3,
     "permissions": [
@@ -14055,14 +14055,14 @@
         "application.name": "Steam Voice Settings",
         "application.process.binary": "steam",
         "application.process.host": "redacted-host",
-        "application.process.id": 37819,
+        "application.process.id": 15255,
         "application.process.machine-id": "redacted",
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "client.api": "pipewire-pulse",
         "clock.power-of-two-quantum": true,
         "config.name": "pipewire-pulse.conf",
-        "core.name": "pipewire-redacted-user-3499",
+        "core.name": "pipewire-redacted-user-3489",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -14080,14 +14080,14 @@
         "mem.allow-mlock": true,
         "mem.warn-mlock": false,
         "module.id": 2,
-        "object.id": 149,
-        "object.serial": 293,
+        "object.id": 97,
+        "object.serial": 801,
         "pipewire.access": "unrestricted",
         "pipewire.access.effective": "unrestricted",
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3499,
+        "pipewire.sec.pid": 3489,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "pulse.server.type": "unix",
@@ -14098,7 +14098,7 @@
     }
   },
   {
-    "id": 146,
+    "id": 98,
     "type": "PipeWire:Interface:Client",
     "version": 3,
     "permissions": [
@@ -14118,7 +14118,7 @@
         "application.name": "Steam",
         "application.process.binary": "steam",
         "application.process.host": "redacted-host",
-        "application.process.id": 37819,
+        "application.process.id": 15255,
         "application.process.machine-id": "redacted",
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
@@ -14126,7 +14126,7 @@
         "client.api": "pipewire-pulse",
         "clock.power-of-two-quantum": true,
         "config.name": "pipewire-pulse.conf",
-        "core.name": "pipewire-redacted-user-3499",
+        "core.name": "pipewire-redacted-user-3489",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -14144,14 +14144,14 @@
         "mem.allow-mlock": true,
         "mem.warn-mlock": false,
         "module.id": 2,
-        "object.id": 146,
-        "object.serial": 294,
+        "object.id": 98,
+        "object.serial": 802,
         "pipewire.access": "unrestricted",
         "pipewire.access.effective": "unrestricted",
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3499,
+        "pipewire.sec.pid": 3489,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "pulse.server.type": "unix",
@@ -14180,14 +14180,14 @@
         "application.name": "Chromium input",
         "application.process.binary": "steamwebhelper",
         "application.process.host": "redacted-host",
-        "application.process.id": 38469,
+        "application.process.id": 15905,
         "application.process.machine-id": "redacted",
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "client.api": "pipewire-pulse",
         "clock.power-of-two-quantum": true,
         "config.name": "pipewire-pulse.conf",
-        "core.name": "pipewire-redacted-user-3499",
+        "core.name": "pipewire-redacted-user-3489",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -14206,13 +14206,13 @@
         "mem.warn-mlock": false,
         "module.id": 2,
         "object.id": 144,
-        "object.serial": 300,
+        "object.serial": 812,
         "pipewire.access": "unrestricted",
         "pipewire.access.effective": "unrestricted",
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 3499,
+        "pipewire.sec.pid": 3489,
         "pipewire.sec.socket": "pipewire-0",
         "pipewire.sec.uid": 1000,
         "pulse.server.type": "unix",
@@ -14223,7 +14223,7 @@
     }
   },
   {
-    "id": 147,
+    "id": 138,
     "type": "PipeWire:Interface:Client",
     "version": 3,
     "permissions": [
@@ -14241,11 +14241,11 @@
         "application.name": "pw-dump",
         "application.process.binary": "pw-dump",
         "application.process.host": "redacted-host",
-        "application.process.id": 56911,
+        "application.process.id": 107640,
         "application.process.session-id": "redacted",
         "application.process.user": "redacted-user",
         "clock.power-of-two-quantum": true,
-        "core.name": "pipewire-redacted-user-56911",
+        "core.name": "pipewire-redacted-user-107640",
         "core.version": "1.6.11",
         "cpu.max-align": 32,
         "default.clock.max-quantum": 2048,
@@ -14263,14 +14263,14 @@
         "mem.allow-mlock": true,
         "mem.warn-mlock": false,
         "module.id": 2,
-        "object.id": 147,
-        "object.serial": 3103,
+        "object.id": 138,
+        "object.serial": 1992,
         "pipewire.access": "unrestricted",
         "pipewire.access.effective": "unrestricted",
         "pipewire.protocol": "protocol-native",
         "pipewire.sec.gid": 1000,
         "pipewire.sec.label": "unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023",
-        "pipewire.sec.pid": 56911,
+        "pipewire.sec.pid": 107640,
         "pipewire.sec.socket": "pipewire-0-manager",
         "pipewire.sec.uid": 1000,
         "remote.intention": "manager",

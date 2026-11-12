@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "pack": "audiocaps-quirks-core",
+  "entries": [
+    {
+      "id": "denon-avr-s660h",
+      "description": "Denon AVR-S660H: decodes Dolby Pro Logic II (not stated in EDID); renders 5.1 at most (no Atmos, no DTS:X), so 7.1 PCM is folded down",
+      "reference": "Denon AVR-S660H product page; Crutchfield listing",
+      "match": {
+        "manufacturer": "DON",
+        "model_names": ["AVR-S660H", "Denon AVR-S660H", "DENON-AVR"],
+        "cec_vendor": "0005cd"
+      },
+      "effects": [
+        { "effect": "feature", "name": "dolby_pro_logic_ii" },
+        { "effect": "processing_channels", "max": 6 },
+        { "effect": "note", "text": "Advertises 8-channel PCM; speaker processing is 5.1." }
+      ]
+    }
+  ]
+}

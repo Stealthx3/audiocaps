@@ -94,6 +94,7 @@ pub(crate) fn probe_inner<'a>(
             todo: card_work.into_iter().collect(),
             want,
             out: BTreeMap::new(),
+            drm: None,
         }));
     }
 
@@ -130,33 +131,57 @@ pub(crate) fn probe_inner<'a>(
             (None, None) => tasks.push(Box::new(ServerTask::new(root, ServerKind::PulseAudio))),
         }
     }
+    if sink_wanted(scope) {
+        res.quirks = Some(load_quirks(root, &opts.quirk_dirs));
+        if opts.cec {
+            tasks.push(Box::new(OneShot {
+                backend: Backend::Cec,
+                run: Some({
+                    let root = root.clone();
+                    Box::new(move |out: &mut Results| out.cec = Some(read_cec(&root)))
+                }),
+                on_timeout: Box::new(|out: &mut Results| {
+                    out.cec = Some(Outcome::Unknown {
+                        reason: UnknownReason::Timeout,
+                        detail: "cec backend deadline".into(),
+                    })
+                }),
+                rx: None,
+                pending: None,
+            }));
+        }
+    }
     if scope.layers.includes(&LayerKind::Wireless) {
         tasks.push(Box::new(OneShot {
             backend: Backend::Bluez,
-            run: Some(Box::new(move |out: &mut Results| {
-                out.bluez = Some(read_bluez(root));
-            })),
+            run: Some({
+                let root = root.clone();
+                Box::new(move |out: &mut Results| out.bluez = Some(read_bluez(&root)))
+            }),
             on_timeout: Box::new(|out: &mut Results| {
                 out.bluez = Some(Outcome::Unknown {
                     reason: UnknownReason::Timeout,
                     detail: "bluez backend deadline".into(),
                 })
             }),
+            rx: None,
             pending: None,
         }));
     }
     if scope.layers.includes(&LayerKind::SoundServer) {
         tasks.push(Box::new(OneShot {
             backend: Backend::Jack,
-            run: Some(Box::new(move |out: &mut Results| {
-                out.jack = Some(read_jack(root));
-            })),
+            run: Some({
+                let root = root.clone();
+                Box::new(move |out: &mut Results| out.jack = Some(read_jack(&root)))
+            }),
             on_timeout: Box::new(|out: &mut Results| {
                 out.jack = Some(Outcome::Unknown {
                     reason: UnknownReason::Timeout,
                     detail: "jack backend deadline".into(),
                 })
             }),
+            rx: None,
             pending: None,
         }));
     }
@@ -189,6 +214,12 @@ pub(crate) struct Results {
     pub bluez: Option<Outcome<crate::bluez::BluezDump>>,
     /// JACK: `None` when not in scope.
     pub jack: Option<Outcome<crate::jack::JackDump>>,
+    /// DRM connectors (sink records).
+    pub drm: Vec<sysfs::DrmConnector>,
+    /// CEC: `None` unless the application opted in.
+    pub cec: Option<Outcome<crate::cec::CecDump>>,
+    /// Quirk data (sink records).
+    pub quirks: Option<audiocaps_rules::quirks::QuirkSet>,
 }
 
 /// What a simple backend produced.
@@ -270,7 +301,13 @@ fn wants(scope: &ProbeScope, found: &[Found]) -> Wants {
         driver: layer(LayerKind::KernelDriver) && field(FieldGroup::Driver),
         pcm_state: pcm && layer(LayerKind::AlsaUserspace) && field(FieldGroup::DirectAccess),
         midi: found.iter().any(|f| matches!(f.kind, Kind::RawMidi { .. })),
+        sink: pcm && sink_wanted(scope),
     }
+}
+
+/// Whether sink records are in scope.
+pub(crate) fn sink_wanted(scope: &ProbeScope) -> bool {
+    scope.layers.includes(&LayerKind::SinkChain) && scope.fields.includes(&FieldGroup::Sink)
 }
 
 /// Discovers endpoints in scope.
@@ -450,6 +487,7 @@ struct SysfsTask<'a> {
     todo: VecDeque<(u32, Vec<(u32, Dir)>)>,
     want: Wants,
     out: BTreeMap<u32, CardData>,
+    drm: Option<Vec<sysfs::DrmConnector>>,
 }
 
 impl Task<Results> for SysfsTask<'_> {
@@ -458,6 +496,10 @@ impl Task<Results> for SysfsTask<'_> {
     }
 
     fn step(&mut self) -> bool {
+        if self.want.sink && self.drm.is_none() {
+            self.drm = Some(sysfs::read_drm(self.root));
+            return false;
+        }
         if let Some((index, pcms)) = self.todo.pop_front() {
             let entry = self.cards.iter().find(|c| c.index == index).cloned();
             let data = sysfs::read_card(self.root, entry, index, &pcms, self.want);
@@ -468,6 +510,7 @@ impl Task<Results> for SysfsTask<'_> {
 
     fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
         out.cards = self.out;
+        out.drm = self.drm.unwrap_or_default();
         out.sysfs_timed_out = timed_out;
     }
 }
@@ -504,7 +547,9 @@ fn alsa_work(scope: &ProbeScope, found: &[Found]) -> AlsaWork {
         .iter()
         .any(|f| field(*f));
     let controls = (layer(LayerKind::KernelDriver) && field(FieldGroup::Driver))
-        || (layer(LayerKind::AlsaUserspace) && field(FieldGroup::Passthrough));
+        || (layer(LayerKind::AlsaUserspace) && field(FieldGroup::Passthrough))
+        // The ELD control names the PCM it belongs to.
+        || sink_wanted(scope);
     let mut w = AlsaWork {
         config: routing_wanted(scope),
         ..AlsaWork::default()
@@ -787,14 +832,17 @@ impl Task<Results> for ServerTask<'_> {
 // ---------------------------------------------------------------------------------------------
 // one-step backends (BlueZ, JACK)
 
-type Fill<'a> = Box<dyn FnOnce(&mut Results) + 'a>;
+type Fill = Box<dyn FnOnce(&mut Results) + Send>;
 
-/// A backend that reads everything in one step.
+/// A backend whose read is one blocking library call (libjack, D-Bus, CEC ioctls). It runs on a
+/// helper thread so it can't hold up the other backends; the executor only polls for the result.
+/// Past its deadline the result is dropped and the helper finishes in the background.
 struct OneShot<'a> {
     backend: Backend,
-    run: Option<Fill<'a>>,
+    run: Option<Fill>,
     on_timeout: Box<dyn Fn(&mut Results) + 'a>,
-    /// Results computed in `step`, applied in `finish`.
+    rx: Option<std::sync::mpsc::Receiver<Results>>,
+    /// Results received, applied in `finish`.
     pending: Option<Results>,
 }
 
@@ -805,11 +853,30 @@ impl Task<Results> for OneShot<'_> {
 
     fn step(&mut self) -> bool {
         if let Some(run) = self.run.take() {
-            let mut r = Results::default();
-            run(&mut r);
-            self.pending = Some(r);
+            let (tx, rx) = std::sync::mpsc::channel();
+            let spawned = std::thread::Builder::new()
+                .name("audiocaps-backend".into())
+                .spawn(move || {
+                    let mut r = Results::default();
+                    run(&mut r);
+                    let _ = tx.send(r);
+                });
+            if spawned.is_err() {
+                return true;
+            }
+            self.rx = Some(rx);
         }
-        true
+        match self.rx.as_ref().map(|rx| rx.try_recv()) {
+            Some(Ok(r)) => {
+                self.pending = Some(r);
+                true
+            }
+            Some(Err(std::sync::mpsc::TryRecvError::Empty)) => {
+                std::thread::sleep(std::time::Duration::from_micros(200));
+                false
+            }
+            _ => true,
+        }
     }
 
     fn finish(self: Box<Self>, out: &mut Results, timed_out: bool) {
@@ -820,6 +887,9 @@ impl Task<Results> for OneShot<'_> {
                 }
                 if r.jack.is_some() {
                     out.jack = r.jack;
+                }
+                if r.cec.is_some() {
+                    out.cec = r.cec;
                 }
             }
             None if timed_out => (self.on_timeout)(out),
@@ -857,6 +927,76 @@ fn read_bluez(root: &SystemRoot) -> Outcome<crate::bluez::BluezDump> {
         Ok((value, live)) => Outcome::Read { value, live },
         Err((reason, detail)) => Outcome::Unknown { reason, detail },
     }
+}
+
+fn read_cec(root: &SystemRoot) -> Outcome<crate::cec::CecDump> {
+    let r = match root {
+        SystemRoot::Live if crate::servers::sandboxed(root) => Err((
+            UnknownReason::NotGranted,
+            "CEC device nodes aren't reachable from a sandbox without --device=all".into(),
+        )),
+        SystemRoot::Live => crate::cec::read_live().map(|v| (v, true)),
+        SystemRoot::Fixture(_) => match root.captured_command(crate::cec::CAPTURE_NAME) {
+            Some((c, None)) => {
+                let why = c.skipped.unwrap_or_else(|| "no CEC output".into());
+                let reason = if why.contains("not requested") {
+                    UnknownReason::NotRequested
+                } else {
+                    UnknownReason::NotExposed
+                };
+                Err((reason, why))
+            }
+            _ => captured_json(root, crate::cec::CAPTURE_NAME).and_then(|j| {
+                serde_json::from_value(j)
+                    .map(|v| (v, false))
+                    .map_err(|e| (UnknownReason::ParseError, e.to_string()))
+            }),
+        },
+    };
+    match r {
+        Ok((value, live)) => Outcome::Read { value, live },
+        Err((reason, detail)) => Outcome::Unknown { reason, detail },
+    }
+}
+
+/// System quirk directories, read through the probed root.
+const QUIRK_DIRS: [&str; 2] = ["/usr/share/audiocaps/quirks.d", "/etc/audiocaps/quirks.d"];
+
+/// The bundled quirk pack, then system packs, then the application's.
+fn load_quirks(
+    root: &SystemRoot,
+    app_dirs: &[std::path::PathBuf],
+) -> audiocaps_rules::quirks::QuirkSet {
+    let mut texts: Vec<(String, String)> =
+        vec![("bundled".into(), audiocaps_rules::quirks::BUNDLED.into())];
+    for d in QUIRK_DIRS {
+        let Ok(entries) = root.read_dir(d) else {
+            continue;
+        };
+        for e in entries.iter().filter(|e| e.name.ends_with(".json")) {
+            let p = format!("{d}/{}", e.name);
+            if let Ok(t) = root.read_string(&p) {
+                texts.push((p, t));
+            }
+        }
+    }
+    for d in app_dirs {
+        let Ok(rd) = std::fs::read_dir(d) else {
+            continue;
+        };
+        let mut files: Vec<_> = rd
+            .flatten()
+            .map(|e| e.path())
+            .filter(|p| p.extension().is_some_and(|x| x == "json"))
+            .collect();
+        files.sort();
+        for p in files {
+            if let Ok(t) = std::fs::read_to_string(&p) {
+                texts.push((p.display().to_string(), t));
+            }
+        }
+    }
+    audiocaps_rules::quirks::QuirkSet::load(texts.iter().map(|(o, t)| (o.clone(), t.as_str())))
 }
 
 fn read_jack(root: &SystemRoot) -> Outcome<crate::jack::JackDump> {

@@ -13,11 +13,12 @@ use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
 use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 4)
+audiocaps — AudioCaps command-line tool (phase 6)
 
 USAGE:
-  audiocaps capture [--out DIR] [--label NAME]
+  audiocaps capture [--out DIR] [--label NAME] [--cec]
       Save a redacted, passive capture of this system as a .tar.gz (default DIR: ./captures).
+      --cec also records the CEC bus (opt-in: sends query messages on HDMI-CEC).
   audiocaps import <capture.tar.gz> <fixture-dir>
       Extract a capture into a fixture directory and check its redaction.
   audiocaps check-redaction <fixture-dir>
@@ -26,13 +27,18 @@ USAGE:
       Re-apply the redaction rules to an extracted fixture (after a rule change).
   audiocaps replay <fixture-dir>
       Probe a fixture with the full scope and print the snapshot as JSON.
-  audiocaps probe [--endpoint ID]... [--unbounded] [--repeat N] [--quiet]
+  audiocaps probe [--endpoint ID]... [--unbounded] [--repeat N] [--quiet] [--cec] [--quirk-dir DIR]...
       Probe the live system through the runtime (per-backend deadlines, 150 ms default) and
       print the last snapshot as JSON. --endpoint limits the scope to those endpoints;
       --repeat probes N times and prints each probe's time to stderr; --quiet skips the JSON.
+      --cec opts in to CEC queries (sends query messages on HDMI-CEC); --quirk-dir adds an
+      application quirk-pack directory.
   audiocaps watch [--endpoint ID]... [--count N]
       Watch the live system and print one line per update: what triggered it, what changed and
       the time from the event to the new snapshot. Stops after N updates (default: never).
+  audiocaps cec-dump
+      Query every configured CEC adapter (opt-in: sends query messages on HDMI-CEC) and print
+      what answered.
   audiocaps alsa-dump
       Print what the ALSA backend reads on this system (same passive rules as a probe).
   audiocaps server-dump <pipewire|pulse>
@@ -66,6 +72,14 @@ fn main() -> ExitCode {
             Ok(())
         }
         Some("server-dump") => cmd_server_dump(&args[1..]),
+        Some("cec-dump") => audiocaps_backends::cec::read_live()
+            .map(|d| {
+                println!(
+                    "{}",
+                    serde_json::to_string_pretty(&d).expect("dump serializes")
+                )
+            })
+            .map_err(|(_, why)| why),
         Some("watch") => cmd_watch(&args[1..]),
         Some("schema") => {
             print!("{}", audiocaps_model::schema::snapshot_schema());
@@ -114,6 +128,10 @@ fn cmd_probe(args: &[String]) -> Result<(), String> {
                     .ok_or("--repeat needs a positive number")?
             }
             "--quiet" => quiet = true,
+            "--cec" => opts = opts.with_cec(),
+            "--quirk-dir" => {
+                opts = opts.with_quirk_dir(it.next().ok_or("--quirk-dir needs a directory")?)
+            }
             other => return Err(format!("unknown option {other}")),
         }
     }
@@ -233,12 +251,14 @@ fn cmd_capture(args: &[String]) -> Result<(), String> {
     let mut opts = capture::Options {
         out_dir: PathBuf::from("captures"),
         label: "system".into(),
+        cec: false,
     };
     let mut it = args.iter();
     while let Some(a) = it.next() {
         match a.as_str() {
             "--out" => opts.out_dir = it.next().ok_or("--out needs a directory")?.into(),
             "--label" => opts.label = it.next().ok_or("--label needs a name")?.clone(),
+            "--cec" => opts.cec = true,
             other => return Err(format!("unknown option {other}")),
         }
     }

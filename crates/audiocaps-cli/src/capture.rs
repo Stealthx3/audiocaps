@@ -83,6 +83,8 @@ pub struct Options {
     pub out_dir: PathBuf,
     /// Label for the tarball name, e.g. `htpc`.
     pub label: String,
+    /// Opt-in: record the CEC bus.
+    pub cec: bool,
 }
 
 struct Staging {
@@ -320,6 +322,35 @@ fn alsa_dump(st: &mut Staging) -> CapturedCommand {
     rec
 }
 
+/// Runs the CEC reader when the user opted in.
+fn cec_dump(st: &mut Staging, opted_in: bool) -> CapturedCommand {
+    use audiocaps_backends::cec;
+    let mut rec = CapturedCommand {
+        name: cec::CAPTURE_NAME.into(),
+        argv: vec!["(in-process)".into(), "audiocaps cec reader".into()],
+        exit_code: None,
+        output_file: None,
+        skipped: None,
+    };
+    if !opted_in {
+        rec.skipped = Some("CEC not requested (capture --cec)".into());
+        return rec;
+    }
+    match cec::read_live() {
+        Ok(d) => {
+            let mut s = serde_json::to_string_pretty(&d).unwrap_or_default();
+            s.push('\n');
+            let file = format!("{}.json", cec::CAPTURE_NAME);
+            if fs::write(st.dir.join("commands").join(&file), st.redactor.text(&s)).is_ok() {
+                rec.exit_code = Some(0);
+                rec.output_file = Some(file);
+            }
+        }
+        Err((_, why)) => rec.skipped = Some(why),
+    }
+    rec
+}
+
 /// Runs the library's JACK reader in-process (never starts a server) and stores its record.
 fn jack_dump(st: &mut Staging) -> CapturedCommand {
     use audiocaps_backends::jack;
@@ -351,7 +382,7 @@ fn which(bin: &str) -> bool {
         .unwrap_or(false)
 }
 
-fn commands(st: &mut Staging) -> Vec<CapturedCommand> {
+fn commands(st: &mut Staging, cec: bool) -> Vec<CapturedCommand> {
     let mut out = vec![];
     let skip = |name: &str, why: &str| CapturedCommand {
         name: name.into(),
@@ -363,6 +394,7 @@ fn commands(st: &mut Staging) -> Vec<CapturedCommand> {
 
     out.push(alsa_dump(st));
     out.push(jack_dump(st));
+    out.push(cec_dump(st, cec));
     if which("pw-dump") {
         out.push(run_command(st, "pw-dump", &["pw-dump"], &[]));
     } else {
@@ -519,7 +551,7 @@ pub fn capture(opts: &Options) -> io::Result<PathBuf> {
         }
     }
 
-    let cmds = commands(&mut st);
+    let cmds = commands(&mut st, opts.cec);
     let manifest = Manifest {
         format: CAPTURE_FORMAT,
         tool_version: env!("CARGO_PKG_VERSION").to_string(),

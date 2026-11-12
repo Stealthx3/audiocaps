@@ -38,6 +38,9 @@ while `capture` runs if needed.
 - The QEMU USB Audio device blocks live snapshots: shut the VM down before `lab.sh snap`.
 - Import captures in the build VM and re-bless goldens in the same `lab.sh run`, then sync back at once; clear the host fixture directory first (sync-back doesn't delete).
 
+## CEC in the lab (phase 6)
+- `sudo modprobe vivid n_devs=1 num_inputs=1 num_outputs=1 input_types=3 output_types=1`, then `v4l2-ctl -d /dev/video0 -c hdmi_000_0_is_connected_to=2` joins the emulated HDMI output and input. Configure roles with `cec-ctl -d0 --tv` and `cec-ctl -d1 --audio --osd-name … --vendor-id …`, answer queries with `cec-follower -d1`, then run `audiocaps cec-dump`. Needs v4l-utils (not in a snapshot).
+
 ## Commands
 - Build: `scripts/lab.sh run 'cargo build --workspace'`
 - Test:  `scripts/lab.sh run 'bash scripts/gate.sh 2>&1 | tail -n 50'`
@@ -46,6 +49,7 @@ while `capture` runs if needed.
 ## Host exceptions
 - Real-hardware tests need a one-time OK from Micaiah per test (decision 2026-11-08).
 - 2026-11-08 — workstation capture: static `dist/audiocaps` run once on the host under `strace` via `scripts/check-passive.sh` (approved by Micaiah; passed, 1672 opens, none in /dev/snd).
+- 2026-11-12 — HTPC gate 6.5: release build from lab-audiocaps-main copied to /tmp over SSH, `capture --cec` and `probe --cec`, files removed (approved by Micaiah; no CEC adapter on the HTPC; no strace there).
 - 2026-11-08 — HTPC capture: run once over SSH from the host, binary in /tmp and removed afterwards (approved by Micaiah; no strace installed there, so passivity rests on the code path and the VM/workstation traces).
 
 ## Log

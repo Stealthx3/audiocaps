@@ -12,6 +12,7 @@ publish.workspace = true
 [dependencies]
 audiocaps-model.workspace = true
 audiocaps-parse.workspace = true
+audiocaps-rules.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 alsa.workspace = true
@@ -21,6 +22,7 @@ nix.workspace = true
 jack.workspace = true
 zbus.workspace = true
 zruntime.workspace = true
+cec_linux.workspace = true
 sha2.workspace = true
 
 [lints]

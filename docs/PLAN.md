@@ -57,11 +57,11 @@ Open items (not phase tasks):
 
 ## Phase 6 — Sink chain, CEC, quirk data
 
-- [ ] **6.1** Sink records: identity, SADs, speaker allocation, stable sink key
-- [ ] **6.2** ALSA PCM ↔ DRM connector ↔ server node correlation
-- [ ] **6.3** Optional CEC reads
-- [ ] **6.4** Quirk data packs
-- [ ] **6.5** Gate: production rig identified; receiver matches its spec sheet
+- [x] **6.1** Sink records: identity, SADs, speaker allocation, stable sink key
+- [x] **6.2** ALSA PCM ↔ DRM connector ↔ server node correlation
+- [x] **6.3** Optional CEC reads
+- [x] **6.4** Quirk data packs
+- [x] **6.5** Gate: production rig identified; receiver matches its spec sheet
 
 ## Phase 7 — Path reports and rule engine
 

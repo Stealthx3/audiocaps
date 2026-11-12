@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 5. Updated at every phase gate._
+_Status: end of phase 6. Updated at every phase gate._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
@@ -18,7 +18,7 @@ published; applications bundle the shared library and use the generated C header
             │  audiocaps-backends                  │  │
             │  SystemRoot · Runtime · probe()      │  │
             │  alsa · sysfs · server · bluez ·     │  │
-            │  jack · sandbox · watch              │  │
+            │  jack · cec · sandbox · watch        │  │
             └──────┬───────────────────────┬───────┘  │
                    │                       │          │
                    ▼                       ▼          ▼
@@ -44,7 +44,7 @@ the CLI or the FFI crate.
 | `audiocaps-model` | Every exported type: `ProbeScope`, `Snapshot`, `Endpoint`, `LayerCapabilities`, `CapabilitySet`, `EffectiveSet`, `PathReport`/`Hop`, `Finding`, `Value<T>` with `Provenance` and `Confidence`, `Sensitive` and `RedactionPolicy`. Generates the JSON schema. | Do I/O, or assume Linux (Linux identifiers appear only as data). |
 | `audiocaps-parse` | Pure parsers over bytes/text: raw ELD and kernel ELD text, EDID/CTA-861 (SADs, speaker allocation, HDMI/HDMI Forum VSDBs), HDA codec dumps, USB Audio Class descriptors, procfs (cards, pcm, PCM `info`/`status`, USB `stream#`, `hw_params`, raw MIDI, sequencer clients), alsa-lib configuration (syntax with includes and quoted keys; resolves a PCM name such as `default` through its plugin chain, including the lazily loaded per-card definitions), os-release, EDID serial redaction. Maps SADs to model `CodecCapability`. Each parser has a cargo-fuzz target in `fuzz/` (separate workspace, never shipped) and is checked against the captures in `tests/captures.rs`. | Do I/O; panic on any input. |
 | `audiocaps-backends` | `SystemRoot` (live `/` or a fixture tree), the capture `Manifest` format, the `Runtime` (probe thread, per-backend deadlines, snapshot generations and diffs), `probe`/`probe_with`, and the backends: `alsa` (alsa-lib reader and its serializable dump), `sysfs` (codecs, USB streams, driver, PCM state, MIDI), `server` (PipeWire and PulseAudio clients, and parsers for `pw-dump` / `pactl -f json`), `environment`, and `watch` (change events). `servers` decides passively whether a sound server manages the cards. | Read outside the scope; open `/dev` nodes through `SystemRoot`; open a PCM a server manages or that is in use; write any control; run commands (only the CLI's capture does). |
-| `audiocaps-rules` | Declarative rule packs that turn snapshots into findings (phase 7). | Fetch anything from the network. |
+| `audiocaps-rules` | Quirk packs (`quirks`: bundled JSON pack, overrides by id, matching by PNP id, product, model name or CEC vendor) and, from phase 7, rule packs that turn snapshots into findings. No I/O: callers pass pack text. | Fetch anything from the network. |
 | `audiocaps-ffi` | The C ABI and cbindgen header (phase 9). Only crate allowed `unsafe`. | Contain logic beyond marshalling. |
 | `audiocaps-cli` | `capture`, `import`, `check-redaction`, `replay`, `probe` (through the runtime; `--endpoint`, `--repeat`), `watch`, `alsa-dump`, `server-dump`, `schema`. Owns command execution and text/JSON redaction for captures. | Be linked by applications. |
 
@@ -96,6 +96,9 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
 - Each completed probe gets the next generation number and becomes `latest()` (an `Arc` swap);
   `Snapshot::diff` lists added, removed and changed endpoints between generations (read times are
   ignored). Queries on a snapshot never lock.
+- Backends whose read is one blocking library call (BlueZ over D-Bus, libjack, CEC ioctls) run
+  on a helper thread; the executor polls for their result, so a slow call can't eat another
+  backend's deadline. Past its deadline the result is dropped and the helper ends on its own.
 - `probe(root, scope)` is the same pipeline without deadlines, for fixtures, tests and tools.
 
 ## Probe pipeline (phase 3)
@@ -152,6 +155,27 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
   `/sys/class/sound`, and BlueZ refusing access). Each gap: permission, hidden layers, fix,
   required or not. A layer that can't be read because of a gap says so in its detail.
 
+## Sink chain (phase 6)
+
+- ELD for a PCM, in order: the ALSA `ELD` control (raw bytes; its `device` is the PCM), else the
+  kernel's `eld#C.P` text when its `codec_cvt_nid` converter is bound to the PCM in the codec dump
+  (`Device: … device=N`, only while a stream is open). Otherwise the PCM's sink chain is
+  `not_exposed` with the reason; an ELD is never guessed onto a PCM.
+- EDID: the connected DRM connector whose EDID has the ELD's manufacturer and product, preferring
+  one on the same PCI slot as the sound card (GPU function 0 vs. its audio function 1). That join is
+  an `inferred` `drm_connector` correlation key.
+- Descriptors: raw ELD, else EDID CTA blocks, else the kernel text (which has lost flag bits).
+  A speaker allocation of 0 (or the kernel's 0xffff stand-in) is `not_exposed`.
+- CEC (opt-in): `cec.rs` opens `/dev/cecN` (the only device node the library opens directly, only
+  on this path), uses only adapters that already have a logical address, keeps the default
+  initiator/no-follower mode, and sends polls, Give Physical Address, Give OSD Name, Give Device
+  Vendor ID and, to an audio system, Request Short Audio Descriptor. The adapter whose physical
+  address matches the sink's EDID is attached to that sink; audio systems become `downstream`.
+- Quirks: `audiocaps-rules::quirks` loads the bundled pack, system packs and the application's
+  (`ProbeOptions::quirk_dirs`); entries matching the sink or a downstream CEC device are listed on
+  the sink record, and codec additions/removals mark the sink layer's values `inferred` with a
+  `quirk` source.
+
 ## Passive guarantees
 
 - Readers never open device nodes (`SystemRoot` refuses `/dev`).
@@ -177,9 +201,13 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
 - Note: reading `/proc/asound/cardN/codec#M` makes the HDA driver query the codec (it may resume a
   runtime-suspended codec). It does not open a PCM or change any setting; `alsa-info.sh` does the same.
 
-## Limits at the end of phase 5
+## Limits at the end of phase 6
 
-- The sink chain layer is `not_implemented` (phase 6).
+- On the production rig (AMD GPU) there is no CEC adapter, so a receiver behind the TV is
+  `not_exposed`; its formats are only visible as what the TV forwards.
+- Captures made while no HDMI stream is open, without the ALSA ELD control (capture format 1),
+  can't bind an ELD to a PCM.
+- The CEC reader is checked on vivid's emulated adapters; no physical CEC adapter has been used.
 - Bluetooth codec gaps are checked against synthetic fixtures and unit tests; no Bluetooth
   hardware has been probed yet (the headset test needs a host exception).
 - Snap plug detection is inferred; the sandbox release gate (phase 9) runs real Flatpak and Snap
