@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 [package]
 name = "audiocaps-rules"
-description = "AudioCaps declarative diagnostic rule engine (phase 7)"
+description = "AudioCaps declarative data: quirk packs (phase 6) and the rule engine (phase 7)"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -11,6 +11,8 @@ publish.workspace = true
 
 [dependencies]
 audiocaps-model.workspace = true
+serde.workspace = true
+serde_json.workspace = true
 
 [lints]
 workspace = true

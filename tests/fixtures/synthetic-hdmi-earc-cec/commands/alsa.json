@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "managing_server": "pipewire",
+  "cards": [
+    {
+      "index": 0,
+      "controls": [
+        {
+          "iface": "pcm",
+          "name": "ELD",
+          "device": 3,
+          "index": 0,
+          "kind": "bytes",
+          "values": [
+            16,
+            0,
+            10,
+            0,
+            103,
+            80,
+            0,
+            79,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            32,
+            163,
+            48,
+            160,
+            72,
+            73,
+            83,
+            69,
+            78,
+            83,
+            69,
+            87,
+            6,
+            0,
+            21,
+            7,
+            80,
+            61,
+            30,
+            192,
+            95,
+            126,
+            1,
+            15,
+            127,
+            7,
+            0,
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "HDMI/DP,pcm=3 Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        }
+      ],
+      "pcms": [
+        {
+          "device": 3,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        }
+      ]
+    }
+  ]
+}

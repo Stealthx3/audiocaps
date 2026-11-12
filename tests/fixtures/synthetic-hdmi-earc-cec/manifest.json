@@ -1,0 +1,54 @@
+{
+  "format": 2,
+  "tool_version": "0.1.0",
+  "captured_at_ms": 1794600000000,
+  "sandbox": {
+    "snap": false,
+    "flatpak": false
+  },
+  "file_count": 9,
+  "commands": [
+    {
+      "name": "alsa",
+      "argv": [
+        "synthetic"
+      ],
+      "exit_code": 0,
+      "output_file": "alsa.json"
+    },
+    {
+      "name": "cec",
+      "argv": [
+        "synthetic"
+      ],
+      "exit_code": 0,
+      "output_file": "cec.json"
+    },
+    {
+      "name": "pw-dump",
+      "argv": [],
+      "skipped": "pw-dump not installed"
+    },
+    {
+      "name": "pactl-info",
+      "argv": [],
+      "skipped": "pactl not installed"
+    },
+    {
+      "name": "bluez",
+      "argv": [],
+      "skipped": "org.bluez not running; not activating it"
+    },
+    {
+      "name": "jack",
+      "argv": [],
+      "skipped": "no JACK server running; not starting one"
+    }
+  ],
+  "redaction": [
+    "synthetic fixture written by hand; the EDID is the HTPC capture's (serials already redacted)"
+  ],
+  "notes": [
+    "Hand-written: PC -> Hisense TV (EDID, ELD control) -> Denon AVR-S660H on eARC, seen over CEC from a Pulse-Eight adapter. The TV forwards no TrueHD; the receiver reports it over CEC."
+  ]
+}

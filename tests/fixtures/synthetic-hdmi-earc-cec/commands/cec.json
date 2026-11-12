@@ -1,0 +1,110 @@
+{
+  "adapters": [
+    {
+      "node": "cec0",
+      "driver": "pulse8-cec",
+      "physical_address": 8192,
+      "logical_addresses": [
+        4
+      ],
+      "devices": [
+        {
+          "logical_address": 0,
+          "device_type": "tv",
+          "physical_address": 0,
+          "osd_name": "TV"
+        },
+        {
+          "logical_address": 5,
+          "device_type": "audio_system",
+          "physical_address": 12288,
+          "osd_name": "AVR-S660H",
+          "vendor_id": "0005cd",
+          "vendor": "Denon",
+          "audio_descriptors": [
+            {
+              "codec": "lpcm",
+              "max_channels": 8,
+              "rates_hz": [
+                32000,
+                44100,
+                48000,
+                88200,
+                96000,
+                176400,
+                192000
+              ],
+              "bit_depths": [
+                16,
+                20,
+                24
+              ]
+            },
+            {
+              "codec": "ac3",
+              "max_channels": 6,
+              "rates_hz": [
+                32000,
+                44100,
+                48000
+              ],
+              "max_bitrate_kbps": 640
+            },
+            {
+              "codec": "eac3",
+              "max_channels": 8,
+              "rates_hz": [
+                44100,
+                48000
+              ]
+            },
+            {
+              "codec": "dts",
+              "max_channels": 6,
+              "rates_hz": [
+                32000,
+                44100,
+                48000,
+                88200,
+                96000
+              ],
+              "max_bitrate_kbps": 1536
+            },
+            {
+              "codec": "dts_hd",
+              "max_channels": 8,
+              "rates_hz": [
+                32000,
+                44100,
+                48000,
+                88200,
+                96000,
+                176400,
+                192000
+              ],
+              "flags": [
+                "needs_hbr"
+              ]
+            },
+            {
+              "codec": "true_hd",
+              "max_channels": 8,
+              "rates_hz": [
+                44100,
+                48000,
+                88200,
+                96000,
+                176400,
+                192000
+              ],
+              "flags": [
+                "needs_hbr"
+              ]
+            }
+          ]
+        }
+      ],
+      "skipped": null
+    }
+  ]
+}

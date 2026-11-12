@@ -17,6 +17,7 @@ use audiocaps_parse::procfs::{CardEntry, StreamDirection, UsbStream};
 
 use crate::alsa::dump::{ControlDump, HwRanges, NotOpened, PcmResult, StreamDir};
 mod server;
+mod sink;
 mod wireless;
 
 use crate::probe::{Found, Kind, PROC_PCM, Results, ServerResult};
@@ -153,13 +154,6 @@ fn timeout<T>() -> Value<T> {
     )
 }
 
-fn not_implemented(phase: u8) -> Availability {
-    Availability::Unknown {
-        reason: UnknownReason::NotImplemented,
-        detail: Some(format!("read from phase {phase} of the roadmap")),
-    }
-}
-
 fn unknown_layer(reason: UnknownReason, detail: impl Into<String>) -> Availability {
     Availability::Unknown {
         reason,
@@ -224,7 +218,16 @@ impl Ctx<'_> {
                 Err(e) => io_unknown(&e, PROC_PCM),
             },
             LayerKind::Environment => Availability::Partial,
-            LayerKind::SinkChain => not_implemented(6),
+            LayerKind::SinkChain => {
+                if crate::probe::sink_wanted(self.scope) {
+                    Availability::Partial
+                } else {
+                    unknown_layer(
+                        UnknownReason::NotRequested,
+                        "the sink field group is not in scope",
+                    )
+                }
+            }
             LayerKind::SoundServer => {
                 let rs = [&self.res.pipewire, &self.res.pulse];
                 if rs.iter().any(|r| matches!(r, ServerResult::Read { .. })) {
@@ -435,6 +438,17 @@ impl Ctx<'_> {
                 infer_transport(&f.name, entry.map(|c| c.driver.as_str()), self.now)
             });
 
+        let hdmi = dir == Dir::Playback && matches!(transport.known(), Some(Transport::HdmiDp));
+        let mut sink_view =
+            (hdmi && self.layer(LayerKind::SinkChain)).then(|| self.sink_view(data, card, device));
+        if let Some(k) = sink_view.as_mut().and_then(|v| v.correlation.take())
+            && identity
+        {
+            correlation.push(k);
+        }
+        let sink = sink_view.as_mut().and_then(|v| v.record.take());
+        let mut sink_layer = sink_view.map(|v| v.layer);
+
         let mut layers = vec![];
         for &layer in LayerKind::ALL
             .iter()
@@ -448,7 +462,15 @@ impl Ctx<'_> {
                 LayerKind::AlsaUserspace => {
                     self.alsa_layer(data, card, device, dir, transport.known())
                 }
-                LayerKind::SinkChain => plain(layer, not_implemented(6)),
+                LayerKind::SinkChain => sink_layer.take().unwrap_or_else(|| {
+                    plain(
+                        layer,
+                        unknown_layer(
+                            UnknownReason::NotExposed,
+                            "only HDMI/DP outputs have a sink chain",
+                        ),
+                    )
+                }),
                 LayerKind::SoundServer => self.server_layer(&f.id),
                 LayerKind::Wireless => plain(
                     layer,
@@ -469,7 +491,7 @@ impl Ctx<'_> {
                 )
             }),
             correlation,
-            sink: None,
+            sink,
             midi: None,
             layers,
             effective: vec![],
