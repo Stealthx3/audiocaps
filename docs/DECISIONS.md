@@ -92,3 +92,4 @@ Entries up to the adoption line were migrated from the former `docs/decision-and
 - **2026-11-11** · decision · Blocking one-step backends (BlueZ, JACK, CEC) run on helper threads polled by the single-threaded executor; their results past a deadline are dropped — _why:_ on the HTPC the PipeWire backend missed its 150 ms deadline inside a full probe while a blocking library call held the probe thread _(by claude)_
 - **2026-11-11** · action · HTPC re-run (approved): live PipeWire 1.6.11 read succeeded and matched pw-dump except one parser bug (video devices), fixed; inside a full probe PipeWire still timed out, addressed with helper threads (not yet re-checked on the HTPC) _(by claude)_
 - **2026-11-11** · action · Phase 6 gate met: 6.5 accepted by Micaiah; gate.sh PASS _(by claude)_
+- **2026-11-11** · approval · Approved the merge of feat/phase-6-sink-cec-quirks into main ("Proceed")
