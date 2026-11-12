@@ -452,3 +452,113 @@ pub struct Policy {
     /// Settings, e.g. `bluetooth.autoswitch-to-headset-profile = true`.
     pub settings: Vec<Parameter>,
 }
+
+/// HDMI link limits and latency stated by a sink.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct HdmiLink {
+    /// CEC physical address as a 16-bit number (`0x1000` is input 1 of the root display).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub physical_address: Option<u16>,
+    /// Maximum TMDS character rate in MHz.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_tmds_mhz: Option<u32>,
+    /// Maximum FRL rate in Gbit/s (HDMI 2.1), when advertised.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_frl_gbps: Option<u32>,
+    /// Audio latency in milliseconds (progressive video), when stated.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub audio_latency_ms: Option<u16>,
+    /// Video latency in milliseconds (progressive video), when stated.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub video_latency_ms: Option<u16>,
+    /// The sink accepts ACP/ISRC packets (Supports_AI).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub supports_ai: Option<bool>,
+}
+
+/// A CEC bus as seen from one adapter.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct CecBus {
+    /// Adapter driver, e.g. `pulse8-cec`, `amdgpu`.
+    pub adapter: String,
+    /// The adapter's own physical address.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub physical_address: Option<u16>,
+    /// The adapter's claimed logical addresses.
+    #[serde(default)]
+    pub own_logical_addresses: Vec<u8>,
+    /// Devices that answered.
+    pub devices: Vec<CecDevice>,
+}
+
+/// One device on the CEC bus.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct CecDevice {
+    /// Logical address (0 TV, 5 audio system, 4/8/11 playback, …).
+    pub logical_address: u8,
+    /// Device type from the logical address, e.g. `tv`, `audio_system`.
+    pub device_type: String,
+    /// Physical address.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub physical_address: Option<u16>,
+    /// OSD name.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub osd_name: Option<String>,
+    /// IEEE OUI vendor id, e.g. `0005cd`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub vendor_id: Option<String>,
+    /// Vendor name resolved from the OUI.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub vendor: Option<String>,
+    /// Short audio descriptors the device reported (audio systems).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub audio_descriptors: Vec<CodecCapability>,
+}
+
+/// A quirk-data entry applied to a sink.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct AppliedQuirk {
+    /// Entry id, e.g. `denon-avr-s660h`.
+    pub id: String,
+    /// What the entry corrects or adds.
+    pub description: String,
+    /// The pack it came from: `bundled`, or the directory that overrode it.
+    pub origin: String,
+    /// Where the facts come from (spec sheet, measurement).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reference: Option<String>,
+    /// Effects.
+    pub effects: Vec<QuirkEffect>,
+}
+
+/// One effect of a quirk entry. Effects are reported, and values they change are marked
+/// `inferred` with a `quirk` source.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "effect", rename_all = "snake_case")]
+pub enum QuirkEffect {
+    /// A capability no EDID field carries, e.g. `dolby_pro_logic_ii`.
+    Feature {
+        /// Feature name.
+        name: String,
+    },
+    /// The sink accepts more channels than it processes (e.g. 8-channel PCM, 5.1 processing).
+    ProcessingChannels {
+        /// Channels the sink actually renders.
+        max: u8,
+    },
+    /// A codec the sink accepts but doesn't advertise.
+    AddCodec {
+        /// The codec.
+        codec: CodecCapability,
+    },
+    /// A codec the sink advertises but can't play.
+    RemoveCodec {
+        /// The codec.
+        codec: crate::caps::Codec,
+    },
+    /// A note for diagnostics.
+    Note {
+        /// Text.
+        text: String,
+    },
+}

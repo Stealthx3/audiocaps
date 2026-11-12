@@ -17,7 +17,7 @@ Client 142 : "PipeWire-System" [User Legacy]
     Pool size          : 200
     Cells in use       : 0
     Peak cells in use  : 4
-    Alloc success      : 16
+    Alloc success      : 4
     Alloc failures     : 0
 Client 143 : "PipeWire-RT-Event" [User Legacy]
   Port   0 : "input" (rwe-) [In/Out]

@@ -50,6 +50,8 @@ pub enum Backend {
     Bluez,
     /// JACK client (never starts a server).
     Jack,
+    /// CEC bus (opt-in).
+    Cec,
 }
 
 /// Probe options.
@@ -59,6 +61,11 @@ pub struct ProbeOptions {
     pub default_deadline: Option<Duration>,
     /// Per-backend deadlines.
     pub deadlines: Vec<(Backend, Duration)>,
+    /// Opt-in: query the CEC bus (sends query messages on HDMI-CEC). Off by default.
+    pub cec: bool,
+    /// Extra quirk-pack directories from the application's bundle; they override the bundled
+    /// pack and the system directories.
+    pub quirk_dirs: Vec<std::path::PathBuf>,
 }
 
 impl Default for ProbeOptions {
@@ -66,6 +73,8 @@ impl Default for ProbeOptions {
         Self {
             default_deadline: Some(DEFAULT_DEADLINE),
             deadlines: vec![],
+            cec: false,
+            quirk_dirs: vec![],
         }
     }
 }
@@ -76,7 +85,26 @@ impl ProbeOptions {
         Self {
             default_deadline: None,
             deadlines: vec![],
+            cec: false,
+            quirk_dirs: vec![],
         }
+    }
+
+    /// Opts in to CEC queries, with a deadline that allows for slow buses (5 s unless set).
+    pub fn with_cec(mut self) -> Self {
+        self.cec = true;
+        if self.default_deadline.is_some()
+            && !self.deadlines.iter().any(|(b, _)| *b == Backend::Cec)
+        {
+            self.deadlines.push((Backend::Cec, Duration::from_secs(5)));
+        }
+        self
+    }
+
+    /// Adds an application quirk-pack directory.
+    pub fn with_quirk_dir(mut self, dir: impl Into<std::path::PathBuf>) -> Self {
+        self.quirk_dirs.push(dir.into());
+        self
     }
 
     /// Sets one backend's deadline.
@@ -105,8 +133,10 @@ impl ProbeOptions {
             Backend::PulseAudio,
             Backend::Bluez,
             Backend::Jack,
+            Backend::Cec,
         ]
         .iter()
+        .filter(|b| **b != Backend::Cec || self.cec)
         .map(|b| self.deadline(*b))
         .try_fold(Duration::ZERO, |acc, d| d.map(|d| acc.max(d)))
     }

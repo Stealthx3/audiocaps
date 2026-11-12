@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.4.0",
   "generation": 1,
   "taken_at_ms": 1794000000000,
   "source": {
@@ -35,9 +35,7 @@
     {
       "layer": "sink_chain",
       "availability": {
-        "state": "unknown",
-        "reason": "not_implemented",
-        "detail": "read from phase 6 of the roadmap"
+        "state": "partial"
       }
     },
     {
@@ -267,8 +265,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },
@@ -463,8 +461,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },
@@ -659,8 +657,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "only HDMI/DP outputs have a sink chain"
           },
           "caps": {}
         },
@@ -860,8 +858,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "nothing connected (the ELD is empty)"
           },
           "caps": {}
         },
@@ -1061,8 +1059,8 @@
           "layer": "sink_chain",
           "availability": {
             "state": "unknown",
-            "reason": "not_implemented",
-            "detail": "read from phase 6 of the roadmap"
+            "reason": "not_exposed",
+            "detail": "nothing connected (the ELD is empty)"
           },
           "caps": {}
         },
