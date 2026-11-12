@@ -3,7 +3,7 @@
   "library_protocol_version": 35,
   "server_protocol_version": 35,
   "is_local": "yes",
-  "client_index": 3104,
+  "client_index": 1993,
   "tile_size": "65472",
   "user_name": "redacted",
   "host_name": "redacted",
@@ -13,5 +13,5 @@
   "default_channel_map": "front-left,front-right",
   "default_sink_name": "game_output",
   "default_source_name": "alsa_input.usb-USB_Composite_Device_USB_Composite_Device_0001-01.mono-fallback",
-  "cookie": "fafa:26f4"
+  "cookie": "c9cc:a6c8"
 }

@@ -100,8 +100,12 @@ impl PwSession {
                 let st = state.clone();
                 move |_id, seq| st.borrow_mut().done_seq.push(seq.seq())
             })
-            .error(move |_id, _seq, _res, msg| {
-                st_err.borrow_mut().error = Some(msg.to_string());
+            .error(move |id, _seq, _res, msg| {
+                // Errors on a bound object (e.g. "enum params … Format failed" for a suspended
+                // node, PipeWire 1.6) concern that object only; only core errors end the session.
+                if id == pw::core::PW_ID_CORE {
+                    st_err.borrow_mut().error = Some(msg.to_string());
+                }
             })
             .register();
 

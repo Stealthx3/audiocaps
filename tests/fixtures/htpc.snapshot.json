@@ -1,7 +1,7 @@
 {
   "schema_version": "1.4.0",
   "generation": 1,
-  "taken_at_ms": 1794190241958,
+  "taken_at_ms": 1794463994360,
   "source": {
     "kind": "fixture",
     "name": "htpc"
@@ -53,7 +53,7 @@
     {
       "layer": "alsa_userspace",
       "availability": {
-        "state": "partial"
+        "state": "read"
       }
     },
     {
@@ -90,7 +90,7 @@
           "kind": "file",
           "path": "/etc/os-release"
         },
-        "read_at_ms": 1794190241958
+        "read_at_ms": 1794463994360
       }
     },
     "kernel": {
@@ -103,7 +103,7 @@
           "kind": "file",
           "path": "/proc/sys/kernel/osrelease"
         },
-        "read_at_ms": 1794190241958
+        "read_at_ms": 1794463994360
       }
     },
     "sandbox": {
@@ -118,7 +118,7 @@
           "kind": "file",
           "path": "/.flatpak-info"
         },
-        "read_at_ms": 1794190241958
+        "read_at_ms": 1794463994360
       }
     },
     "servers": [
@@ -137,7 +137,7 @@
               "kind": "command",
               "name": "pw-dump"
             },
-            "read_at_ms": 1794190241958
+            "read_at_ms": 1794463994360
           }
         }
       },
@@ -156,7 +156,7 @@
               "kind": "command",
               "name": "pactl-info"
             },
-            "read_at_ms": 1794190241958
+            "read_at_ms": 1794463994360
           }
         }
       }
@@ -164,14 +164,40 @@
   },
   "routing": {
     "default_playback": {
-      "state": "unknown",
-      "reason": "not_exposed",
-      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+      "state": "known",
+      "value": [
+        {
+          "name": "default",
+          "kind": "pipewire"
+        }
+      ],
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "alsa_userspace",
+        "source": {
+          "kind": "command",
+          "name": "alsa"
+        },
+        "read_at_ms": 1794463994360
+      }
     },
     "default_capture": {
-      "state": "unknown",
-      "reason": "not_exposed",
-      "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+      "state": "known",
+      "value": [
+        {
+          "name": "default",
+          "kind": "pipewire"
+        }
+      ],
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "alsa_userspace",
+        "source": {
+          "kind": "command",
+          "name": "alsa"
+        },
+        "read_at_ms": 1794463994360
+      }
     }
   },
   "servers": [
@@ -193,7 +219,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "clock": {
@@ -216,7 +242,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "default_sink": {
@@ -229,7 +255,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "default_source": {
@@ -242,7 +268,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "policy": {
@@ -359,7 +385,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       }
     },
@@ -381,7 +407,7 @@
             "kind": "command",
             "name": "pactl-list"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "default_sink": {
@@ -394,7 +420,7 @@
             "kind": "command",
             "name": "pactl-list"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "default_source": {
@@ -407,16 +433,77 @@
             "kind": "command",
             "name": "pactl-list"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       }
     },
     {
       "server": "jack",
       "availability": {
-        "state": "unknown",
-        "reason": "not_exposed",
-        "detail": "jack not captured"
+        "state": "read"
+      },
+      "info": {
+        "state": "known",
+        "value": {
+          "name": "jack"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "jack"
+          },
+          "read_at_ms": 1794463994360
+        }
+      },
+      "clock": {
+        "state": "known",
+        "value": {
+          "rate_hz": 48000,
+          "quantum": 1024
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "jack"
+          },
+          "read_at_ms": 1794463994360
+        }
+      },
+      "ports": {
+        "state": "known",
+        "value": [
+          {
+            "client": "Navi 48 HDMI/DP Audio Controller Digital Surround 5.1 (HDMI 4) [HISENSE]",
+            "direction": "playback",
+            "channels": 6,
+            "latency_frames": {
+              "min": 1024,
+              "max": 1024
+            }
+          },
+          {
+            "client": "USB Composite Device Mono",
+            "direction": "capture",
+            "channels": 1,
+            "latency_frames": {
+              "min": 1024,
+              "max": 1024
+            }
+          }
+        ],
+        "confidence": "measured",
+        "provenance": {
+          "layer": "sound_server",
+          "source": {
+            "kind": "command",
+            "name": "jack"
+          },
+          "read_at_ms": 1794463994360
+        }
       }
     }
   ],
@@ -435,7 +522,7 @@
             "kind": "file",
             "path": "/proc/asound/card0/usbid"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -450,7 +537,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -513,7 +600,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -531,7 +618,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -547,7 +634,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           },
@@ -563,7 +650,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/usbid"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "usb_speed": {
@@ -576,7 +663,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "usb_alt_settings": {
@@ -605,7 +692,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           }
@@ -628,7 +715,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -641,7 +728,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card0/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -723,18 +810,13 @@
                   "kind": "file",
                   "path": "/sys/module/snd_usb_audio/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
               "state": "unknown",
               "reason": "not_exposed",
               "detail": "/sys/class/sound/card0/device/power/runtime_status"
-            },
-            "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
             }
           }
         },
@@ -746,33 +828,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -781,7 +863,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -790,7 +873,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/pcm0c/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -806,13 +889,13 @@
                   "kind": "file",
                   "path": "/proc/asound/card0/pcm0c/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           }
         },
@@ -834,7 +917,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -852,7 +935,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -868,7 +951,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channel_maps": {
@@ -887,7 +970,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -913,7 +996,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "profiles": {
@@ -944,7 +1027,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "routes": {
@@ -963,7 +1046,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -979,7 +1062,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": true
@@ -998,7 +1081,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -1015,7 +1098,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -1031,7 +1114,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": true
@@ -1064,7 +1147,7 @@
             "kind": "file",
             "path": "/proc/asound/card1/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -1079,7 +1162,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -1106,7 +1189,7 @@
           "availability": {
             "state": "unknown",
             "reason": "not_exposed",
-            "detail": "a sink is connected to this card, but nothing binds its ELD to this PCM (no ELD control in the data and no stream open)"
+            "detail": "nothing connected (the ELD is empty)"
           },
           "caps": {}
         },
@@ -1130,7 +1213,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -1143,7 +1226,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -1171,7 +1254,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -1184,7 +1267,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -1278,7 +1361,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -1291,13 +1374,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "HDMI/DP,pcm=3 Jack",
+                "plugged": false
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -1309,33 +1403,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -1344,7 +1438,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -1353,7 +1448,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm3p/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -1369,18 +1464,18 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm3p/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "iec958": {
               "state": "unknown",
               "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "detail": "no IEC958 switch bound to PCM device 3"
             }
           }
         },
@@ -1418,7 +1513,7 @@
             "kind": "file",
             "path": "/proc/asound/card1/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -1433,7 +1528,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -1460,7 +1555,7 @@
           "availability": {
             "state": "unknown",
             "reason": "not_exposed",
-            "detail": "a sink is connected to this card, but nothing binds its ELD to this PCM (no ELD control in the data and no stream open)"
+            "detail": "nothing connected (the ELD is empty)"
           },
           "caps": {}
         },
@@ -1484,7 +1579,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -1497,7 +1592,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -1525,7 +1620,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -1538,7 +1633,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -1632,7 +1727,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -1645,13 +1740,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "HDMI/DP,pcm=7 Jack",
+                "plugged": false
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -1663,33 +1769,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -1698,7 +1804,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -1707,7 +1814,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm7p/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -1723,18 +1830,18 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm7p/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "iec958": {
               "state": "unknown",
               "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "detail": "no IEC958 switch bound to PCM device 7"
             }
           }
         },
@@ -1772,7 +1879,7 @@
             "kind": "file",
             "path": "/proc/asound/card1/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -1787,7 +1894,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -1814,7 +1921,7 @@
           "availability": {
             "state": "unknown",
             "reason": "not_exposed",
-            "detail": "a sink is connected to this card, but nothing binds its ELD to this PCM (no ELD control in the data and no stream open)"
+            "detail": "nothing connected (the ELD is empty)"
           },
           "caps": {}
         },
@@ -1838,7 +1945,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -1851,7 +1958,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -1879,7 +1986,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -1892,7 +1999,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -1986,7 +2093,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -1999,13 +2106,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "HDMI/DP,pcm=8 Jack",
+                "plugged": false
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -2017,33 +2135,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -2052,7 +2170,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -2061,7 +2180,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm8p/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -2077,18 +2196,18 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm8p/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "iec958": {
               "state": "unknown",
               "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "detail": "no IEC958 switch bound to PCM device 8"
             }
           }
         },
@@ -2126,7 +2245,7 @@
             "kind": "file",
             "path": "/proc/asound/card1/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -2141,7 +2260,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -2195,7 +2314,7 @@
                 "kind": "file",
                 "path": "/sys/class/drm/card1-HDMI-A-2/edid"
               },
-              "read_at_ms": 1794190241958
+              "read_at_ms": 1794463994360
             }
           },
           "manufacturer_name": {
@@ -2208,7 +2327,7 @@
                 "kind": "table",
                 "name": "pnp"
               },
-              "read_at_ms": 1794190241958
+              "read_at_ms": 1794463994360
             }
           },
           "product_code": {
@@ -2221,7 +2340,7 @@
                 "kind": "file",
                 "path": "/sys/class/drm/card1-HDMI-A-2/edid"
               },
-              "read_at_ms": 1794190241958
+              "read_at_ms": 1794463994360
             }
           },
           "model_name": {
@@ -2234,7 +2353,7 @@
                 "kind": "file",
                 "path": "/sys/class/drm/card1-HDMI-A-2/edid"
               },
-              "read_at_ms": 1794190241958
+              "read_at_ms": 1794463994360
             }
           },
           "sink_key": {
@@ -2247,7 +2366,7 @@
                 "kind": "derived",
                 "from": "manufacturer, product and serial"
               },
-              "read_at_ms": 1794190241958
+              "read_at_ms": 1794463994360
             }
           }
         },
@@ -2321,65 +2440,21 @@
           "provenance": {
             "layer": "sink_chain",
             "source": {
-              "kind": "file",
-              "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+              "kind": "command",
+              "name": "alsa"
             },
-            "read_at_ms": 1794190241958
+            "read_at_ms": 1794463994360
           }
         },
         "speaker_allocation": {
-          "state": "known",
-          "value": [
-            "fl",
-            "fr",
-            "lfe",
-            "fc",
-            "rl",
-            "rr",
-            "rc",
-            "flc",
-            "frc",
-            "rlc",
-            "rrc",
-            {
-              "other": "flw"
-            },
-            {
-              "other": "frw"
-            },
-            {
-              "other": "flh"
-            },
-            {
-              "other": "frh"
-            },
-            "tc",
-            {
-              "other": "fch"
-            }
-          ],
-          "confidence": "measured",
-          "provenance": {
-            "layer": "sink_chain",
-            "source": {
-              "kind": "file",
-              "path": "/sys/class/drm/card1-HDMI-A-2/edid"
-            },
-            "read_at_ms": 1794190241958
-          }
+          "state": "unknown",
+          "reason": "not_exposed",
+          "detail": "the sink states no speaker allocation"
         },
         "sync_delay_ms": {
-          "state": "known",
-          "value": 0,
-          "confidence": "measured",
-          "provenance": {
-            "layer": "sink_chain",
-            "source": {
-              "kind": "file",
-              "path": "/proc/asound/card1/eld#0.3"
-            },
-            "read_at_ms": 1794190241958
-          }
+          "state": "unknown",
+          "reason": "not_exposed",
+          "detail": "the sink states no audio sync delay"
         },
         "downstream": {
           "state": "unknown",
@@ -2400,7 +2475,7 @@
               "kind": "file",
               "path": "/sys/class/drm/card1-HDMI-A-2/edid"
             },
-            "read_at_ms": 1794190241958
+            "read_at_ms": 1794463994360
           }
         }
       },
@@ -2429,10 +2504,10 @@
               "provenance": {
                 "layer": "sink_chain",
                 "source": {
-                  "kind": "file",
-                  "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+                  "kind": "command",
+                  "name": "alsa"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -2445,10 +2520,10 @@
               "provenance": {
                 "layer": "sink_chain",
                 "source": {
-                  "kind": "file",
-                  "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+                  "kind": "command",
+                  "name": "alsa"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -2503,10 +2578,10 @@
               "provenance": {
                 "layer": "sink_chain",
                 "source": {
-                  "kind": "file",
-                  "path": "/sys/class/drm/card1-HDMI-A-2/edid"
+                  "kind": "command",
+                  "name": "alsa"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           }
@@ -2529,7 +2604,7 @@
                   "kind": "derived",
                   "from": "converter bits in /proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -2549,7 +2624,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -2565,7 +2640,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           },
@@ -2581,7 +2656,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -2594,7 +2669,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -2617,7 +2692,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           }
@@ -2640,7 +2715,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -2653,7 +2728,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -2747,7 +2822,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -2760,13 +2835,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card1/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "HDMI/DP,pcm=9 Jack",
+                "plugged": true
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -2778,33 +2864,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             }
           },
           "detail": {
@@ -2814,7 +2900,7 @@
               "state": "known",
               "value": {
                 "state": "in_use",
-                "owner_pid": 3333
+                "owner_pid": 3317
               },
               "confidence": "measured",
               "provenance": {
@@ -2823,7 +2909,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm9p/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -2839,7 +2925,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm9p/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "current": {
@@ -2858,18 +2944,18 @@
                   "kind": "file",
                   "path": "/proc/asound/card1/pcm9p/sub0/hw_params"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "busy",
+              "detail": "in use (owner pid 3317); ranges are read only from a free device"
             },
             "iec958": {
               "state": "unknown",
               "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "detail": "no IEC958 switch bound to PCM device 9"
             }
           }
         },
@@ -2892,7 +2978,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -2909,7 +2995,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -2925,7 +3011,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channel_maps": {
@@ -2949,7 +3035,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -2975,7 +3061,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           },
@@ -2996,7 +3082,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -3013,7 +3099,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "profiles": {
@@ -3110,7 +3196,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "routes": {
@@ -3148,7 +3234,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -3164,7 +3250,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -3183,7 +3269,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -3200,7 +3286,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -3216,7 +3302,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -3249,7 +3335,7 @@
             "kind": "file",
             "path": "/proc/asound/card2/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -3264,7 +3350,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -3314,7 +3400,7 @@
                   "kind": "derived",
                   "from": "converter bits in /proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -3337,7 +3423,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -3353,7 +3439,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           },
@@ -3369,7 +3455,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -3382,7 +3468,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -3432,7 +3518,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           }
@@ -3455,7 +3541,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -3468,7 +3554,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -3562,7 +3648,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -3575,13 +3661,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "Front Headphone Jack",
+                "plugged": false
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -3593,33 +3690,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -3628,7 +3725,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -3637,7 +3735,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/pcm0c/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -3653,13 +3751,13 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/pcm0c/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           }
         },
@@ -3697,7 +3795,7 @@
             "kind": "file",
             "path": "/proc/asound/card2/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -3712,7 +3810,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -3762,7 +3860,7 @@
                   "kind": "derived",
                   "from": "converter bits in /proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -3785,7 +3883,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -3801,7 +3899,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           },
@@ -3817,7 +3915,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -3830,7 +3928,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -3889,7 +3987,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           }
@@ -3912,7 +4010,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -3925,7 +4023,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -4019,7 +4117,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -4032,13 +4130,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "Front Headphone Jack",
+                "plugged": false
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -4050,33 +4159,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -4085,7 +4194,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -4094,7 +4204,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/pcm0p/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -4110,13 +4220,13 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/pcm0p/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           }
         },
@@ -4154,7 +4264,7 @@
             "kind": "file",
             "path": "/proc/asound/card2/codec#0"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -4169,7 +4279,7 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -4219,7 +4329,7 @@
                   "kind": "derived",
                   "from": "converter bits in /proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -4242,7 +4352,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -4258,7 +4368,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           },
@@ -4274,7 +4384,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/vendor"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "codec": {
@@ -4287,7 +4397,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "pins": {
@@ -4337,7 +4447,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             }
           }
@@ -4360,7 +4470,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "module": {
@@ -4373,7 +4483,7 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/uevent"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "parameters": {
@@ -4467,7 +4577,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "power": {
@@ -4480,13 +4590,24 @@
                   "kind": "file",
                   "path": "/sys/class/sound/card2/device/power/runtime_status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "jack": {
-              "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "state": "known",
+              "value": {
+                "control": "Front Headphone Jack",
+                "plugged": false
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "command",
+                  "name": "alsa"
+                },
+                "read_at_ms": 1794463994360
+              }
             }
           }
         },
@@ -4498,33 +4619,33 @@
           "caps": {
             "sample_formats": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "rates": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channels": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "channel_maps": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "latency_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             },
             "direct_access": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           },
           "detail": {
@@ -4533,7 +4654,8 @@
             "state": {
               "state": "known",
               "value": {
-                "state": "idle"
+                "state": "managed_by_server",
+                "server": "pipewire"
               },
               "confidence": "measured",
               "provenance": {
@@ -4542,7 +4664,7 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/pcm2c/sub0/status"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "subdevices": {
@@ -4558,13 +4680,13 @@
                   "kind": "file",
                   "path": "/proc/asound/card2/pcm2c/info"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "period_us": {
               "state": "unknown",
-              "reason": "not_exposed",
-              "detail": "the capture predates ALSA dumps (capture format 1, phase 2)"
+              "reason": "managed_by_server",
+              "detail": "pipewire manages the cards; read through the server from phase 4"
             }
           }
         },
@@ -4604,7 +4726,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -4619,7 +4741,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -4668,7 +4790,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -4683,7 +4805,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -4732,7 +4854,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -4747,7 +4869,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -4796,7 +4918,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -4811,7 +4933,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -4851,7 +4973,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -4867,7 +4989,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -4883,7 +5005,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channel_maps": {
@@ -4903,7 +5025,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -4929,7 +5051,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -4945,7 +5067,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -4964,7 +5086,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -4981,7 +5103,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -4997,7 +5119,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -5023,7 +5145,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -5038,7 +5160,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -5078,7 +5200,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -5094,7 +5216,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -5110,7 +5232,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channel_maps": {
@@ -5130,7 +5252,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -5156,7 +5278,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -5172,7 +5294,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": true
@@ -5191,7 +5313,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -5208,7 +5330,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -5224,7 +5346,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": true
@@ -5250,7 +5372,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -5265,7 +5387,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -5305,7 +5427,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -5321,7 +5443,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -5337,7 +5459,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channel_maps": {
@@ -5357,7 +5479,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -5383,7 +5505,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -5399,7 +5521,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -5418,7 +5540,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -5435,7 +5557,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -5451,7 +5573,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -5477,7 +5599,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "name": {
@@ -5492,7 +5614,7 @@
             "kind": "command",
             "name": "pw-dump"
           },
-          "read_at_ms": 1794190241958
+          "read_at_ms": 1794463994360
         }
       },
       "correlation": [
@@ -5532,7 +5654,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "rates": {
@@ -5548,7 +5670,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channels": {
@@ -5564,7 +5686,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "channel_maps": {
@@ -5584,7 +5706,7 @@
                   "kind": "command",
                   "name": "pw-dump"
                 },
-                "read_at_ms": 1794190241958
+                "read_at_ms": 1794463994360
               }
             },
             "passthrough": {
@@ -5610,7 +5732,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -5626,7 +5748,7 @@
                       "kind": "command",
                       "name": "pw-dump"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false
@@ -5645,7 +5767,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "current": {
@@ -5662,7 +5784,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "volume": {
@@ -5678,7 +5800,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794190241958
+                    "read_at_ms": 1794463994360
                   }
                 },
                 "is_default": false

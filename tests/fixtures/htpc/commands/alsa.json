@@ -1,0 +1,402 @@
+{
+  "format": 1,
+  "managing_server": "pipewire",
+  "config": "cards.@hooks [\n\t{\n\t\tfunc load\n\t\tfiles [\n\t\t\t{\n\t\t\t\t@func concat\n\t\t\t\tstrings [\n\t\t\t\t\t{\n\t\t\t\t\t\t@func datadir\n\t\t\t\t\t}\n\t\t\t\t\t'/cards/aliases.conf'\n\t\t\t\t]\n\t\t\t}\n\t\t]\n\t}\n\t{\n\t\tfunc load_for_all_cards\n\t\tfiles [\n\t\t\t{\n\t\t\t\t@func concat\n\t\t\t\tstrings [\n\t\t\t\t\t{\n\t\t\t\t\t\t@func datadir\n\t\t\t\t\t}\n\t\t\t\t\t/cards/\n\t\t\t\t\t{\n\t\t\t\t\t\t@func private_string\n\t\t\t\t\t}\n\t\t\t\t\t'.conf'\n\t\t\t\t]\n\t\t\t}\n\t\t\t{\n\t\t\t\troot {\n\t\t\t\t\t@func private_integer\n\t\t\t\t}\n\t\t\t\tfile {\n\t\t\t\t\t@func concat\n\t\t\t\t\tstrings [\n\t\t\t\t\t\t/var/lib/alsa/card\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\t@func private_integer\n\t\t\t\t\t\t}\n\t\t\t\t\t\t'.conf.d'\n\t\t\t\t\t]\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t\ttable {\n\t\t\tid {\n\t\t\t\t@func concat\n\t\t\t\tstrings [\n\t\t\t\t\t{\n\t\t\t\t\t\t@func private_integer\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t}\n\t\t\tvalue {\n\t\t\t\t@func concat\n\t\t\t\tstrings [\n\t\t\t\t\t'cards.'\n\t\t\t\t\t{\n\t\t\t\t\t\t@func private_string\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t}\n\t\t}\n\t\terrors false\n\t}\n]\ndefaults.namehint.showall off\ndefaults.namehint.basic on\ndefaults.namehint.extended off\ndefaults.ctl.card 0\ndefaults.pcm.card 0\ndefaults.pcm.device 0\ndefaults.pcm.subdevice -1\ndefaults.pcm.nonblock 1\ndefaults.pcm.compat 0\ndefaults.pcm.minperiodtime 5000\ndefaults.pcm.ipc_key 5678293\ndefaults.pcm.ipc_perm 384\ndefaults.pcm.tstamp_type default\ndefaults.pcm.dmix.max_periods 0\ndefaults.pcm.dmix.channels 2\ndefaults.pcm.dmix.rate 48000\ndefaults.pcm.dmix.format unchanged\ndefaults.pcm.dmix.card 'defaults.pcm.card'\ndefaults.pcm.dmix.device 'defaults.pcm.device'\ndefaults.pcm.dsnoop.card 'defaults.pcm.card'\ndefaults.pcm.dsnoop.device 'defaults.pcm.device'\ndefaults.pcm.front.card 'defaults.pcm.card'\ndefaults.pcm.front.device 'defaults.pcm.device'\ndefaults.pcm.rear.card 'defaults.pcm.card'\ndefaults.pcm.rear.device 'defaults.pcm.device'\ndefaults.pcm.center_lfe.card 'defaults.pcm.card'\ndefaults.pcm.center_lfe.device 'defaults.pcm.device'\ndefaults.pcm.side.card 'defaults.pcm.card'\ndefaults.pcm.side.device 'defaults.pcm.device'\ndefaults.pcm.surround21.card 'defaults.pcm.card'\ndefaults.pcm.surround21.device 'defaults.pcm.device'\ndefaults.pcm.surround40.card 'defaults.pcm.card'\ndefaults.pcm.surround40.device 'defaults.pcm.device'\ndefaults.pcm.surround41.card 'defaults.pcm.card'\ndefaults.pcm.surround41.device 'defaults.pcm.device'\ndefaults.pcm.surround50.card 'defaults.pcm.card'\ndefaults.pcm.surround50.device 'defaults.pcm.device'\ndefaults.pcm.surround51.card 'defaults.pcm.card'\ndefaults.pcm.surround51.device 'defaults.pcm.device'\ndefaults.pcm.surround71.card 'defaults.pcm.card'\ndefaults.pcm.surround71.device 'defaults.pcm.device'\ndefaults.pcm.iec958.card 'defaults.pcm.card'\ndefaults.pcm.iec958.device 'defaults.pcm.device'\ndefaults.pcm.modem.card 'defaults.pcm.card'\ndefaults.pcm.modem.device 'defaults.pcm.device'\ndefaults.pcm.file_format raw\ndefaults.pcm.file_truncate true\ndefaults.rawmidi.card 0\ndefaults.rawmidi.device 0\ndefaults.rawmidi.subdevice -1\ndefaults.hwdep.card 0\ndefaults.hwdep.device 0\ndefaults.timer.class 2\ndefaults.timer.sclass 0\ndefaults.timer.card 0\ndefaults.timer.device 0\ndefaults.timer.subdevice 0\ndefaults.pipewire.server pipewire-0\ndefaults.pipewire.node '-1'\ndefaults.pipewire.exclusive false\ndefaults.pipewire.role ''\ndefaults.pipewire.rate 0\ndefaults.pipewire.format ''\ndefaults.pipewire.channels 0\ndefaults.pipewire.period_bytes 0\ndefaults.pipewire.buffer_bytes 0\npcm.hw {\n\t@args.0 CARD\n\t@args.1 DEV\n\t@args.2 SUBDEV\n\t@args.CARD {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func getenv\n\t\t\tvars [\n\t\t\t\tALSA_PCM_CARD\n\t\t\t\tALSA_CARD\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.pcm.card'\n\t\t\t}\n\t\t}\n\t}\n\t@args.DEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func igetenv\n\t\t\tvars [\n\t\t\t\tALSA_PCM_DEVICE\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.pcm.device'\n\t\t\t}\n\t\t}\n\t}\n\t@args.SUBDEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pcm.subdevice'\n\t\t}\n\t}\n\ttype hw\n\tcard $CARD\n\tdevice $DEV\n\tsubdevice $SUBDEV\n\thint {\n\t\tshow {\n\t\t\t@func refer\n\t\t\tname 'defaults.namehint.extended'\n\t\t}\n\t\tdescription 'Direct hardware device without any conversions'\n\t}\n}\npcm.plughw {\n\t@args.0 CARD\n\t@args.1 DEV\n\t@args.2 SUBDEV\n\t@args.CARD {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func getenv\n\t\t\tvars [\n\t\t\t\tALSA_PCM_CARD\n\t\t\t\tALSA_CARD\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.pcm.card'\n\t\t\t}\n\t\t}\n\t}\n\t@args.DEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func igetenv\n\t\t\tvars [\n\t\t\t\tALSA_PCM_DEVICE\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.pcm.device'\n\t\t\t}\n\t\t}\n\t}\n\t@args.SUBDEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pcm.subdevice'\n\t\t}\n\t}\n\ttype plug\n\tslave.pcm {\n\t\ttype hw\n\t\tcard $CARD\n\t\tdevice $DEV\n\t\tsubdevice $SUBDEV\n\t}\n\thint {\n\t\tshow {\n\t\t\t@func refer\n\t\t\tname 'defaults.namehint.extended'\n\t\t}\n\t\tdescription 'Hardware device with all software conversions'\n\t}\n}\npcm.plug {\n\t@args.0 SLAVE\n\t@args.SLAVE {\n\t\ttype string\n\t}\n\ttype plug\n\tslave.pcm $SLAVE\n}\npcm.shm {\n\t@args.0 SOCKET\n\t@args.1 PCM\n\t@args.SOCKET {\n\t\ttype string\n\t}\n\t@args.PCM {\n\t\ttype string\n\t}\n\ttype shm\n\tserver $SOCKET\n\tpcm $PCM\n}\npcm.tee {\n\t@args.0 SLAVE\n\t@args.1 FILE\n\t@args.2 FORMAT\n\t@args.SLAVE {\n\t\ttype string\n\t}\n\t@args.FILE {\n\t\ttype string\n\t}\n\t@args.FORMAT {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pcm.file_format'\n\t\t}\n\t}\n\ttype file\n\tslave.pcm $SLAVE\n\tfile $FILE\n\tformat $FORMAT\n\ttruncate {\n\t\t@func refer\n\t\tname 'defaults.pcm.file_truncate'\n\t}\n}\npcm.file {\n\t@args.0 FILE\n\t@args.1 FORMAT\n\t@args.FILE {\n\t\ttype string\n\t}\n\t@args.FORMAT {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pcm.file_format'\n\t\t}\n\t}\n\ttype file\n\tslave.pcm null\n\tfile $FILE\n\tformat $FORMAT\n\ttruncate {\n\t\t@func refer\n\t\tname 'defaults.pcm.file_truncate'\n\t}\n}\npcm.null {\n\ttype null\n\thint {\n\t\tshow {\n\t\t\t@func refer\n\t\t\tname 'defaults.namehint.basic'\n\t\t}\n\t\tdescription 'Discard all samples (playback) or generate zero samples (capture)'\n\t}\n}\npcm.cards 'cards.pcm'\npcm.sysdefault 'cards.pcm.default'\npcm.front 'cards.pcm.front'\npcm.rear 'cards.pcm.rear'\npcm.center_lfe 'cards.pcm.center_lfe'\npcm.side 'cards.pcm.side'\npcm.surround21 'cards.pcm.surround21'\npcm.surround40 'cards.pcm.surround40'\npcm.surround41 'cards.pcm.surround41'\npcm.surround50 'cards.pcm.surround50'\npcm.surround51 'cards.pcm.surround51'\npcm.surround71 'cards.pcm.surround71'\npcm.iec958 'cards.pcm.iec958'\npcm.spdif iec958\npcm.hdmi 'cards.pcm.hdmi'\npcm.dmix 'cards.pcm.dmix'\npcm.dsnoop 'cards.pcm.dsnoop'\npcm.modem 'cards.pcm.modem'\npcm.phoneline 'cards.pcm.phoneline'\npcm.pipewire {\n\t@args.0 SERVER\n\t@args.1 NODE\n\t@args.2 EXCLUSIVE\n\t@args.3 ROLE\n\t@args.4 RATE\n\t@args.5 FORMAT\n\t@args.6 CHANNELS\n\t@args.7 PERIOD_BYTES\n\t@args.8 BUFFER_BYTES\n\t@args.SERVER {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.server'\n\t\t}\n\t}\n\t@args.NODE {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.node'\n\t\t}\n\t}\n\t@args.EXCLUSIVE {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.exclusive'\n\t\t}\n\t}\n\t@args.ROLE {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.role'\n\t\t}\n\t}\n\t@args.RATE {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.rate'\n\t\t}\n\t}\n\t@args.FORMAT {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.format'\n\t\t}\n\t}\n\t@args.CHANNELS {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.channels'\n\t\t}\n\t}\n\t@args.PERIOD_BYTES {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.period_bytes'\n\t\t}\n\t}\n\t@args.BUFFER_BYTES {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.buffer_bytes'\n\t\t}\n\t}\n\t@args.9 SERVER\n\t@args.10 NODE\n\t@args.11 EXCLUSIVE\n\t@args.12 ROLE\n\t@args.13 RATE\n\t@args.14 FORMAT\n\t@args.15 CHANNELS\n\t@args.16 PERIOD_BYTES\n\t@args.17 BUFFER_BYTES\n\ttype pipewire\n\tserver $SERVER\n\tplayback_node $NODE\n\tcapture_node $NODE\n\texclusive $EXCLUSIVE\n\trole $ROLE\n\trate $RATE\n\tformat $FORMAT\n\tchannels $CHANNELS\n\tperiod_bytes $PERIOD_BYTES\n\tbuffer_bytes $BUFFER_BYTES\n\thint {\n\t\tshow on\n\t\tdescription 'PipeWire Sound Server'\n\t}\n}\npcm.default {\n\ttype pipewire\n\tplayback_node '-1'\n\tcapture_node '-1'\n\thint {\n\t\tshow on\n\t\tdescription 'Default ALSA Output (currently PipeWire Media Server)'\n\t}\n}\nctl.sysdefault 'cards.ctl.default'\nctl.hw {\n\t@args.0 CARD\n\t@args.CARD {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func getenv\n\t\t\tvars [\n\t\t\t\tALSA_CTL_CARD\n\t\t\t\tALSA_CARD\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.ctl.card'\n\t\t\t}\n\t\t}\n\t}\n\ttype hw\n\tcard $CARD\n\thint.description 'Direct control device'\n}\nctl.shm {\n\t@args.0 SOCKET\n\t@args.1 CTL\n\t@args.SOCKET {\n\t\ttype string\n\t}\n\t@args.CTL {\n\t\ttype string\n\t}\n\ttype shm\n\tserver $SOCKET\n\tctl $CTL\n}\nctl.pipewire {\n\t@args.SERVER {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.pipewire.server'\n\t\t}\n\t}\n\ttype pipewire\n\tserver $SERVER\n}\nctl.default {\n\ttype pipewire\n}\nrawmidi.default {\n\ttype hw\n\tcard {\n\t\t@func getenv\n\t\tvars [\n\t\t\tALSA_RAWMIDI_CARD\n\t\t\tALSA_CARD\n\t\t]\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.rawmidi.card'\n\t\t}\n\t}\n\tdevice {\n\t\t@func igetenv\n\t\tvars [\n\t\t\tALSA_RAWMIDI_DEVICE\n\t\t]\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.rawmidi.device'\n\t\t}\n\t}\n\thint.description 'Default raw MIDI device'\n}\nrawmidi.hw {\n\t@args.0 CARD\n\t@args.1 DEV\n\t@args.2 SUBDEV\n\t@args.CARD {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func getenv\n\t\t\tvars [\n\t\t\t\tALSA_RAWMIDI_CARD\n\t\t\t\tALSA_CARD\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.rawmidi.card'\n\t\t\t}\n\t\t}\n\t}\n\t@args.DEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func igetenv\n\t\t\tvars [\n\t\t\t\tALSA_RAWMIDI_DEVICE\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.rawmidi.device'\n\t\t\t}\n\t\t}\n\t}\n\t@args.SUBDEV {\n\t\ttype integer\n\t\tdefault -1\n\t}\n\ttype hw\n\tcard $CARD\n\tdevice $DEV\n\tsubdevice $SUBDEV\n\thint {\n\t\tdescription 'Direct rawmidi driver device'\n\t\tdevice $DEV\n\t}\n}\nrawmidi.virtual {\n\t@args.0 MERGE\n\t@args.MERGE {\n\t\ttype string\n\t\tdefault 1\n\t}\n\ttype virtual\n\tmerge $MERGE\n}\nseq.default {\n\ttype hw\n\thint.description 'Default sequencer device'\n}\nseq.hw {\n\ttype hw\n}\nhwdep.default {\n\ttype hw\n\tcard {\n\t\t@func getenv\n\t\tvars [\n\t\t\tALSA_HWDEP_CARD\n\t\t\tALSA_CARD\n\t\t]\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.hwdep.card'\n\t\t}\n\t}\n\tdevice {\n\t\t@func igetenv\n\t\tvars [\n\t\t\tALSA_HWDEP_DEVICE\n\t\t]\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.hwdep.device'\n\t\t}\n\t}\n\thint.description 'Default hardware dependent device'\n}\nhwdep.hw {\n\t@args.0 CARD\n\t@args.1 DEV\n\t@args.CARD {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func getenv\n\t\t\tvars [\n\t\t\t\tALSA_HWDEP_CARD\n\t\t\t\tALSA_CARD\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.hwdep.card'\n\t\t\t}\n\t\t}\n\t}\n\t@args.DEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func igetenv\n\t\t\tvars [\n\t\t\t\tALSA_HWDEP_DEVICE\n\t\t\t]\n\t\t\tdefault {\n\t\t\t\t@func refer\n\t\t\t\tname 'defaults.hwdep.device'\n\t\t\t}\n\t\t}\n\t}\n\ttype hw\n\tcard $CARD\n\tdevice $DEV\n\thint {\n\t\tdescription 'Direct hardware dependent device'\n\t\tdevice $DEV\n\t}\n}\ntimer_query.default {\n\ttype hw\n}\ntimer_query.hw {\n\ttype hw\n}\ntimer.default {\n\ttype hw\n\tclass {\n\t\t@func refer\n\t\tname 'defaults.timer.class'\n\t}\n\tsclass {\n\t\t@func refer\n\t\tname 'defaults.timer.sclass'\n\t}\n\tcard {\n\t\t@func refer\n\t\tname 'defaults.timer.card'\n\t}\n\tdevice {\n\t\t@func refer\n\t\tname 'defaults.timer.device'\n\t}\n\tsubdevice {\n\t\t@func refer\n\t\tname 'defaults.timer.subdevice'\n\t}\n\thint.description 'Default timer device'\n}\ntimer.hw {\n\t@args.0 CLASS\n\t@args.1 SCLASS\n\t@args.2 CARD\n\t@args.3 DEV\n\t@args.4 SUBDEV\n\t@args.CLASS {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.timer.class'\n\t\t}\n\t}\n\t@args.SCLASS {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.timer.sclass'\n\t\t}\n\t}\n\t@args.CARD {\n\t\ttype string\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.timer.card'\n\t\t}\n\t}\n\t@args.DEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.timer.device'\n\t\t}\n\t}\n\t@args.SUBDEV {\n\t\ttype integer\n\t\tdefault {\n\t\t\t@func refer\n\t\t\tname 'defaults.timer.subdevice'\n\t\t}\n\t}\n\ttype hw\n\tclass $CLASS\n\tsclass $SCLASS\n\tcard $CARD\n\tdevice $DEV\n\tsubdevice $SUBDEV\n\thint {\n\t\tdescription 'Direct timer device'\n\t\tdevice $DEV\n\t}\n}\n",
+  "cards": [
+    {
+      "index": 0,
+      "controls": [],
+      "pcms": [
+        {
+          "device": 0,
+          "stream": "capture",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "controls": [
+        {
+          "iface": "card",
+          "name": "HDMI/DP,pcm=3 Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "HDMI/DP,pcm=7 Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "HDMI/DP,pcm=8 Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "HDMI/DP,pcm=9 Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Con Mask",
+          "device": 0,
+          "index": 0,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Con Mask",
+          "device": 0,
+          "index": 1,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Con Mask",
+          "device": 0,
+          "index": 2,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Con Mask",
+          "device": 0,
+          "index": 3,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Pro Mask",
+          "device": 0,
+          "index": 0,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Pro Mask",
+          "device": 0,
+          "index": 1,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Pro Mask",
+          "device": 0,
+          "index": 2,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Pro Mask",
+          "device": 0,
+          "index": 3,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Default",
+          "device": 0,
+          "index": 0,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Default",
+          "device": 0,
+          "index": 1,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Default",
+          "device": 0,
+          "index": 2,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Default",
+          "device": 0,
+          "index": 3,
+          "kind": "iec958",
+          "values": []
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Switch",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Switch",
+          "device": 0,
+          "index": 1,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Switch",
+          "device": 0,
+          "index": 2,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        },
+        {
+          "iface": "mixer",
+          "name": "IEC958 Playback Switch",
+          "device": 0,
+          "index": 3,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        },
+        {
+          "iface": "pcm",
+          "name": "ELD",
+          "device": 3,
+          "index": 0,
+          "kind": "bytes",
+          "values": []
+        },
+        {
+          "iface": "pcm",
+          "name": "ELD",
+          "device": 7,
+          "index": 0,
+          "kind": "bytes",
+          "values": []
+        },
+        {
+          "iface": "pcm",
+          "name": "ELD",
+          "device": 8,
+          "index": 0,
+          "kind": "bytes",
+          "values": []
+        },
+        {
+          "iface": "pcm",
+          "name": "ELD",
+          "device": 9,
+          "index": 0,
+          "kind": "bytes",
+          "values": [
+            16,
+            0,
+            10,
+            0,
+            103,
+            80,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            32,
+            163,
+            48,
+            160,
+            72,
+            73,
+            83,
+            69,
+            78,
+            83,
+            69,
+            87,
+            6,
+            0,
+            21,
+            7,
+            80,
+            61,
+            30,
+            192,
+            95,
+            126,
+            1,
+            15,
+            127,
+            7,
+            0,
+            0
+          ]
+        }
+      ],
+      "pcms": [
+        {
+          "device": 3,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        },
+        {
+          "device": 7,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        },
+        {
+          "device": 8,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        },
+        {
+          "device": 9,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "busy",
+            "detail": "owner pid 3317"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "controls": [
+        {
+          "iface": "card",
+          "name": "Front Headphone Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "Front Mic Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "Line Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "Line Out Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "Rear Mic Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            0
+          ]
+        }
+      ],
+      "pcms": [
+        {
+          "device": 0,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        },
+        {
+          "device": 0,
+          "stream": "capture",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        },
+        {
+          "device": 2,
+          "stream": "capture",
+          "result": {
+            "result": "not_opened",
+            "reason": "managed_by_server",
+            "detail": "pipewire"
+          }
+        }
+      ]
+    }
+  ]
+}
