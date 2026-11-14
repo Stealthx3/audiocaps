@@ -551,9 +551,16 @@ impl Ctx<'_> {
                 .iter()
                 .find_map(|a| a.skipped.clone())
                 .unwrap_or_else(|| "no CEC adapter on this connector".into());
+            // A node that exists but can't be opened is a permission matter (a strict snap has
+            // no interface for /dev/cec*; Flatpak needs --device=all).
+            let reason = if why.contains("os error 1)") || why.contains("os error 13)") {
+                UnknownReason::NotGranted
+            } else {
+                UnknownReason::NotExposed
+            };
             return (
-                Some(Value::unknown(UnknownReason::NotExposed, Some(why.clone()))),
-                Value::unknown(UnknownReason::NotExposed, Some(why)),
+                Some(Value::unknown(reason, Some(why.clone()))),
+                Value::unknown(reason, Some(why)),
             );
         };
         let src = if live {

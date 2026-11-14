@@ -3,6 +3,7 @@
 //!
 //! - [`quirks`]: sink quirk data, matched by manufacturer, product and model name (phase 6).
 //! - [`paths`]: effective sets per access path and path reports (phase 7).
+//! - [`query`]: "can this endpoint play format X via access path Y?" with the reason.
 //! - [`facts`] and [`engine`]: declarative rule packs over facts derived from a snapshot; each rule
 //!   that fires becomes a [`audiocaps_model::Finding`] with evidence and a distro-aware hint.
 //!
@@ -12,6 +13,7 @@
 pub mod engine;
 pub mod facts;
 pub mod paths;
+pub mod query;
 pub mod quirks;
 
 pub use engine::{RULE_PACK_FORMAT, RuleSet};

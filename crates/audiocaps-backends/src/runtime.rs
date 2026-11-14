@@ -78,6 +78,9 @@ pub struct ProbeOptions {
     pub software_codecs: bool,
     /// Opt-in: play silence to one idle device to confirm formats.
     pub active_probe: Option<audiocaps_model::ActiveProbeRequest>,
+    /// Redaction of sensitive values; `None` is the default policy (serials and Bluetooth
+    /// addresses hashed, personal names masked).
+    pub redaction: Option<audiocaps_model::RedactionPolicy>,
 }
 
 impl Default for ProbeOptions {
@@ -91,6 +94,7 @@ impl Default for ProbeOptions {
             app: None,
             software_codecs: false,
             active_probe: None,
+            redaction: None,
         }
     }
 }
@@ -107,6 +111,7 @@ impl ProbeOptions {
             app: None,
             software_codecs: false,
             active_probe: None,
+            redaction: None,
         }
     }
 

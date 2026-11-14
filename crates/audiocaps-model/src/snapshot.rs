@@ -166,6 +166,33 @@ pub struct EnvironmentInfo {
     pub sandbox: Value<Sandbox>,
     /// Sound servers found.
     pub servers: Vec<ServerPresence>,
+    /// Realtime scheduling available to this process (live system only; schema 1.7).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub realtime: Option<Realtime>,
+}
+
+/// Ways the process could get realtime scheduling for its audio thread. Read passively: rtkit is
+/// never started, no thread is made realtime.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct Realtime {
+    /// Whether at least one method grants realtime. `None` when no method grants it but some
+    /// couldn't be checked.
+    pub available: Option<bool>,
+    /// Each method checked.
+    pub methods: Vec<RealtimeMethod>,
+}
+
+/// One way to get realtime scheduling.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct RealtimeMethod {
+    /// `rlimit` (`RLIMIT_RTPRIO`), `rtkit` (org.freedesktop.RealtimeKit1 on the system bus) or
+    /// `portal` (org.freedesktop.portal.Realtime on the session bus).
+    pub method: String,
+    /// Whether it grants realtime; unknown with the reason when it can't be checked.
+    pub grants: Value<bool>,
+    /// Highest realtime priority it allows, when known.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_priority: Option<u32>,
 }
 
 /// Operating system release (from os-release on Linux).

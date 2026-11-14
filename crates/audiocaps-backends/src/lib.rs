@@ -21,6 +21,7 @@ mod environment;
 pub mod jack;
 pub mod manifest;
 pub mod probe;
+mod realtime;
 pub mod root;
 pub mod runtime;
 mod sandbox;

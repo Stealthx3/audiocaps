@@ -113,6 +113,9 @@ struct Sources {
     pw: Option<PwSession>,
     pulse: Option<PulseSession>,
     next_retry: Instant,
+    /// Servers a snap's confinement refused (PipeWire, PulseAudio): not retried, since every try
+    /// logs an AppArmor denial.
+    refused: (bool, bool),
 }
 
 impl Sources {
@@ -135,6 +138,7 @@ impl Sources {
             pw: None,
             pulse: None,
             next_retry: Instant::now(),
+            refused: (false, false),
         };
         if live && scope.layers.includes(&LayerKind::SoundServer) {
             s.connect_servers(root);
@@ -148,8 +152,14 @@ impl Sources {
             return;
         }
         self.next_retry = Instant::now() + Duration::from_secs(1);
-        if self.pw.is_none() && presence::pipewire(root).is_ok() {
-            self.pw = PwSession::connect().ok().and_then(|mut s| {
+        let snap = std::env::var_os("SNAP_NAME").is_some();
+        if self.pw.is_none()
+            && !self.refused.0
+            && let Ok(socket) = presence::pipewire(root)
+        {
+            let connected = PwSession::connect(&socket);
+            self.refused.0 = snap && connected.is_err();
+            self.pw = connected.ok().and_then(|mut s| {
                 let until = Instant::now() + SETUP;
                 loop {
                     match s.step(Duration::from_millis(5)) {
@@ -160,15 +170,22 @@ impl Sources {
                 }
             });
         }
-        if self.pulse.is_none() && presence::pulse(root).is_ok() {
-            self.pulse = PulseSession::connect().ok().and_then(|mut s| {
-                if read_pulse(&mut s) {
-                    s.subscribe();
-                    Some(s)
-                } else {
-                    None
-                }
-            });
+        if self.pulse.is_none()
+            && !self.refused.1
+            && let Ok(server) = presence::pulse(root)
+        {
+            self.pulse = PulseSession::connect(server.as_deref())
+                .ok()
+                .and_then(|mut s| {
+                    if read_pulse(&mut s) {
+                        s.subscribe();
+                        Some(s)
+                    } else {
+                        None
+                    }
+                });
+            // libpulse connects asynchronously: a refused connection shows as a failed read.
+            self.refused.1 = snap && self.pulse.is_none();
         }
     }
 

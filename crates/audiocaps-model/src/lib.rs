@@ -32,4 +32,4 @@ pub use value::*;
 
 /// Version of the JSON schema this crate produces. Within major version 1, changes are additive
 /// only (new optional fields, new enum variants); see `schema/README.md`.
-pub const SCHEMA_VERSION: &str = "1.6.0";
+pub const SCHEMA_VERSION: &str = "1.7.0";

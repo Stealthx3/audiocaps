@@ -96,11 +96,7 @@ pub(crate) fn flatpak(info: &str) -> (Vec<String>, Vec<PermissionGap>) {
 /// Inferred connected plugs and missing plugs of a Snap app.
 pub(crate) fn snap(root: &SystemRoot) -> (Vec<String>, Vec<PermissionGap>) {
     let name = std::env::var("SNAP_NAME").unwrap_or_else(|_| "<snap>".into());
-    let rt = std::env::var("XDG_RUNTIME_DIR").ok();
-    let sock = |p: &str| {
-        rt.as_ref()
-            .is_some_and(|d| root.exists(&format!("{d}/{p}")))
-    };
+    let sock = |p: &str| crate::server::presence::find_socket(root, p).is_some();
     let fix = |plug: &str| format!("snap connect {name}:{plug}");
     let mut connected = vec![];
     let mut missing = vec![];
@@ -128,16 +124,35 @@ pub(crate) fn snap(root: &SystemRoot) -> (Vec<String>, Vec<PermissionGap>) {
         vec![LayerKind::SoundServer],
         false,
     );
+    // /dev/snd is visible in every snap (the device cgroup blocks it); the alsa plug's AppArmor
+    // rules are what open /proc/asound.
     check(
-        root.dev_snd_visible(),
+        live.then(|| root.read("/proc/asound/cards").is_ok()),
         "alsa",
         vec![LayerKind::AlsaUserspace],
         false,
     );
+    // /sys/class/sound lists without any plug; hardware-observe is what opens device attributes
+    // such as the DRM connectors' EDID (the sink chain). Unknown when there is no connector.
+    let edid = root.read_dir("/sys/class/drm").ok().and_then(|es| {
+        es.iter()
+            .filter(|e| e.name.starts_with("card") && e.name.contains('-'))
+            .map(|e| format!("/sys/class/drm/{}/edid", e.name))
+            .find(|p| root.exists(p))
+    });
     check(
-        Some(root.read_dir("/sys/class/sound").is_ok()),
+        live.then_some(edid)
+            .flatten()
+            .map(|p| root.read(&p).is_ok()),
         "hardware-observe",
-        vec![LayerKind::HostHardware, LayerKind::KernelDriver],
+        vec![LayerKind::HostHardware, LayerKind::SinkChain],
+        false,
+    );
+    // Driver parameters (power saving, model quirks) under /sys/module.
+    check(
+        live.then(|| root.read_dir("/sys/module").is_ok()),
+        "kernel-module-observe",
+        vec![LayerKind::KernelDriver],
         false,
     );
     (connected, missing)
@@ -145,12 +160,17 @@ pub(crate) fn snap(root: &SystemRoot) -> (Vec<String>, Vec<PermissionGap>) {
 
 /// The gap for the `bluez` plug, when the BlueZ backend was refused inside a snap.
 pub(crate) fn snap_bluez_gap() -> PermissionGap {
+    snap_gap("bluez", vec![LayerKind::Wireless], false)
+}
+
+/// The gap for a snap plug a backend was refused for.
+pub(crate) fn snap_gap(plug: &str, layers: Vec<LayerKind>, required: bool) -> PermissionGap {
     let name = std::env::var("SNAP_NAME").unwrap_or_else(|_| "<snap>".into());
     PermissionGap {
-        permission: "bluez".into(),
-        layers: vec![LayerKind::Wireless],
-        fix: format!("snap connect {name}:bluez"),
-        required: false,
+        permission: plug.into(),
+        layers,
+        fix: format!("snap connect {name}:{plug}"),
+        required,
     }
 }
 

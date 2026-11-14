@@ -45,16 +45,11 @@ fn live(root: &SystemRoot) -> Option<String> {
 }
 
 fn live_found(root: &SystemRoot) -> Option<String> {
-    if let Some(dir) = std::env::var_os("XDG_RUNTIME_DIR") {
-        let dir = dir.to_string_lossy();
-        if dir.starts_with('/') {
-            if root.exists(&format!("{dir}/pipewire-0")) {
-                return Some("pipewire".into());
-            }
-            if root.exists(&format!("{dir}/pulse/native")) {
-                return Some("pulseaudio".into());
-            }
-        }
+    if crate::server::presence::find_socket(root, "pipewire-0").is_some() {
+        return Some("pipewire".into());
+    }
+    if crate::server::presence::find_socket(root, "pulse/native").is_some() {
+        return Some("pulseaudio".into());
     }
     let entries = root.read_dir("/proc").ok()?;
     entries
