@@ -8,7 +8,7 @@ within v1).
 
 ## [Unreleased]
 
-## [1.0.0] - release candidate (date set when tagged)
+## [1.0.0] - 2026-11-14
 
 First release for Linux. AudioCaps reports what audio the system can really deliver, from the
 TV or receiver back through the host hardware, drivers, ALSA, the sound server and the sandbox

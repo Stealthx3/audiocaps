@@ -1,8 +1,8 @@
 <!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
 # Release 1.0.0 (Linux)
 
-Status: **release candidate** on branch `chore/release-1.0.0`. Not tagged and not published.
-Tagging and publishing wait for Micaiah.
+Status: **released** 2026-11-14 as tag `v1.0.0` on `main`, with the tarball and checksum on the
+GitHub release.
 
 ## What ships
 
