@@ -1,8 +1,0 @@
-tstamp_mode: ENABLE
-period_step: 1
-avail_min: 1102
-start_threshold: 18446744073709551615
-stop_threshold: 4962966789362286592
-silence_threshold: 0
-silence_size: 0
-boundary: 4962966789362286592

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.5.0",
   "generation": 1,
-  "taken_at_ms": 1794363070520,
+  "taken_at_ms": 1794625948336,
   "source": {
     "kind": "fixture",
     "name": "lab-pulseaudio"
@@ -92,7 +92,7 @@
           "kind": "file",
           "path": "/etc/os-release"
         },
-        "read_at_ms": 1794363070520
+        "read_at_ms": 1794625948336
       }
     },
     "kernel": {
@@ -105,7 +105,7 @@
           "kind": "file",
           "path": "/proc/sys/kernel/osrelease"
         },
-        "read_at_ms": 1794363070520
+        "read_at_ms": 1794625948336
       }
     },
     "sandbox": {
@@ -120,7 +120,7 @@
           "kind": "file",
           "path": "/.flatpak-info"
         },
-        "read_at_ms": 1794363070520
+        "read_at_ms": 1794625948336
       }
     },
     "servers": [
@@ -147,7 +147,7 @@
               "kind": "command",
               "name": "pactl-info"
             },
-            "read_at_ms": 1794363070520
+            "read_at_ms": 1794625948336
           }
         }
       }
@@ -155,14 +155,40 @@
   },
   "routing": {
     "default_playback": {
-      "state": "unknown",
-      "reason": "not_exposed",
-      "detail": "the default device depends on a configuration hook that can't be evaluated here: /usr/share/alsa/pulse-alsa.conf not readable"
+      "state": "known",
+      "value": [
+        {
+          "name": "default",
+          "kind": "pulse"
+        }
+      ],
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "alsa_userspace",
+        "source": {
+          "kind": "command",
+          "name": "alsa"
+        },
+        "read_at_ms": 1794625948336
+      }
     },
     "default_capture": {
-      "state": "unknown",
-      "reason": "not_exposed",
-      "detail": "the default device depends on a configuration hook that can't be evaluated here: /usr/share/alsa/pulse-alsa.conf not readable"
+      "state": "known",
+      "value": [
+        {
+          "name": "default",
+          "kind": "pulse"
+        }
+      ],
+      "confidence": "inferred",
+      "provenance": {
+        "layer": "alsa_userspace",
+        "source": {
+          "kind": "command",
+          "name": "alsa"
+        },
+        "read_at_ms": 1794625948336
+      }
     }
   },
   "servers": [
@@ -192,12 +218,12 @@
             "kind": "command",
             "name": "pactl-list"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "default_sink": {
         "state": "known",
-        "value": "alsa:card1/pcm0p",
+        "value": "alsa:card0/pcm0p",
         "confidence": "measured",
         "provenance": {
           "layer": "sound_server",
@@ -205,12 +231,12 @@
             "kind": "command",
             "name": "pactl-list"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "default_source": {
         "state": "known",
-        "value": "alsa:card3/pcm0c",
+        "value": "alsa:card2/pcm0c",
         "confidence": "measured",
         "provenance": {
           "layer": "sound_server",
@@ -218,7 +244,7 @@
             "kind": "command",
             "name": "pactl-list"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       }
     },
@@ -226,346 +252,14 @@
       "server": "jack",
       "availability": {
         "state": "unknown",
-        "reason": "not_exposed",
-        "detail": "jack not captured"
+        "reason": "service_not_running",
+        "detail": "no JACK server running; not starting one (client error, status is ClientStatus(FAILURE | SERVER_FAILED))"
       }
     }
   ],
   "endpoints": [
     {
-      "id": "alsa:card0/midi0",
-      "class": "virtual",
-      "direction": "midi",
-      "transport": {
-        "state": "known",
-        "value": {
-          "virtual": "virmidi"
-        },
-        "confidence": "measured",
-        "provenance": {
-          "layer": "kernel_driver",
-          "source": {
-            "kind": "file",
-            "path": "/proc/asound/cards"
-          },
-          "read_at_ms": 1794363070520
-        }
-      },
-      "name": {
-        "state": "known",
-        "value": {
-          "plain": "Virtual Raw MIDI"
-        },
-        "confidence": "measured",
-        "provenance": {
-          "layer": "alsa_userspace",
-          "source": {
-            "kind": "file",
-            "path": "/proc/asound/card0/midi0"
-          },
-          "read_at_ms": 1794363070520
-        }
-      },
-      "correlation": [
-        {
-          "id": {
-            "kind": "alsa_raw_midi",
-            "card": 0,
-            "device": 0
-          },
-          "confidence": "measured"
-        },
-        {
-          "id": {
-            "kind": "alsa_seq_port",
-            "client": 16,
-            "port": 0
-          },
-          "confidence": "inferred"
-        }
-      ],
-      "midi": {
-        "kind": "raw",
-        "input": true,
-        "output": true,
-        "subdevices": 16
-      },
-      "layers": [
-        {
-          "layer": "kernel_driver",
-          "availability": {
-            "state": "read"
-          },
-          "caps": {},
-          "detail": {
-            "kind": "kernel_driver",
-            "driver": {
-              "state": "known",
-              "value": "VirMIDI",
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/proc/asound/cards"
-                },
-                "read_at_ms": 1794363070520
-              }
-            },
-            "module": {
-              "state": "known",
-              "value": "snd_virmidi",
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/sys/class/sound/card0/device/uevent"
-                },
-                "read_at_ms": 1794363070520
-              }
-            },
-            "parameters": {
-              "state": "known",
-              "value": [
-                {
-                  "name": "enable",
-                  "value": "Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
-                },
-                {
-                  "name": "id",
-                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
-                },
-                {
-                  "name": "index",
-                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
-                },
-                {
-                  "name": "midi_devs",
-                  "value": "2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4"
-                }
-              ],
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/sys/module/snd_virmidi/parameters"
-                },
-                "read_at_ms": 1794363070520
-              }
-            },
-            "power": {
-              "state": "known",
-              "value": "unsupported",
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/sys/class/sound/card0/device/power/runtime_status"
-                },
-                "read_at_ms": 1794363070520
-              }
-            }
-          }
-        },
-        {
-          "layer": "alsa_userspace",
-          "availability": {
-            "state": "read"
-          },
-          "caps": {},
-          "detail": {
-            "kind": "device",
-            "device": "hw:CARD=VirMIDI,DEV=0",
-            "state": {
-              "state": "known",
-              "value": {
-                "state": "idle"
-              },
-              "confidence": "measured",
-              "provenance": {
-                "layer": "alsa_userspace",
-                "source": {
-                  "kind": "file",
-                  "path": "/proc/asound/card0/midi0"
-                },
-                "read_at_ms": 1794363070520
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "alsa:card0/midi1",
-      "class": "virtual",
-      "direction": "midi",
-      "transport": {
-        "state": "known",
-        "value": {
-          "virtual": "virmidi"
-        },
-        "confidence": "measured",
-        "provenance": {
-          "layer": "kernel_driver",
-          "source": {
-            "kind": "file",
-            "path": "/proc/asound/cards"
-          },
-          "read_at_ms": 1794363070520
-        }
-      },
-      "name": {
-        "state": "known",
-        "value": {
-          "plain": "Virtual Raw MIDI"
-        },
-        "confidence": "measured",
-        "provenance": {
-          "layer": "alsa_userspace",
-          "source": {
-            "kind": "file",
-            "path": "/proc/asound/card0/midi1"
-          },
-          "read_at_ms": 1794363070520
-        }
-      },
-      "correlation": [
-        {
-          "id": {
-            "kind": "alsa_raw_midi",
-            "card": 0,
-            "device": 1
-          },
-          "confidence": "measured"
-        },
-        {
-          "id": {
-            "kind": "alsa_seq_port",
-            "client": 17,
-            "port": 0
-          },
-          "confidence": "inferred"
-        }
-      ],
-      "midi": {
-        "kind": "raw",
-        "input": true,
-        "output": true,
-        "subdevices": 16
-      },
-      "layers": [
-        {
-          "layer": "kernel_driver",
-          "availability": {
-            "state": "read"
-          },
-          "caps": {},
-          "detail": {
-            "kind": "kernel_driver",
-            "driver": {
-              "state": "known",
-              "value": "VirMIDI",
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/proc/asound/cards"
-                },
-                "read_at_ms": 1794363070520
-              }
-            },
-            "module": {
-              "state": "known",
-              "value": "snd_virmidi",
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/sys/class/sound/card0/device/uevent"
-                },
-                "read_at_ms": 1794363070520
-              }
-            },
-            "parameters": {
-              "state": "known",
-              "value": [
-                {
-                  "name": "enable",
-                  "value": "Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
-                },
-                {
-                  "name": "id",
-                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
-                },
-                {
-                  "name": "index",
-                  "value": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
-                },
-                {
-                  "name": "midi_devs",
-                  "value": "2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4"
-                }
-              ],
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/sys/module/snd_virmidi/parameters"
-                },
-                "read_at_ms": 1794363070520
-              }
-            },
-            "power": {
-              "state": "known",
-              "value": "unsupported",
-              "confidence": "measured",
-              "provenance": {
-                "layer": "kernel_driver",
-                "source": {
-                  "kind": "file",
-                  "path": "/sys/class/sound/card0/device/power/runtime_status"
-                },
-                "read_at_ms": 1794363070520
-              }
-            }
-          }
-        },
-        {
-          "layer": "alsa_userspace",
-          "availability": {
-            "state": "read"
-          },
-          "caps": {},
-          "detail": {
-            "kind": "device",
-            "device": "hw:CARD=VirMIDI,DEV=1",
-            "state": {
-              "state": "known",
-              "value": {
-                "state": "idle"
-              },
-              "confidence": "measured",
-              "provenance": {
-                "layer": "alsa_userspace",
-                "source": {
-                  "kind": "file",
-                  "path": "/proc/asound/card0/midi1"
-                },
-                "read_at_ms": 1794363070520
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "alsa:card1/pcm0p",
+      "id": "alsa:card0/pcm0p",
       "class": "hardware",
       "direction": "playback",
       "transport": {
@@ -576,9 +270,9 @@
           "layer": "host_hardware",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/card1/usbid"
+            "path": "/proc/asound/card0/usbid"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "name": {
@@ -593,14 +287,14 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "correlation": [
         {
           "id": {
             "kind": "alsa_card",
-            "card": 1,
+            "card": 0,
             "id": "Audio"
           },
           "confidence": "measured"
@@ -608,7 +302,7 @@
         {
           "id": {
             "kind": "alsa_pcm",
-            "card": 1,
+            "card": 0,
             "device": 0
           },
           "confidence": "measured"
@@ -647,9 +341,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/stream0"
+                  "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -665,9 +359,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/stream0"
+                  "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -681,9 +375,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/stream0"
+                  "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -697,9 +391,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/usbid"
+                  "path": "/proc/asound/card0/usbid"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "usb_speed": {
@@ -710,9 +404,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/stream0"
+                  "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "usb_alt_settings": {
@@ -739,9 +433,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/stream0"
+                  "path": "/proc/asound/card0/stream0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -764,7 +458,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "module": {
@@ -775,9 +469,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card1/device/uevent"
+                  "path": "/sys/class/sound/card0/device/uevent"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "parameters": {
@@ -851,7 +545,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_usb_audio/parameters"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "power": {
@@ -862,9 +556,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card1/device/power/runtime_status"
+                  "path": "/sys/class/sound/card0/device/power/runtime_status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -878,32 +572,32 @@
             "sample_formats": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "rates": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channels": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channel_maps": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "latency_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "direct_access": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           },
           "detail": {
@@ -913,16 +607,16 @@
               "state": "known",
               "value": {
                 "state": "in_use",
-                "owner_pid": 2778
+                "owner_pid": 2519
               },
               "confidence": "measured",
               "provenance": {
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/pcm0p/sub0/status"
+                  "path": "/proc/asound/card0/pcm0p/sub0/status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "subdevices": {
@@ -936,9 +630,9 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/pcm0p/info"
+                  "path": "/proc/asound/card0/pcm0p/info"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "current": {
@@ -955,15 +649,15 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card1/pcm0p/sub0/hw_params"
+                  "path": "/proc/asound/card0/pcm0p/sub0/hw_params"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "period_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           }
         },
@@ -985,7 +679,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -1003,7 +697,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -1019,7 +713,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channel_maps": {
@@ -1039,7 +733,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -1052,7 +746,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -1073,7 +767,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "current": {
@@ -1090,7 +784,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "profiles": {
@@ -1128,7 +822,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "routes": {
@@ -1152,7 +846,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "volume": {
@@ -1168,7 +862,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "is_default": true
@@ -1205,7 +899,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -1223,7 +917,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -1239,7 +933,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -1262,7 +956,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -1280,7 +974,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -1296,7 +990,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -1309,7 +1003,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -1336,7 +1030,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1349,7 +1043,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1378,7 +1072,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1391,7 +1085,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1420,7 +1114,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1433,7 +1127,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1446,7 +1140,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "latency_us": {
@@ -1481,7 +1175,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1494,7 +1188,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1524,7 +1218,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1537,7 +1231,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1566,7 +1260,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1579,7 +1273,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1608,7 +1302,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -1621,7 +1315,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -1634,7 +1328,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "latency_us": {
@@ -1652,7 +1346,7 @@
       ]
     },
     {
-      "id": "alsa:card2/pcm0c",
+      "id": "alsa:card1/pcm0c",
       "class": "hardware",
       "direction": "capture",
       "transport": {
@@ -1663,9 +1357,9 @@
           "layer": "host_hardware",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/card2/codec#0"
+            "path": "/proc/asound/card1/codec#0"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "name": {
@@ -1680,14 +1374,14 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "correlation": [
         {
           "id": {
             "kind": "alsa_card",
-            "card": 2,
+            "card": 1,
             "id": "Intel_1"
           },
           "confidence": "measured"
@@ -1695,7 +1389,7 @@
         {
           "id": {
             "kind": "alsa_pcm",
-            "card": 2,
+            "card": 1,
             "device": 0
           },
           "confidence": "measured"
@@ -1734,9 +1428,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "derived",
-                  "from": "converter bits in /proc/asound/card2/codec#0"
+                  "from": "converter bits in /proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -1758,9 +1452,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -1774,9 +1468,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -1790,9 +1484,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card2/device/vendor"
+                  "path": "/sys/class/sound/card1/device/vendor"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "codec": {
@@ -1803,9 +1497,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "pins": {
@@ -1826,9 +1520,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -1851,7 +1545,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "module": {
@@ -1862,9 +1556,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card2/device/uevent"
+                  "path": "/sys/class/sound/card1/device/uevent"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "parameters": {
@@ -1958,7 +1652,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "power": {
@@ -1969,9 +1663,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card2/device/power/runtime_status"
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "jack": {
@@ -1987,7 +1681,7 @@
                   "kind": "command",
                   "name": "alsa"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -2001,32 +1695,32 @@
             "sample_formats": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "rates": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channels": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channel_maps": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "latency_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "direct_access": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           },
           "detail": {
@@ -2036,16 +1730,16 @@
               "state": "known",
               "value": {
                 "state": "in_use",
-                "owner_pid": 2778
+                "owner_pid": 2519
               },
               "confidence": "measured",
               "provenance": {
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/pcm0c/sub0/status"
+                  "path": "/proc/asound/card1/pcm0c/sub0/status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "subdevices": {
@@ -2059,9 +1753,9 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/pcm0c/info"
+                  "path": "/proc/asound/card1/pcm0c/info"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "current": {
@@ -2078,15 +1772,15 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/pcm0c/sub0/hw_params"
+                  "path": "/proc/asound/card1/pcm0c/sub0/hw_params"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "period_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           }
         },
@@ -2108,7 +1802,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -2126,7 +1820,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -2142,7 +1836,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channel_maps": {
@@ -2162,7 +1856,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -2175,7 +1869,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -2196,7 +1890,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "current": {
@@ -2213,7 +1907,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "profiles": {
@@ -2251,7 +1945,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "routes": {
@@ -2270,7 +1964,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "volume": {
@@ -2286,7 +1980,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "is_default": false
@@ -2323,7 +2017,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -2347,7 +2041,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -2363,7 +2057,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -2386,7 +2080,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -2404,7 +2098,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -2420,7 +2114,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -2433,7 +2127,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -2447,7 +2141,7 @@
       ]
     },
     {
-      "id": "alsa:card2/pcm0p",
+      "id": "alsa:card1/pcm0p",
       "class": "hardware",
       "direction": "playback",
       "transport": {
@@ -2458,9 +2152,9 @@
           "layer": "host_hardware",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/card2/codec#0"
+            "path": "/proc/asound/card1/codec#0"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "name": {
@@ -2475,14 +2169,14 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "correlation": [
         {
           "id": {
             "kind": "alsa_card",
-            "card": 2,
+            "card": 1,
             "id": "Intel_1"
           },
           "confidence": "measured"
@@ -2490,7 +2184,7 @@
         {
           "id": {
             "kind": "alsa_pcm",
-            "card": 2,
+            "card": 1,
             "device": 0
           },
           "confidence": "measured"
@@ -2529,9 +2223,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "derived",
-                  "from": "converter bits in /proc/asound/card2/codec#0"
+                  "from": "converter bits in /proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -2553,9 +2247,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -2569,9 +2263,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -2585,9 +2279,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card2/device/vendor"
+                  "path": "/sys/class/sound/card1/device/vendor"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "codec": {
@@ -2598,9 +2292,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "pins": {
@@ -2621,9 +2315,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/codec#0"
+                  "path": "/proc/asound/card1/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -2646,7 +2340,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "module": {
@@ -2657,9 +2351,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card2/device/uevent"
+                  "path": "/sys/class/sound/card1/device/uevent"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "parameters": {
@@ -2753,7 +2447,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "power": {
@@ -2764,9 +2458,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card2/device/power/runtime_status"
+                  "path": "/sys/class/sound/card1/device/power/runtime_status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "jack": {
@@ -2782,7 +2476,7 @@
                   "kind": "command",
                   "name": "alsa"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -2796,32 +2490,32 @@
             "sample_formats": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "rates": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channels": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channel_maps": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "latency_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "direct_access": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           },
           "detail": {
@@ -2831,16 +2525,16 @@
               "state": "known",
               "value": {
                 "state": "in_use",
-                "owner_pid": 2778
+                "owner_pid": 2519
               },
               "confidence": "measured",
               "provenance": {
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/pcm0p/sub0/status"
+                  "path": "/proc/asound/card1/pcm0p/sub0/status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "subdevices": {
@@ -2854,9 +2548,9 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/pcm0p/info"
+                  "path": "/proc/asound/card1/pcm0p/info"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "current": {
@@ -2873,15 +2567,15 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card2/pcm0p/sub0/hw_params"
+                  "path": "/proc/asound/card1/pcm0p/sub0/hw_params"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "period_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           }
         },
@@ -2903,7 +2597,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -2921,7 +2615,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -2937,7 +2631,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channel_maps": {
@@ -2957,7 +2651,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -2970,7 +2664,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -2991,7 +2685,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "current": {
@@ -3008,7 +2702,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "profiles": {
@@ -3046,7 +2740,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "routes": {
@@ -3065,7 +2759,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "volume": {
@@ -3081,7 +2775,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "is_default": false
@@ -3118,7 +2812,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -3142,7 +2836,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -3158,7 +2852,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -3181,7 +2875,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -3199,7 +2893,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -3215,7 +2909,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -3228,7 +2922,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -3261,7 +2955,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3274,7 +2968,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3303,7 +2997,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3316,7 +3010,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3345,7 +3039,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3358,7 +3052,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3397,7 +3091,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3410,7 +3104,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3440,7 +3134,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3453,7 +3147,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3492,7 +3186,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3505,7 +3199,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3534,7 +3228,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -3547,7 +3241,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -3570,7 +3264,339 @@
       ]
     },
     {
-      "id": "alsa:card3/pcm0c",
+      "id": "alsa:card10/midi0",
+      "class": "virtual",
+      "direction": "midi",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "virmidi"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "kernel_driver",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/cards"
+          },
+          "read_at_ms": 1794625948336
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Virtual Raw MIDI"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/card10/midi0"
+          },
+          "read_at_ms": 1794625948336
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_raw_midi",
+            "card": 10,
+            "device": 0
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_seq_port",
+            "client": 56,
+            "port": 0
+          },
+          "confidence": "inferred"
+        }
+      ],
+      "midi": {
+        "kind": "raw",
+        "input": true,
+        "output": true,
+        "subdevices": 16
+      },
+      "layers": [
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "VirMIDI",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794625948336
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_virmidi",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card10/device/uevent"
+                },
+                "read_at_ms": 1794625948336
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "enable",
+                  "value": "Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "midi_devs",
+                  "value": "2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_virmidi/parameters"
+                },
+                "read_at_ms": 1794625948336
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "unsupported",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card10/device/power/runtime_status"
+                },
+                "read_at_ms": 1794625948336
+              }
+            }
+          }
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=VirMIDI,DEV=0",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card10/midi0"
+                },
+                "read_at_ms": 1794625948336
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "alsa:card10/midi1",
+      "class": "virtual",
+      "direction": "midi",
+      "transport": {
+        "state": "known",
+        "value": {
+          "virtual": "virmidi"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "kernel_driver",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/cards"
+          },
+          "read_at_ms": 1794625948336
+        }
+      },
+      "name": {
+        "state": "known",
+        "value": {
+          "plain": "Virtual Raw MIDI"
+        },
+        "confidence": "measured",
+        "provenance": {
+          "layer": "alsa_userspace",
+          "source": {
+            "kind": "file",
+            "path": "/proc/asound/card10/midi1"
+          },
+          "read_at_ms": 1794625948336
+        }
+      },
+      "correlation": [
+        {
+          "id": {
+            "kind": "alsa_raw_midi",
+            "card": 10,
+            "device": 1
+          },
+          "confidence": "measured"
+        },
+        {
+          "id": {
+            "kind": "alsa_seq_port",
+            "client": 57,
+            "port": 0
+          },
+          "confidence": "inferred"
+        }
+      ],
+      "midi": {
+        "kind": "raw",
+        "input": true,
+        "output": true,
+        "subdevices": 16
+      },
+      "layers": [
+        {
+          "layer": "kernel_driver",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "kernel_driver",
+            "driver": {
+              "state": "known",
+              "value": "VirMIDI",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/cards"
+                },
+                "read_at_ms": 1794625948336
+              }
+            },
+            "module": {
+              "state": "known",
+              "value": "snd_virmidi",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card10/device/uevent"
+                },
+                "read_at_ms": 1794625948336
+              }
+            },
+            "parameters": {
+              "state": "known",
+              "value": [
+                {
+                  "name": "enable",
+                  "value": "Y,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N"
+                },
+                {
+                  "name": "id",
+                  "value": "(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null),(null)"
+                },
+                {
+                  "name": "index",
+                  "value": "10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+                },
+                {
+                  "name": "midi_devs",
+                  "value": "2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4"
+                }
+              ],
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/module/snd_virmidi/parameters"
+                },
+                "read_at_ms": 1794625948336
+              }
+            },
+            "power": {
+              "state": "known",
+              "value": "unsupported",
+              "confidence": "measured",
+              "provenance": {
+                "layer": "kernel_driver",
+                "source": {
+                  "kind": "file",
+                  "path": "/sys/class/sound/card10/device/power/runtime_status"
+                },
+                "read_at_ms": 1794625948336
+              }
+            }
+          }
+        },
+        {
+          "layer": "alsa_userspace",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {},
+          "detail": {
+            "kind": "device",
+            "device": "hw:CARD=VirMIDI,DEV=1",
+            "state": {
+              "state": "known",
+              "value": {
+                "state": "idle"
+              },
+              "confidence": "measured",
+              "provenance": {
+                "layer": "alsa_userspace",
+                "source": {
+                  "kind": "file",
+                  "path": "/proc/asound/card10/midi1"
+                },
+                "read_at_ms": 1794625948336
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "alsa:card2/pcm0c",
       "class": "hardware",
       "direction": "capture",
       "transport": {
@@ -3581,9 +3607,9 @@
           "layer": "host_hardware",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/card3/codec#0"
+            "path": "/proc/asound/card2/codec#0"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "name": {
@@ -3598,14 +3624,14 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "correlation": [
         {
           "id": {
             "kind": "alsa_card",
-            "card": 3,
+            "card": 2,
             "id": "Intel"
           },
           "confidence": "measured"
@@ -3613,7 +3639,7 @@
         {
           "id": {
             "kind": "alsa_pcm",
-            "card": 3,
+            "card": 2,
             "device": 0
           },
           "confidence": "measured"
@@ -3652,9 +3678,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "derived",
-                  "from": "converter bits in /proc/asound/card3/codec#0"
+                  "from": "converter bits in /proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -3676,9 +3702,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -3692,9 +3718,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -3708,9 +3734,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card3/device/vendor"
+                  "path": "/sys/class/sound/card2/device/vendor"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "codec": {
@@ -3721,9 +3747,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "pins": {
@@ -3744,9 +3770,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -3769,7 +3795,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "module": {
@@ -3780,9 +3806,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card3/device/uevent"
+                  "path": "/sys/class/sound/card2/device/uevent"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "parameters": {
@@ -3876,7 +3902,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "power": {
@@ -3887,9 +3913,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card3/device/power/runtime_status"
+                  "path": "/sys/class/sound/card2/device/power/runtime_status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "jack": {
@@ -3905,7 +3931,7 @@
                   "kind": "command",
                   "name": "alsa"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -3919,32 +3945,32 @@
             "sample_formats": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "rates": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channels": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channel_maps": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "latency_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "direct_access": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           },
           "detail": {
@@ -3954,16 +3980,16 @@
               "state": "known",
               "value": {
                 "state": "in_use",
-                "owner_pid": 2778
+                "owner_pid": 2519
               },
               "confidence": "measured",
               "provenance": {
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/pcm0c/sub0/status"
+                  "path": "/proc/asound/card2/pcm0c/sub0/status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "subdevices": {
@@ -3977,9 +4003,9 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/pcm0c/info"
+                  "path": "/proc/asound/card2/pcm0c/info"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "current": {
@@ -3996,15 +4022,15 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/pcm0c/sub0/hw_params"
+                  "path": "/proc/asound/card2/pcm0c/sub0/hw_params"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "period_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           }
         },
@@ -4026,7 +4052,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -4044,7 +4070,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -4060,7 +4086,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channel_maps": {
@@ -4080,7 +4106,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -4093,7 +4119,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -4114,7 +4140,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "current": {
@@ -4131,7 +4157,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "profiles": {
@@ -4169,7 +4195,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "routes": {
@@ -4188,7 +4214,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "volume": {
@@ -4204,7 +4230,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "is_default": true
@@ -4241,7 +4267,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -4265,7 +4291,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -4281,7 +4307,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -4304,7 +4330,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -4322,7 +4348,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -4338,7 +4364,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -4351,7 +4377,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -4365,7 +4391,7 @@
       ]
     },
     {
-      "id": "alsa:card3/pcm0p",
+      "id": "alsa:card2/pcm0p",
       "class": "hardware",
       "direction": "playback",
       "transport": {
@@ -4376,9 +4402,9 @@
           "layer": "host_hardware",
           "source": {
             "kind": "file",
-            "path": "/proc/asound/card3/codec#0"
+            "path": "/proc/asound/card2/codec#0"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "name": {
@@ -4393,14 +4419,14 @@
             "kind": "file",
             "path": "/proc/asound/pcm"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "correlation": [
         {
           "id": {
             "kind": "alsa_card",
-            "card": 3,
+            "card": 2,
             "id": "Intel"
           },
           "confidence": "measured"
@@ -4408,7 +4434,7 @@
         {
           "id": {
             "kind": "alsa_pcm",
-            "card": 3,
+            "card": 2,
             "device": 0
           },
           "confidence": "measured"
@@ -4447,9 +4473,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "derived",
-                  "from": "converter bits in /proc/asound/card3/codec#0"
+                  "from": "converter bits in /proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -4471,9 +4497,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -4487,9 +4513,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -4503,9 +4529,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card3/device/vendor"
+                  "path": "/sys/class/sound/card2/device/vendor"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "codec": {
@@ -4516,9 +4542,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "pins": {
@@ -4539,9 +4565,9 @@
                 "layer": "host_hardware",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/codec#0"
+                  "path": "/proc/asound/card2/codec#0"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -4564,7 +4590,7 @@
                   "kind": "file",
                   "path": "/proc/asound/cards"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "module": {
@@ -4575,9 +4601,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card3/device/uevent"
+                  "path": "/sys/class/sound/card2/device/uevent"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "parameters": {
@@ -4671,7 +4697,7 @@
                   "kind": "file",
                   "path": "/sys/module/snd_hda_intel/parameters"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "power": {
@@ -4682,9 +4708,9 @@
                 "layer": "kernel_driver",
                 "source": {
                   "kind": "file",
-                  "path": "/sys/class/sound/card3/device/power/runtime_status"
+                  "path": "/sys/class/sound/card2/device/power/runtime_status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "jack": {
@@ -4700,7 +4726,7 @@
                   "kind": "command",
                   "name": "alsa"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -4714,32 +4740,32 @@
             "sample_formats": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "rates": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channels": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "channel_maps": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "latency_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             },
             "direct_access": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           },
           "detail": {
@@ -4749,16 +4775,16 @@
               "state": "known",
               "value": {
                 "state": "in_use",
-                "owner_pid": 2778
+                "owner_pid": 2519
               },
               "confidence": "measured",
               "provenance": {
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/pcm0p/sub0/status"
+                  "path": "/proc/asound/card2/pcm0p/sub0/status"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "subdevices": {
@@ -4772,9 +4798,9 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/pcm0p/info"
+                  "path": "/proc/asound/card2/pcm0p/info"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "current": {
@@ -4791,15 +4817,15 @@
                 "layer": "alsa_userspace",
                 "source": {
                   "kind": "file",
-                  "path": "/proc/asound/card3/pcm0p/sub0/hw_params"
+                  "path": "/proc/asound/card2/pcm0p/sub0/hw_params"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "period_us": {
               "state": "unknown",
               "reason": "busy",
-              "detail": "in use (owner pid 2778); ranges are read only from a free device"
+              "detail": "in use (owner pid 2519); ranges are read only from a free device"
             }
           }
         },
@@ -4821,7 +4847,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -4839,7 +4865,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -4855,7 +4881,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channel_maps": {
@@ -4875,7 +4901,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -4888,7 +4914,7 @@
                   "kind": "command",
                   "name": "pactl-list"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -4909,7 +4935,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "current": {
@@ -4926,7 +4952,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "profiles": {
@@ -4964,7 +4990,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "routes": {
@@ -4983,7 +5009,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "volume": {
@@ -4999,7 +5025,7 @@
                       "kind": "command",
                       "name": "pactl-list"
                     },
-                    "read_at_ms": 1794363070520
+                    "read_at_ms": 1794625948336
                   }
                 },
                 "is_default": false
@@ -5036,7 +5062,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -5060,7 +5086,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -5076,7 +5102,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           }
@@ -5099,7 +5125,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "rates": {
@@ -5117,7 +5143,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "channels": {
@@ -5133,7 +5159,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             },
             "passthrough": {
@@ -5146,7 +5172,7 @@
                   "kind": "derived",
                   "from": "intersection of the path's layers"
                 },
-                "read_at_ms": 1794363070520
+                "read_at_ms": 1794625948336
               }
             }
           },
@@ -5179,7 +5205,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5192,7 +5218,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5221,7 +5247,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5234,7 +5260,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5263,7 +5289,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5276,7 +5302,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5315,7 +5341,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5328,7 +5354,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5358,7 +5384,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5371,7 +5397,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5410,7 +5436,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5423,7 +5449,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5452,7 +5478,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "bitrate_bps": {
@@ -5465,7 +5491,7 @@
                     "kind": "derived",
                     "from": "path report"
                   },
-                  "read_at_ms": 1794363070520
+                  "read_at_ms": 1794625948336
                 }
               },
               "ceiling_bps": {
@@ -5503,7 +5529,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "name": {
@@ -5518,7 +5544,7 @@
             "kind": "file",
             "path": "/proc/asound/seq/clients"
           },
-          "read_at_ms": 1794363070520
+          "read_at_ms": 1794625948336
         }
       },
       "correlation": [
@@ -5556,7 +5582,7 @@
     {
       "code": "POWER_SAVE_ACTIVE",
       "severity": "info",
-      "endpoint": "alsa:card2/pcm0c",
+      "endpoint": "alsa:card1/pcm0c",
       "access_path": "pulse_audio",
       "hop": "driver_host",
       "evidence": [
@@ -5569,7 +5595,7 @@
               "kind": "file",
               "path": "/sys/module/snd_hda_intel/parameters"
             },
-            "read_at_ms": 1794363070520
+            "read_at_ms": 1794625948336
           }
         }
       ],
