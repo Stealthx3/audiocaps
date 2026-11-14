@@ -72,9 +72,9 @@ Open items (not phase tasks):
 
 ## Phase 8 — Software codecs, active probes
 
-- [ ] **8.1** Software codec checks (opt-in)
-- [ ] **8.2** Active probes on idle devices (opt-in)
-- [ ] **8.3** Gate: opt-ins run only when the app asks
+- [x] **8.1** Software codec checks (opt-in)
+- [x] **8.2** Active probes on idle devices (opt-in)
+- [x] **8.3** Gate: opt-ins run only when the app asks
 
 ## Phase 9 — C ABI, docs, packaging
 

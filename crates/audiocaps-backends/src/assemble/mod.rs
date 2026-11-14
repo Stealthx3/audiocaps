@@ -106,6 +106,7 @@ pub(crate) fn snapshot(
         routing,
         servers,
         endpoints,
+        software_codecs: None,
         app_request: None,
         findings: vec![],
     };
@@ -518,6 +519,7 @@ impl Ctx<'_> {
             }),
             correlation,
             sink,
+            active_probe: None,
             midi: None,
             layers,
             effective: vec![],
@@ -1080,6 +1082,7 @@ impl Ctx<'_> {
             }),
             correlation,
             sink: None,
+            active_probe: None,
             midi: identity.then(|| MidiPort {
                 kind: MidiKind::Raw,
                 input: raw.is_some_and(|r| !r.inputs.is_empty()),
@@ -1159,6 +1162,7 @@ impl Ctx<'_> {
                 vec![]
             },
             sink: None,
+            active_probe: None,
             midi: identity.then(|| MidiPort {
                 kind: MidiKind::Sequencer,
                 input: port.readable,

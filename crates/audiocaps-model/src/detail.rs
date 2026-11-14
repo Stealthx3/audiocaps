@@ -596,3 +596,101 @@ pub struct AppRequest {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub latency_target_us: Option<u32>,
 }
+
+/// Software codecs the application could load (opt-in check). Presence is read from the
+/// libraries on disk; nothing is loaded, so what each provider decodes or encodes is `inferred`
+/// from what its standard builds include.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct SoftwareCodecs {
+    /// Providers found.
+    pub providers: Vec<CodecProvider>,
+    /// Codecs some provider decodes.
+    pub decoders: Vec<crate::caps::Codec>,
+    /// Codecs some provider encodes.
+    pub encoders: Vec<crate::caps::Codec>,
+}
+
+/// A library that provides codecs.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct CodecProvider {
+    /// Name, e.g. `ffmpeg`, `alsa-a52`, `pipewire-bluez5-ldac`.
+    pub name: String,
+    /// Library path as found.
+    pub library: String,
+    /// Version from the soname, when it has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub version: Option<String>,
+    /// Codecs it decodes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub decodes: Vec<crate::caps::Codec>,
+    /// Codecs it encodes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub encodes: Vec<crate::caps::Codec>,
+    /// Bluetooth codecs it adds to the host.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bluetooth: Vec<crate::caps::BluetoothCodec>,
+    /// Use: e.g. `alsa-plugin` (open as an ALSA PCM), `library`, `gstreamer`, `pipewire`.
+    pub kind: String,
+}
+
+/// Result of an active probe of one endpoint (opt-in).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ActiveProbe {
+    /// The device name used, e.g. `hdmi:CARD=HDMI,DEV=0`.
+    pub device: String,
+    /// One result per requested format.
+    pub results: Vec<ActiveResult>,
+}
+
+/// One format tried by an active probe.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ActiveResult {
+    /// The codec tried.
+    pub codec: crate::caps::Codec,
+    /// Carrier: channels.
+    pub channels: u32,
+    /// Carrier: rate in Hz.
+    pub rate_hz: u32,
+    /// What happened.
+    pub outcome: ActiveOutcome,
+}
+
+/// Outcome of one active test.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "outcome", rename_all = "snake_case")]
+pub enum ActiveOutcome {
+    /// The host path accepted the format and played silence without error. (The sink can't
+    /// report back, so this confirms the host side.)
+    Accepted {
+        /// Milliseconds of silence played.
+        played_ms: u32,
+    },
+    /// The device refused it.
+    Refused {
+        /// Stage: `open`, `hw_params`, `write`.
+        stage: String,
+        /// Error.
+        error: String,
+    },
+    /// Not tried.
+    Skipped {
+        /// Why.
+        reason: String,
+    },
+}
+
+/// What the application asked an active probe to try.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct ActiveProbeRequest {
+    /// The endpoint (an idle ALSA playback device).
+    pub endpoint: crate::endpoint::EndpointId,
+    /// Codecs to try: `lpcm` (silent PCM at the given layout) or compressed codecs (silent
+    /// IEC 61937 pause bursts in their carrier layout).
+    pub codecs: Vec<crate::caps::Codec>,
+    /// LPCM layout: channels (default 2).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub channels: Option<u32>,
+    /// LPCM layout: rate (default 48000).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rate_hz: Option<u32>,
+}
