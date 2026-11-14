@@ -11,12 +11,15 @@ _Standard: VM-LAB-STANDARD v1.2 · Created 2026-11-08_
 |---|---|---|---|---|
 | main | vm | 2 | Q7, Q8 | builds and tests; reverts keep the toolchain clean |
 | capture | vm | 2 | Q2, Q5, Q7, Q8 | runs real sound-server stacks (systemd user units) with an emulated HDA card; one snapshot per stack |
+| snap | vm | 2 | Q2, Q7, Q8 | Ubuntu 24.04: strict snap confinement needs Ubuntu's AppArmor kernel (Debian's lacks D-Bus and unix mediation, so snapd reports `partial`) |
 
 ## Guests (watch in virt-manager → QEMU/KVM)
 | Guest | Kind | Base | vCPU/RAM | Purpose | Snapshots |
 |---|---|---|---|---|---|
 | lab-audiocaps-main | vm | lab-base-debian13 | 4 / 6 GB | Rust build, tests, cargo-deny | clean, provisioned |
 | lab-audiocaps-capture | vm | lab-base-debian13 | 4 / 6 GB | capture fixtures: PipeWire, PulseAudio, ALSA-only; 2 emulated ich9 HDA cards, standard (non-cloud) kernel; snapshot `usb-audio` adds an emulated USB Audio (UAC1) device and the phase 2 CLI; `phase3` adds the phase 3 CLI, libasound2-dev and snd-virmidi/snd-seq-dummy loaded at boot; `phase4` adds libpipewire/libpulse dev packages and clang, and pins VirMIDI to card index 10; `phase7` adds libjack-jackd2-dev and v4l-utils | audio-base, tooling, usb-audio, phase3, phase4, phase7 |
+
+| lab-audiocaps-snap | vm | noble-base (Ubuntu 24.04 cloud image, used read-only as backing) | 4 / 6 GB | phase 9 sandbox gate, Snap half: snapd strict, PipeWire, rtkit, xdg-desktop-portal, 2 emulated ich9 HDA cards, vivid CEC (linux-modules-extra) | clean |
 
 Other projects' lab guests may be running; never run more than 3 guests at once. Shut `main` down
 while `capture` runs if needed.
@@ -47,6 +50,12 @@ while `capture` runs if needed.
 ## CEC in the lab (phase 6)
 - `sudo modprobe vivid n_devs=1 num_inputs=1 num_outputs=1 input_types=3 output_types=1`, then `v4l2-ctl -d /dev/video0 -c hdmi_000_0_is_connected_to=2` joins the emulated HDMI output and input. Configure roles with `cec-ctl -d0 --tv` and `cec-ctl -d1 --audio --osd-name … --vendor-id …`, answer queries with `cec-follower -d1`, then run `audiocaps cec-dump`. Needs v4l-utils (not in a snapshot).
 
+## Packaging and the sandbox gate (phase 9)
+- `scripts/lab.sh run 'bash scripts/build-portable.sh'` (main): release CLI and `libaudiocaps.so.1` built in an Ubuntu 24.04 podman container (glibc 2.39), with the libraries and PipeWire/ALSA data a core24 snap stages, in `target/portable/`. Pull it with `lab.sh pull /home/lab/src/target/portable/ DIR`, copy it to a guest with `lab.sh put DIR/ /home/lab/portable <role>`.
+- `scripts/gate-sandbox.sh setup|flatpak|snap|summary`: Flatpak half in `capture`, Snap half in `snap` (`GATE_FLATPAK=0 … setup` there). Results in `~/sandbox-gate/` on the guest; summary in `packaging/README.md`.
+- `LAB_ENV=lab.snap.env scripts/lab.sh up snap` creates the Ubuntu guest; other commands use the default `lab.env`.
+- `scripts/lab.sh run 'bash scripts/gate-examples.sh'` (main): C, C++, Python and C# examples on fixtures (needs mono-mcs, valgrind).
+
 ## Commands
 - Build: `scripts/lab.sh run 'cargo build --workspace'`
 - Test:  `scripts/lab.sh run 'bash scripts/gate.sh 2>&1 | tail -n 50'`
@@ -71,3 +80,4 @@ while `capture` runs if needed.
 - 2026-11-11 — capture: snapshot `phase4` from `phase3` + libpipewire-0.3-dev, libpulse-dev, clang; VirMIDI pinned to index 10 (at index 0 it made `default` unopenable).
 - 2026-11-11 — main: libjack-jackd2-dev added (jack-sys needs jack.pc at build time). capture: jackd2 and bluez installed for the phase 5 checks (not in a snapshot).
 - 2026-11-14 — capture: snapshot `phase7` (+ libjack-jackd2-dev, v4l-utils). lab-pulseaudio recaptured with `/usr/share/alsa/pulse-alsa.conf`.
+- 2026-11-13 — main: podman, mono-mcs, mono-runtime, valgrind; cbindgen 0.29.2 (cargo install). capture (no snapshot): flatpak, snapd, rtkit, xdg-desktop-portal, PipeWire stack, the freedesktop 24.08 runtime from Flathub. New guest `lab-audiocaps-snap` (Ubuntu 24.04) on `noble-base.qcow2` with a second ich9 HDA added by virt-xml.

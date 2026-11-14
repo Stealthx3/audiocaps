@@ -66,7 +66,7 @@ it. Packs are never fetched from the network. Quirk packs load the same way from
 | `BT_CODEC_UNAVAILABLE` | warning | bluetooth_link | The device advertises LDAC or aptX, but the codec isn't enabled or its plugin isn't installed. | active |
 | `BT_BITRATE_LIMITED` | warning | bluetooth_link | The negotiated codec or quality mode is below what both ends support. | active |
 | `BT_HEADSET_PROFILE_ACTIVE` | warning | bluetooth_link | The headset profile is active, dropping playback to voice quality. | active |
-| `NO_REALTIME` | info | whole_path | No realtime scheduling is available. | waits for `g.realtime.available` |
+| `NO_REALTIME` | info | whole_path | No realtime scheduling is available. | `g.realtime.available` (rlimit, rtkit, portal; phase 9) |
 | `SANDBOX_PERMISSION_MISSING` | warning | application | A layer is hidden because a Flatpak permission or Snap plug is missing; names the exact fix. | active |
 | `APP_FORMAT_BELOW_SINK` | info | application | The app requests less than the path can deliver. | active |
 | `LATENCY_BUDGET_EXCEEDED` | warning | whole_path | The end-to-end latency estimate misses an app-supplied target. | active |

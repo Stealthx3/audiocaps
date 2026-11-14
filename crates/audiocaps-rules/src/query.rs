@@ -2,7 +2,7 @@
 //! Queries on a snapshot: "can this endpoint play format X via access path Y?", answered from the
 //! effective set with the reason when it can't. Pure, no I/O, no locks.
 
-use audiocaps_model::{AccessPath, AppRequest, Availability, Codec, EndpointId, RateSet, Snapshot};
+use audiocaps_model::{AccessPath, AppRequest, Codec, EndpointId, RateSet, Snapshot};
 
 use crate::facts::{codec_name, format_bits};
 
@@ -114,9 +114,7 @@ pub fn can_play(
     if !missing.is_empty() {
         return Answer::Unknown(format!("not known for this path: {}", missing.join(", ")));
     }
-    if matches!(eff.availability, Availability::Partial) {
-        // Every asked field is known; unread layers can still narrow it.
-        return Answer::Yes;
-    }
+    // Every asked field is known for the path. A `partial` path (some layers unread) still
+    // answers yes: the unread layers are named in the path's availability and findings.
     Answer::Yes
 }

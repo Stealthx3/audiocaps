@@ -112,6 +112,21 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Realtime availability in the environment layer (`RLIMIT_RTPRIO`, rtkit, the Realtime portal),
   read passively; the `NO_REALTIME` finding now fires.
 - Schema 1.7.0 (additive): `EnvironmentInfo.realtime`.
+- Flatpak `finish-args` and Snap plug templates (`packaging/`), with what each permission
+  unlocks and the sandbox release gate results; `scripts/build-portable.sh` builds binaries that
+  run on the freedesktop 24.08 runtime and core24.
+
+### Fixed
+
+- Inside a snap, sound-server sockets are found next to the snap's private runtime directory, so
+  PulseAudio and PipeWire are read from strict snaps; a connection the confinement refuses is
+  reported `not_granted` with the plug to connect.
+- Flatpak's placeholder `pipewire-0` file is no longer mistaken for the PipeWire socket.
+- A CEC adapter that can't be opened for lack of permission is reported `not_granted`.
+- Snap plug inference: `alsa` is judged by `/proc/asound`, `hardware-observe` by the DRM EDID,
+  and `/sys/module` needs `kernel-module-observe`; a capture claims no plug state.
+- The realtime read runs on its own helper thread, so a slow bus can't delay other backends.
+- Watches in a snap stop retrying a server the confinement refused.
 
 ### Changed
 

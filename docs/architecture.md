@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 8. Updated at every phase gate._
+_Status: end of phase 9. Updated at every phase gate._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
@@ -45,7 +45,7 @@ the CLI or the FFI crate.
 | `audiocaps-parse` | Pure parsers over bytes/text: raw ELD and kernel ELD text, EDID/CTA-861 (SADs, speaker allocation, HDMI/HDMI Forum VSDBs), HDA codec dumps, USB Audio Class descriptors, procfs (cards, pcm, PCM `info`/`status`, USB `stream#`, `hw_params`, raw MIDI, sequencer clients), alsa-lib configuration (syntax with includes and quoted keys; resolves a PCM name such as `default` through its plugin chain, including the lazily loaded per-card definitions), os-release, EDID serial redaction. Maps SADs to model `CodecCapability`. Each parser has a cargo-fuzz target in `fuzz/` (separate workspace, never shipped) and is checked against the captures in `tests/captures.rs`. | Do I/O; panic on any input. |
 | `audiocaps-backends` | `SystemRoot` (live `/` or a fixture tree), the capture `Manifest` format, the `Runtime` (probe thread, per-backend deadlines, snapshot generations and diffs), `probe`/`probe_with`, and the backends: `alsa` (alsa-lib reader and its serializable dump), `sysfs` (codecs, USB streams, driver, PCM state, MIDI), `server` (PipeWire and PulseAudio clients, and parsers for `pw-dump` / `pactl -f json`), `environment`, and `watch` (change events). `servers` decides passively whether a sound server manages the cards. | Read outside the scope; open `/dev` nodes through `SystemRoot`; open a PCM a server manages or that is in use; write any control; run commands (only the CLI's capture does). |
 | `audiocaps-rules` | Quirk packs (`quirks`), effective sets and path reports (`paths`), facts from snapshots (`facts`) and the declarative rule engine with the bundled starter pack (`engine`); `analyze(snapshot, previous, rules)`. No I/O: callers pass pack text. See `docs/rules.md`. | Fetch anything from the network; run code from packs. |
-| `audiocaps-ffi` | The C ABI and cbindgen header (phase 9). Only crate allowed `unsafe`. | Contain logic beyond marshalling. |
+| `audiocaps-ffi` | The C ABI (`libaudiocaps.so.1`, soname set in `build.rs`) and its cbindgen header `include/audiocaps.h`: opaque context, snapshot and watch handles, JSON scope and options, `ac_can_play`, watches by callback thread or pollable fd + dispatch, thread-local errors. Only crate allowed `unsafe`. | Contain logic beyond marshalling. |
 | `audiocaps-cli` | `capture`, `import`, `check-redaction`, `replay`, `probe` (through the runtime; `--endpoint`, `--repeat`), `watch`, `alsa-dump`, `server-dump`, `schema`. Owns command execution and text/JSON redaction for captures. | Be linked by applications. |
 
 ## Key types
@@ -190,6 +190,31 @@ Off by default; each runs only when `ProbeOptions` asks, and does only what it a
   `hdmi:`/`iec958:` with non-audio AES bytes; alsa-lib's hooks restore the previous IEC 958
   status on close. An accepted result confirms the host side only.
 
+## C ABI and packaging (phase 9)
+
+- `audiocaps-ffi` wraps the `Runtime`. An `ac_context` owns one runtime (system or fixture). An
+  `ac_snapshot` holds an `Arc<Snapshot>` plus endpoint ids as C strings. An `ac_watch` runs a
+  forwarder thread that either calls the callback (thread mode) or queues the update and writes
+  one byte to a non-blocking pipe (dispatch mode, drained by `ac_watch_dispatch`). Scope JSON is a
+  friendlier form of `ProbeScope` (each field `"all"` or a list). Options JSON maps onto
+  `ProbeOptions`, including `redact: false`.
+- `audiocaps_rules::query::can_play` answers yes, no or unknown (with the reason and the
+  limiting layers) from an endpoint's effective set.
+- The default redaction now runs at the end of the probe, and `ProbeOptions.redaction` can
+  replace it.
+- The environment layer reads realtime availability passively (`realtime.rs`): `RLIMIT_RTPRIO`;
+  rtkit by name owner or activatable name, never started; the Realtime portal's
+  `MaxRealtimePriority`, read only when the portal already runs. D-Bus reads run on a helper
+  thread with a 120 ms deadline.
+- Sound-server sockets must be real sockets (`SystemRoot::is_socket`; Flatpak leaves a
+  placeholder file). Inside a snap they are looked up one level above the snap's private
+  `XDG_RUNTIME_DIR` and connected to by explicit path. A connection the snap's AppArmor profile
+  refuses becomes `not_granted`, with the plug (`pipewire`, `audio-playback`) moved to the
+  missing list.
+- `docs/consumers.md` (C, C++, Python, .NET, mpv) and `examples/` (checked by
+  `scripts/gate-examples.sh`). `packaging/` holds the Flatpak and Snap templates and the sandbox
+  gate results (`scripts/gate-sandbox.sh`).
+
 ## Analysis (phase 7)
 
 After assembly, when `effective`, `paths` or `findings` is in scope, the probe loads rule packs
@@ -223,6 +248,16 @@ catalogue and every rule: `docs/rules.md`.
 - Note: reading `/proc/asound/cardN/codec#M` makes the HDA driver query the codec (it may resume a
   runtime-suspended codec). It does not open a PCM or change any setting; `alsa-info.sh` does the same.
 
+## Limits at the end of phase 9
+
+- The sandbox gate ran in lab guests with emulated hardware. A Flatpak or Snap on the HTPC (real
+  HDMI sink, eARC) is not yet checked.
+- In a strict snap no interface grants `/dev/cec*`, so the CEC opt-in reports `not_granted`
+  there. Flatpak exposes `/sys/module` to no app, so driver parameters are `not_exposed`.
+- alsa-lib may print configuration errors to stderr when `/proc/asound` is visible but
+  `/dev/snd` is not (a Flatpak without devices). The library can't silence them without
+  replacing the application's own alsa-lib error handler.
+
 ## Limits at the end of phase 8
 
 - Active probes of compressed formats have only been checked to be skipped on analog outputs in
@@ -232,7 +267,7 @@ catalogue and every rule: `docs/rules.md`.
 
 - Five starter rules wait for inputs the library doesn't read yet (see `docs/rules.md`):
   host HBR quirk data, the app's client library version, USB descriptor clock ranges, video
-  timing and realtime scheduling.
+  timing and realtime scheduling. (Phase 9 added the realtime read; four remain.)
 - JACK isn't an access path in effective sets or path reports yet.
 
 ## Limits at the end of phase 6

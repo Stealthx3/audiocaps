@@ -49,7 +49,7 @@ extern "C" {
 // The ABI version of the loaded library ([`AC_ABI_VERSION`]).
 uint32_t ac_abi_version(void);
 
-// The JSON schema version snapshots follow, e.g. `"1.6.0"` (static string).
+// The JSON schema version snapshots follow, e.g. `"1.7.0"` (static string).
 const char *ac_schema_version(void);
 
 // The last error on this thread (empty if none). Valid until the next failing call on the thread.
@@ -173,8 +173,9 @@ int ac_watch_fd(const ac_watch *w);
 // `w` must be a valid watch; call from one thread at a time.
 int ac_watch_dispatch(ac_watch *w);
 
-// Stops and frees a watch. In thread mode, waits for a running callback to return. NULL is
-// ignored.
+// Stops and frees a watch. Waits for a running callback to return and for an in-flight
+// re-probe to finish (bounded by the probe deadlines; unbounded with `"deadline_ms": 0`), so
+// free a watch with deadlines off a UI thread. NULL is ignored.
 //
 // # Safety
 // `w` must be NULL or a watch from this library, freed once, not from inside its callback.

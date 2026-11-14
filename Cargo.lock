@@ -110,6 +110,10 @@ version = "0.1.0"
 dependencies = [
  "audiocaps-backends",
  "audiocaps-model",
+ "audiocaps-rules",
+ "nix 0.31.3",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

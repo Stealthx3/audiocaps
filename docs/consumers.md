@@ -100,9 +100,11 @@ Every field below is optional, and unknown fields are rejected.
 ac_watch *w = ac_watch_new(ctx, scope_json, options_json, mode, on_update, user);
 ```
 
-The first delivery is the initial snapshot. After that, every hotplug, sound-server change or
-Bluetooth change in the watched scope delivers a new snapshot and a diff (`added`, `removed`,
-`changed` endpoint ids, and the old and new generation). Only the watched scope is re-probed.
+The first delivery is the initial snapshot. After that, every kernel hotplug (`/dev/snd`) and
+every PipeWire or PulseAudio change in the watched scope delivers a new snapshot and a diff. A
+Bluetooth device shows up when the sound server creates its node; BlueZ itself isn't watched.
+Each update carries `added`, `removed` and
+`changed` endpoint ids, and the old and new generation. Only the watched scope is re-probed.
 
 - `AC_WATCH_THREAD`: the callback runs on the library's event thread. Post the result to your UI
   thread yourself. `ac_watch_free` waits for a running callback to return, so don't call it from
@@ -111,7 +113,11 @@ Bluetooth change in the watched scope delivers a new snapshot and a diff (`added
   (`poll`, `GSource`/`g_unix_fd_add`, `QSocketNotifier`, `asyncio.loop.add_reader`) and call
   `ac_watch_dispatch(w)` when it's readable. Callbacks then run on your thread.
 
-The snapshot passed to the callback is borrowed. Keep it with `ac_snapshot_clone`.
+The snapshot passed to the callback is borrowed. Keep it with `ac_snapshot_clone`. In dispatch
+mode at most 32 undelivered updates are kept; if you fall further behind, the oldest are dropped
+(compare the diff's generations). `ac_watch_free` waits for an in-flight re-probe, which is
+bounded by the deadlines, so free a watch with `"deadline_ms": 0` off your UI thread. A `mode`
+other than the two constants is an error.
 
 ## Language notes
 
@@ -150,7 +156,7 @@ access path that matches mpv's `--ao`, and translate:
 | mpv option | From the snapshot |
 | --- | --- |
 | `--ao=pipewire` / `pulse` / `alsa` / `jack` | An access path with `availability.state` of `read` or `partial` in `effective[]`: `pipe_wire`, `pulse_audio`, `alsa_direct`, `jack`. Prefer the sound server the system runs (`servers[]`). |
-| `--audio-device=` | The endpoint's `correlation[]`. `pipewire_node.name` gives `pipewire/<name>`, `pulse_device.name` gives `pulse/<name>`, and `alsa_pcm` card/device gives `alsa/hdmi:CARD=<id>,DEV=<n>` for passthrough, or `alsa/hw:<card>,<device>` for PCM. |
+| `--audio-device=` | The endpoint's `correlation[]`. `pipewire_node.name` gives `pipewire/<name>`, `pulse_device.name` gives `pulse/<name>`, and `alsa_pcm` card/device gives `alsa/hw:<card>,<device>` for PCM. For passthrough over ALSA, `hdmi:CARD=<id>,DEV=<n>` takes the HDMI *ordinal* (the n-th HDMI PCM of the card; on HDA, `hw:1,3` is `DEV=0`), not the PCM device number. |
 | `--audio-spdif=` | `effective[path].caps.passthrough` (codec names map as `ac3`, `eac3`, `dts`, `dts_hd` to `dts-hd`, `true_hd` to `truehd`). Include `dts-hd` and `truehd` only when the codec is listed, and check that `flags` doesn't contain `needs_hbr` unless the path also lists 8 channels at 192 kHz. Leave the option unset when passthrough is `unknown`, and show the `reason`. |
 | `--audio-channels=` | `effective[path].caps.channels.max` together with `channel_maps`, for example `5.1` when the path carries 6 channels with an FL FR FC LFE RL RR (or SL SR) map. Use `auto-safe` when it's `unknown`. |
 | `--audio-samplerate=` | One of `effective[path].caps.rates`. Leave it unset unless the source rate isn't carried. |

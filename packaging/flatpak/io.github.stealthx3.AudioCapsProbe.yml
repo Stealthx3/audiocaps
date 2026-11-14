@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# Test app for the sandbox release gate: the `audiocaps` CLI and libaudiocaps.so.1 in the
+# freedesktop runtime, with the minimum finish-args. The gate adds the others per run with
+# `flatpak run --socket=... --filesystem=...` and checks what each one unlocks.
+#
+# The gate builds without flatpak-builder (prebuilt binary, `flatpak build-init/finish/export`);
+# this manifest is the equivalent for flatpak-builder users.
+app-id: io.github.stealthx3.AudioCapsProbe
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: audiocaps
+finish-args:
+  - --socket=pulseaudio
+modules:
+  - name: audiocaps
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 audiocaps /app/bin/audiocaps
+      - install -Dm755 libaudiocaps.so /app/lib/libaudiocaps.so.1
+      - install -Dm644 audiocaps.h /app/include/audiocaps.h
+    sources:
+      - type: file
+        path: ../../target/release/audiocaps
+      - type: file
+        path: ../../target/release/libaudiocaps.so
+      - type: file
+        path: ../../include/audiocaps.h

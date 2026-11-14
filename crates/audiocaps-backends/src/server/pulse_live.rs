@@ -53,15 +53,16 @@ impl<F: ?Sized> OpDone for Operation<F> {
 }
 
 impl PulseSession {
-    /// Starts connecting. Call only after [`super::presence::pulse`] allowed it.
-    pub fn connect() -> Result<Self, String> {
+    /// Starts connecting to `server` (`None`: libpulse's default). Call only after
+    /// [`super::presence::pulse`] allowed it.
+    pub fn connect(server: Option<&str>) -> Result<Self, String> {
         let mainloop = Mainloop::new().ok_or("pa_mainloop_new failed")?;
         let mut props = Proplist::new().ok_or("pa_proplist_new failed")?;
         let _ = props.set_str(pa::proplist::properties::APPLICATION_NAME, "audiocaps");
         let mut context = Context::new_with_proplist(&mainloop, "audiocaps", &props)
             .ok_or("pa_context_new failed")?;
         context
-            .connect(None, FlagSet::NOAUTOSPAWN, None)
+            .connect(server, FlagSet::NOAUTOSPAWN, None)
             .map_err(|e| e.to_string().unwrap_or_else(|| "connect failed".into()))?;
         Ok(Self {
             mainloop,
