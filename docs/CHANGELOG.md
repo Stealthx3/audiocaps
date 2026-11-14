@@ -86,12 +86,26 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - New HTPC fixture (capture format 2) and a synthetic eARC + CEC fixture.
 - Schema 1.4.0 (additive): sink link, CEC bus, applied quirks.
 
+- Effective sets per access path and path reports (per-hop format, bit rate, ceiling, latency,
+  losses, bottleneck, end-to-end latency).
+- Declarative rule engine with the 29-rule starter pack (codes from the plan), distro-keyed
+  hints, overrides from `/usr/share/audiocaps/rules.d`, `/etc/audiocaps/rules.d` and the app
+  (`--rule-dir`); findings in the snapshot. `docs/rules.md` lists every rule and fact.
+- App request inputs (`--app-endpoint`, `--app-channels`, `--app-rate`, `--app-bits`,
+  `--latency-target-us`); fuzz target `rule_pack`; `scripts/gate-rules.sh`.
+- Schema 1.5.0 (additive): route `detected_passthrough`, link `connector`/`connection`,
+  `Snapshot.app_request`.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in
   `docs/DECISIONS.md`, changelog in `docs/CHANGELOG.md`.
 - Hardware ranges and HDA codec dumps are cached per process and cleared on hotplug, so a free
   PCM is opened at most once and codecs aren't queried on every probe.
+- HDMI/DP converters no longer report host channel and rate limits (they don't limit the link).
+- ALSA routing evaluates configuration hooks (`load`, `pulse_load_if_running`), so the default
+  device on a PulseAudio system resolves to the pulse plugin; the capture tool saves
+  `/usr/share/alsa/*.conf`. The lab-pulseaudio fixture was recaptured.
 - BlueZ, JACK and CEC reads run on helper threads, so a blocking call (e.g. opening a
   pipewire-jack client) can't push another backend past its deadline.
 - The `pw-dump` parser keeps audio devices only, as the live client does.

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "generation": 1,
   "taken_at_ms": 1794463994360,
   "source": {
@@ -1131,6 +1131,187 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  8000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 1,
+                "max": 1
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        },
+        {
+          "access_path": "pipe_wire",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 1,
+                "max": 1
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          },
+          "limited_by": [
+            {
+              "layer": "sound_server",
+              "field": "rates"
+            }
+          ]
+        },
+        {
+          "access_path": "pulse_audio",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 1,
+                "max": 1
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          },
+          "limited_by": [
+            {
+              "layer": "sound_server",
+              "field": "rates"
+            }
+          ]
+        }
       ]
     },
     {
@@ -1198,7 +1379,7 @@
           "availability": {
             "state": "unknown",
             "reason": "not_exposed",
-            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
+            "detail": "HDMI/DP converters don't state the link's channel and rate limits; see the sink chain"
           },
           "caps": {},
           "detail": {
@@ -1497,6 +1678,87 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=3",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -1564,7 +1826,7 @@
           "availability": {
             "state": "unknown",
             "reason": "not_exposed",
-            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
+            "detail": "HDMI/DP converters don't state the link's channel and rate limits; see the sink chain"
           },
           "caps": {},
           "detail": {
@@ -1863,6 +2125,87 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=7",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -1930,7 +2273,7 @@
           "availability": {
             "state": "unknown",
             "reason": "not_exposed",
-            "detail": "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
+            "detail": "HDMI/DP converters don't state the link's channel and rate limits; see the sink chain"
           },
           "caps": {},
           "detail": {
@@ -2229,6 +2572,87 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=8",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -2464,6 +2888,8 @@
         "link": {
           "state": "known",
           "value": {
+            "connector": "card1-HDMI-A-2",
+            "connection": "hdmi",
             "physical_address": 8192,
             "max_tmds_mhz": 600,
             "supports_ai": false
@@ -2589,61 +3015,11 @@
         {
           "layer": "host_hardware",
           "availability": {
-            "state": "read"
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "HDMI/DP converters don't state the link's channel and rate limits; see the sink chain"
           },
-          "caps": {
-            "sample_formats": {
-              "state": "known",
-              "value": [
-                "s16_le"
-              ],
-              "confidence": "inferred",
-              "provenance": {
-                "layer": "host_hardware",
-                "source": {
-                  "kind": "derived",
-                  "from": "converter bits in /proc/asound/card1/codec#0"
-                },
-                "read_at_ms": 1794463994360
-              }
-            },
-            "rates": {
-              "state": "known",
-              "value": {
-                "kind": "discrete",
-                "rates_hz": [
-                  32000,
-                  44100,
-                  48000
-                ]
-              },
-              "confidence": "measured",
-              "provenance": {
-                "layer": "host_hardware",
-                "source": {
-                  "kind": "file",
-                  "path": "/proc/asound/card1/codec#0"
-                },
-                "read_at_ms": 1794463994360
-              }
-            },
-            "channels": {
-              "state": "known",
-              "value": {
-                "min": 2,
-                "max": 2
-              },
-              "confidence": "measured",
-              "provenance": {
-                "layer": "host_hardware",
-                "source": {
-                  "kind": "file",
-                  "path": "/proc/asound/card1/codec#0"
-                },
-                "read_at_ms": 1794463994360
-              }
-            }
-          },
+          "caps": {},
           "detail": {
             "kind": "host_hardware",
             "pci_id": {
@@ -3224,7 +3600,13 @@
                       "name": "hdmi-output-3",
                       "description": "HDMI / DisplayPort 4",
                       "available": true,
-                      "active": true
+                      "active": true,
+                      "detected_passthrough": [
+                        "dts",
+                        "ac3",
+                        "eac3",
+                        "dts_hd"
+                      ]
                     }
                   ],
                   "confidence": "measured",
@@ -3318,6 +3700,1207 @@
             "detail": "not a wireless endpoint"
           },
           "caps": {}
+        }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  176400,
+                  192000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 8
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "passthrough": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "eac3",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000
+                  ]
+                },
+                {
+                  "codec": "ac3",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    32000,
+                    44100,
+                    48000
+                  ],
+                  "max_bitrate_kbps": 640
+                },
+                {
+                  "codec": "dts",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000
+                  ],
+                  "max_bitrate_kbps": 1536
+                },
+                {
+                  "codec": "dts_hd",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000,
+                    176400,
+                    192000
+                  ],
+                  "flags": [
+                    "needs_hbr"
+                  ]
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        },
+        {
+          "access_path": "pipe_wire",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s32_le",
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  48000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 6,
+                "max": 6
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "passthrough": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "eac3",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000
+                  ]
+                },
+                {
+                  "codec": "ac3",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    32000,
+                    44100,
+                    48000
+                  ],
+                  "max_bitrate_kbps": 640
+                },
+                {
+                  "codec": "dts",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000
+                  ],
+                  "max_bitrate_kbps": 1536
+                },
+                {
+                  "codec": "dts_hd",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000,
+                    176400,
+                    192000
+                  ],
+                  "flags": [
+                    "needs_hbr"
+                  ]
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          },
+          "limited_by": [
+            {
+              "layer": "sound_server",
+              "field": "channels"
+            },
+            {
+              "layer": "sound_server",
+              "field": "rates"
+            }
+          ]
+        },
+        {
+          "access_path": "pulse_audio",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s32_le",
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  48000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 6,
+                "max": 6
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "passthrough": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "eac3",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000
+                  ]
+                },
+                {
+                  "codec": "ac3",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    32000,
+                    44100,
+                    48000
+                  ],
+                  "max_bitrate_kbps": 640
+                },
+                {
+                  "codec": "dts",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000
+                  ],
+                  "max_bitrate_kbps": 1536
+                },
+                {
+                  "codec": "dts_hd",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000,
+                    176400,
+                    192000
+                  ],
+                  "flags": [
+                    "needs_hbr"
+                  ]
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          },
+          "limited_by": [
+            {
+              "layer": "sound_server",
+              "field": "channels"
+            },
+            {
+              "layer": "sound_server",
+              "field": "rates"
+            }
+          ]
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=9",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "link",
+              "label": "card1-HDMI-A-2",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sink",
+              "label": "HISENSE",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        },
+        {
+          "access_path": "pipe_wire",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "sample_format": "s32_le",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "known",
+                "value": 21333,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "losses": [
+                {
+                  "kind": "downmix",
+                  "detail": "the server's profile carries fewer channels"
+                },
+                {
+                  "kind": "resample",
+                  "detail": "the server's rates don't cover the hardware's"
+                }
+              ]
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=9",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "link",
+              "label": "card1-HDMI-A-2",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sink",
+              "label": "HISENSE",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "bottleneck": 1,
+          "latency_us": {
+            "state": "known",
+            "value": 21333,
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "environment",
+              "source": {
+                "kind": "derived",
+                "from": "path report"
+              },
+              "read_at_ms": 1794463994360
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "alsa_output.pci-0000_09_00.1.hdmi-surround-extra3",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "sample_format": "s32_le",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "losses": [
+                {
+                  "kind": "downmix",
+                  "detail": "the server's profile carries fewer channels"
+                },
+                {
+                  "kind": "resample",
+                  "detail": "the server's rates don't cover the hardware's"
+                }
+              ]
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=9",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "link",
+              "label": "card1-HDMI-A-2",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sink",
+              "label": "HISENSE",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 6
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 9216000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "bottleneck": 1,
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
         }
       ]
     },
@@ -3778,6 +5361,71 @@
             "detail": "not a wireless endpoint"
           },
           "caps": {}
+        }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  176400,
+                  192000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
         }
       ]
     },
@@ -4248,6 +5896,209 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  176400,
+                  192000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 12288000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=Generic,DEV=0",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 12288000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "analog",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 12288000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -4708,6 +6559,71 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le",
+                "s32_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  176400,
+                  192000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        }
       ]
     },
     {
@@ -5127,6 +7043,356 @@
             ]
           }
         }
+      ],
+      "effective": [
+        {
+          "access_path": "pipe_wire",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "pipe_wire",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "browser_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "known",
+                "value": 21333,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "losses": [
+                {
+                  "kind": "volume",
+                  "detail": "server volume 95%"
+                }
+              ]
+            },
+            {
+              "kind": "alsa",
+              "label": "node:browser_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "known",
+            "value": 21333,
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "environment",
+              "source": {
+                "kind": "derived",
+                "from": "path report"
+              },
+              "read_at_ms": 1794463994360
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "browser_output",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "sample_format": "f32_le",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "losses": [
+                {
+                  "kind": "volume",
+                  "detail": "server volume 95%"
+                }
+              ]
+            },
+            {
+              "kind": "alsa",
+              "label": "node:browser_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -5352,6 +7618,344 @@
                 "is_default": true
               }
             ]
+          }
+        }
+      ],
+      "effective": [
+        {
+          "access_path": "pipe_wire",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "pipe_wire",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "game_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "known",
+                "value": 21333,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "node:game_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "known",
+            "value": 21333,
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "environment",
+              "source": {
+                "kind": "derived",
+                "from": "path report"
+              },
+              "read_at_ms": 1794463994360
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "game_output",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "sample_format": "f32_le",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "node:game_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
           }
         }
       ]
@@ -5581,6 +8185,344 @@
             ]
           }
         }
+      ],
+      "effective": [
+        {
+          "access_path": "pipe_wire",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "pipe_wire",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "music_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "known",
+                "value": 21333,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "node:music_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "known",
+            "value": 21333,
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "environment",
+              "source": {
+                "kind": "derived",
+                "from": "path report"
+              },
+              "read_at_ms": 1794463994360
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "music_output",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "sample_format": "f32_le",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "node:music_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -5808,7 +8750,626 @@
             ]
           }
         }
+      ],
+      "effective": [
+        {
+          "access_path": "pipe_wire",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                {
+                  "other": "F32P"
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": []
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794463994360
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "pipe_wire",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "voice_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "known",
+                "value": 21333,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "losses": [
+                {
+                  "kind": "volume",
+                  "detail": "server volume 95%"
+                }
+              ]
+            },
+            {
+              "kind": "alsa",
+              "label": "node:voice_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "known",
+            "value": 21333,
+            "confidence": "inferred",
+            "provenance": {
+              "layer": "environment",
+              "source": {
+                "kind": "derived",
+                "from": "path report"
+              },
+              "read_at_ms": 1794463994360
+            }
+          }
+        },
+        {
+          "access_path": "pulse_audio",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sound_server",
+              "label": "voice_output",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "sample_format": "f32_le",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "measured",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794463994360
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "losses": [
+                {
+                  "kind": "volume",
+                  "detail": "server volume 95%"
+                }
+              ]
+            },
+            {
+              "kind": "alsa",
+              "label": "node:voice_output",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "virtual(\"virtual\")",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
+    }
+  ],
+  "findings": [
+    {
+      "code": "CHANNELS_DOWNMIXED",
+      "severity": "warning",
+      "endpoint": "alsa:card1/pcm9p",
+      "access_path": "pipe_wire",
+      "hop": "sound_server",
+      "evidence": [
+        {
+          "label": "e.hw.max_channels",
+          "value": 8,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "e.server.max_channels",
+          "value": 6,
+          "provenance": {
+            "layer": "sound_server",
+            "source": {
+              "kind": "command",
+              "name": "pw-dump"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "e.server.profile",
+          "value": "output:hdmi-surround-extra3",
+          "provenance": {
+            "layer": "sound_server",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "The output takes 8 channels but the active profile (output:hdmi-surround-extra3) carries 6: choose a surround profile for this device."
+      }
+    },
+    {
+      "code": "POWER_SAVE_ACTIVE",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm3p",
+      "access_path": "alsa_direct",
+      "hop": "driver_host",
+      "evidence": [
+        {
+          "label": "e.driver.power_save",
+          "value": 1,
+          "provenance": {
+            "layer": "kernel_driver",
+            "source": {
+              "kind": "file",
+              "path": "/sys/module/snd_hda_intel/parameters"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "HDA codec power saving is on (1 s): expect a short delay or a click when playback starts. Set the snd_hda_intel power_save option to 0 to turn it off."
+      }
+    },
+    {
+      "code": "RATE_CAPPED_BY_SERVER",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm9p",
+      "access_path": "pipe_wire",
+      "hop": "sound_server",
+      "evidence": [
+        {
+          "label": "e.hw.max_rate",
+          "value": 192000,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "g.clock.allowed_rates",
+          "value": [
+            48000
+          ],
+          "provenance": {
+            "layer": "sound_server",
+            "source": {
+              "kind": "command",
+              "name": "pw-dump"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "The hardware takes up to 192000 Hz but PipeWire only runs at 48000: higher-rate audio is resampled. Add rates to default.clock.allowed-rates in a pipewire.conf.d drop-in."
+      }
+    },
+    {
+      "code": "SINK_DOWNSTREAM_UNKNOWN",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm9p",
+      "access_path": "pipe_wire",
+      "hop": "sink_chain",
+      "evidence": [
+        {
+          "label": "e.sink.earc_likely",
+          "value": true,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "e.sink.codecs",
+          "value": [
+            "eac3",
+            "ac3",
+            "dts",
+            "dts_hd",
+            "lpcm"
+          ],
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "inferred",
+      "hint": {
+        "text": "The display seems to pass audio on to a receiver or soundbar (ARC/eARC), but nothing behind it can be identified without CEC. Formats the display lists may not all reach that device."
+      }
+    },
+    {
+      "code": "SINK_NOT_PRESENT",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm3p",
+      "access_path": "alsa_direct",
+      "hop": "sink",
+      "evidence": [
+        {
+          "label": "e.jack.plugged",
+          "value": false,
+          "provenance": {
+            "layer": "kernel_driver",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "e.sink.present",
+          "value": false,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "Nothing is connected to this output, or it sent no audio capabilities: check the cable and that the display or receiver is on and set to this input."
+      }
+    },
+    {
+      "code": "SINK_NOT_PRESENT",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm7p",
+      "access_path": "alsa_direct",
+      "hop": "sink",
+      "evidence": [
+        {
+          "label": "e.jack.plugged",
+          "value": false,
+          "provenance": {
+            "layer": "kernel_driver",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "e.sink.present",
+          "value": false,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "Nothing is connected to this output, or it sent no audio capabilities: check the cable and that the display or receiver is on and set to this input."
+      }
+    },
+    {
+      "code": "SINK_NOT_PRESENT",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm8p",
+      "access_path": "alsa_direct",
+      "hop": "sink",
+      "evidence": [
+        {
+          "label": "e.jack.plugged",
+          "value": false,
+          "provenance": {
+            "layer": "kernel_driver",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794463994360
+          }
+        },
+        {
+          "label": "e.sink.present",
+          "value": false,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794463994360
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "Nothing is connected to this output, or it sent no audio capabilities: check the cable and that the display or receiver is on and set to this input."
+      }
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "generation": 1,
   "taken_at_ms": 1794600000000,
   "source": {
@@ -421,6 +421,8 @@
         "link": {
           "state": "known",
           "value": {
+            "connector": "card0-HDMI-A-1",
+            "connection": "hdmi",
             "physical_address": 8192,
             "max_tmds_mhz": 600,
             "supports_ai": false
@@ -694,7 +696,400 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000,
+                  176400,
+                  192000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794600000000
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 8
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794600000000
+              }
+            },
+            "passthrough": {
+              "state": "known",
+              "value": [
+                {
+                  "codec": "eac3",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000
+                  ]
+                },
+                {
+                  "codec": "ac3",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    32000,
+                    44100,
+                    48000
+                  ],
+                  "max_bitrate_kbps": 640
+                },
+                {
+                  "codec": "dts",
+                  "max_channels": 6,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000
+                  ],
+                  "max_bitrate_kbps": 1536
+                },
+                {
+                  "codec": "dts_hd",
+                  "max_channels": 8,
+                  "rates_hz": [
+                    44100,
+                    48000,
+                    88200,
+                    96000,
+                    176400,
+                    192000
+                  ],
+                  "flags": [
+                    "needs_hbr"
+                  ]
+                }
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794600000000
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=3",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "link",
+              "label": "card0-HDMI-A-1",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "sink",
+              "label": "HISENSE",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 192000,
+                  "channels": 8
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 36864000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794600000000
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
+    }
+  ],
+  "findings": [
+    {
+      "code": "SINK_DOWNSTREAM_UNKNOWN",
+      "severity": "info",
+      "endpoint": "alsa:card0/pcm3p",
+      "access_path": "alsa_direct",
+      "hop": "sink_chain",
+      "evidence": [
+        {
+          "label": "e.sink.earc_likely",
+          "value": true,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794600000000
+          }
+        },
+        {
+          "label": "e.sink.codecs",
+          "value": [
+            "eac3",
+            "ac3",
+            "dts",
+            "dts_hd",
+            "lpcm"
+          ],
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794600000000
+          }
+        }
+      ],
+      "confidence": "inferred",
+      "hint": {
+        "text": "The display seems to pass audio on to a receiver or soundbar (ARC/eARC), but nothing behind it can be identified without CEC. Formats the display lists may not all reach that device."
+      }
     }
   ]
 }

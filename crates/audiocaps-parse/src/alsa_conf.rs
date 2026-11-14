@@ -455,6 +455,48 @@ pub fn load_cards(root: &mut Node, cards: &[CardRef], loader: Loader<'_>) {
     *root.child_mut("cards", Mode::Override) = ct;
 }
 
+/// Evaluates `@hooks` left in a loaded tree (alsa-lib keeps hooks that configuration files
+/// declare): `load` loads its files; `pulse_load_if_running` loads them when `pulse_running`.
+/// Returns what couldn't be evaluated (unknown hook functions, missing files); the hooks are
+/// removed either way.
+pub fn apply_hooks(root: &mut Node, loader: Loader<'_>, pulse_running: bool) -> Vec<String> {
+    let Some(hooks) = root.get("@hooks").cloned() else {
+        return vec![];
+    };
+    if let Node::Compound(c) = root {
+        c.retain(|(k, _)| k != "@hooks");
+    }
+    let mut issues = vec![];
+    for (_, h) in hooks.children() {
+        let func = h.get("func").and_then(Node::leaf).unwrap_or("");
+        let run = match func {
+            "load" => true,
+            "pulse_load_if_running" => pulse_running,
+            other => {
+                issues.push(format!("hook function {other}"));
+                continue;
+            }
+        };
+        if !run {
+            continue;
+        }
+        let errors_ok = h.get("errors").and_then(Node::leaf) == Some("false");
+        for (_, f) in h.get("files").map(Node::children).unwrap_or_default() {
+            let Some(path) = f.leaf() else {
+                issues.push("computed hook file name".into());
+                continue;
+            };
+            match loader(path).map(|t| parse_with(&t, loader)) {
+                Some(Ok(n)) => merge(root, n),
+                Some(Err(e)) => issues.push(format!("{path}: {e:?}")),
+                None if errors_ok && func == "load" => {}
+                None => issues.push(format!("{path} not readable")),
+            }
+        }
+    }
+    issues
+}
+
 /// A sound card, as the resolver needs it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CardRef {
@@ -1130,5 +1172,29 @@ pcm.dmix {
                 .and_then(Node::leaf),
             Some("no")
         );
+    }
+
+    #[test]
+    fn pulse_hook_loads_only_when_running() {
+        let files: BTreeMap<&str, &str> = [(
+            "/usr/share/alsa/pulse-alsa.conf",
+            "pcm.!default { type pulse }",
+        )]
+        .into_iter()
+        .collect();
+        let loader = |p: &str| files.get(p).map(|s| s.to_string());
+        let text = "pcm.default { type hw }\nhook_func.pulse_load_if_running { lib x func y }\n@hooks [ { func pulse_load_if_running files [ '/usr/share/alsa/pulse-alsa.conf' ] errors false } ]";
+        let mut t = parse(text).unwrap();
+        assert!(apply_hooks(&mut t, &loader, true).is_empty());
+        assert_eq!(
+            t.path("pcm.default.type").and_then(Node::leaf),
+            Some("pulse")
+        );
+        let mut t = parse(text).unwrap();
+        assert!(apply_hooks(&mut t, &loader, false).is_empty());
+        assert_eq!(t.path("pcm.default.type").and_then(Node::leaf), Some("hw"));
+        let mut t = parse(text).unwrap();
+        let none = |_: &str| None;
+        assert_eq!(apply_hooks(&mut t, &none, true).len(), 1);
     }
 }

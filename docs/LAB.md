@@ -16,7 +16,7 @@ _Standard: VM-LAB-STANDARD v1.2 · Created 2026-11-08_
 | Guest | Kind | Base | vCPU/RAM | Purpose | Snapshots |
 |---|---|---|---|---|---|
 | lab-audiocaps-main | vm | lab-base-debian13 | 4 / 6 GB | Rust build, tests, cargo-deny | clean, provisioned |
-| lab-audiocaps-capture | vm | lab-base-debian13 | 4 / 6 GB | capture fixtures: PipeWire, PulseAudio, ALSA-only; 2 emulated ich9 HDA cards, standard (non-cloud) kernel; snapshot `usb-audio` adds an emulated USB Audio (UAC1) device and the phase 2 CLI; `phase3` adds the phase 3 CLI, libasound2-dev and snd-virmidi/snd-seq-dummy loaded at boot; `phase4` adds libpipewire/libpulse dev packages and clang, and pins VirMIDI to card index 10 | audio-base, tooling, usb-audio, phase3, phase4 |
+| lab-audiocaps-capture | vm | lab-base-debian13 | 4 / 6 GB | capture fixtures: PipeWire, PulseAudio, ALSA-only; 2 emulated ich9 HDA cards, standard (non-cloud) kernel; snapshot `usb-audio` adds an emulated USB Audio (UAC1) device and the phase 2 CLI; `phase3` adds the phase 3 CLI, libasound2-dev and snd-virmidi/snd-seq-dummy loaded at boot; `phase4` adds libpipewire/libpulse dev packages and clang, and pins VirMIDI to card index 10; `phase7` adds libjack-jackd2-dev and v4l-utils | audio-base, tooling, usb-audio, phase3, phase4, phase7 |
 
 Other projects' lab guests may be running; never run more than 3 guests at once. Shut `main` down
 while `capture` runs if needed.
@@ -37,6 +37,9 @@ while `capture` runs if needed.
 - `scripts/gate-server.sh <check>...` (phase 4) runs after `capture-stack.sh pipewire|pulseaudio`: `pipewire`, `pulse` (live backend vs `pw-dump` / `pactl`), `passive`, `hotplug` (server changes); `hotplug` without a server measures kernel hotplug with snd-dummy; `jack` and `bluez` (phase 5) need jackd2 and bluez installed.
 - The QEMU USB Audio device blocks live snapshots: shut the VM down before `lab.sh snap`.
 - Import captures in the build VM and re-bless goldens in the same `lab.sh run`, then sync back at once; clear the host fixture directory first (sync-back doesn't delete).
+
+## Rule checks (phase 7)
+- `scripts/gate-rules.sh <check>...` from `phase7`: `busy` (no server), `rate` and `latency` (after `capture-stack.sh pipewire`), `routing` (after `capture-stack.sh pulseaudio`).
 
 ## CEC in the lab (phase 6)
 - `sudo modprobe vivid n_devs=1 num_inputs=1 num_outputs=1 input_types=3 output_types=1`, then `v4l2-ctl -d /dev/video0 -c hdmi_000_0_is_connected_to=2` joins the emulated HDMI output and input. Configure roles with `cec-ctl -d0 --tv` and `cec-ctl -d1 --audio --osd-name … --vendor-id …`, answer queries with `cec-follower -d1`, then run `audiocaps cec-dump`. Needs v4l-utils (not in a snapshot).
@@ -64,3 +67,4 @@ while `capture` runs if needed.
 - 2026-11-11 — capture: snapshot `phase3` (shut off) from `usb-audio` + phase 3 CLI, libasound2-dev, python3, snd-virmidi (2 devices) and snd-seq-dummy at boot. Recaptured alsa-only, pipewire and pulseaudio (capture format 2).
 - 2026-11-11 — capture: snapshot `phase4` from `phase3` + libpipewire-0.3-dev, libpulse-dev, clang; VirMIDI pinned to index 10 (at index 0 it made `default` unopenable).
 - 2026-11-11 — main: libjack-jackd2-dev added (jack-sys needs jack.pc at build time). capture: jackd2 and bluez installed for the phase 5 checks (not in a snapshot).
+- 2026-11-14 — capture: snapshot `phase7` (+ libjack-jackd2-dev, v4l-utils). lab-pulseaudio recaptured with `/usr/share/alsa/pulse-alsa.conf`.

@@ -315,7 +315,20 @@ impl Ctx<'_> {
             EldSrc::Raw(e) => e.audio_sync_delay_ms,
             EldSrc::Text(t) => t.audio_sync_delay_ms,
         };
-        let link = edid.as_ref().map(|(_, e)| {
+        let conn = match &eld {
+            EldSrc::Raw(e) => match e.connection {
+                audiocaps_parse::eld::ConnectionType::DisplayPort => "displayport".to_string(),
+                _ => "hdmi".to_string(),
+            },
+            EldSrc::Text(t) => t
+                .connection_type
+                .clone()
+                .unwrap_or_default()
+                .to_ascii_lowercase()
+                .replace("dp", "displayport"),
+        };
+        let link = edid.as_ref().map(|(c, e)| {
+            let c_name = &c.name;
             let h = e.hdmi();
             let lat = |l: Option<&Latency>| match l {
                 Some(Latency::Ms(v)) => Some(*v),
@@ -323,6 +336,8 @@ impl Ctx<'_> {
             };
             Value::measured(
                 HdmiLink {
+                    connector: Some(c_name.clone()),
+                    connection: Some(conn.clone()),
                     physical_address: h.map(|h| h.physical_address),
                     max_tmds_mhz: e
                         .hdmi_forum()
@@ -468,7 +483,15 @@ impl Ctx<'_> {
                 ),
             },
             downstream,
-            link,
+            link: link.or_else(|| {
+                Some(Value::measured(
+                    HdmiLink {
+                        connection: Some(conn.clone()),
+                        ..HdmiLink::default()
+                    },
+                    p_eld.clone(),
+                ))
+            }),
             cec,
             quirks,
         };

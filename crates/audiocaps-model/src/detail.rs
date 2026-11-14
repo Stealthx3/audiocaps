@@ -328,6 +328,10 @@ pub struct RouteState {
     pub available: Option<bool>,
     /// The active route.
     pub active: bool,
+    /// Compressed formats the server detected on this route from the sink (PipeWire
+    /// `iec958.codecs.detected`), when it publishes them.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detected_passthrough: Option<Vec<crate::caps::Codec>>,
 }
 
 /// Volume and mute.
@@ -456,6 +460,12 @@ pub struct Policy {
 /// HDMI link limits and latency stated by a sink.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct HdmiLink {
+    /// The GPU connector, e.g. `card1-HDMI-A-2`, `card0-DP-1`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub connector: Option<String>,
+    /// What the sink says the link is (`hdmi`, `displayport`), from the ELD.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub connection: Option<String>,
     /// CEC physical address as a 16-bit number (`0x1000` is input 1 of the root display).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub physical_address: Option<u16>,
@@ -561,4 +571,28 @@ pub enum QuirkEffect {
         /// Text.
         text: String,
     },
+}
+
+/// What the application intends to play, for findings that compare against it.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct AppRequest {
+    /// The endpoint the app plays to; app findings are about it alone. Without it they apply to
+    /// every endpoint in scope.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub endpoint: Option<crate::endpoint::EndpointId>,
+    /// Codec the app plays (LPCM or a compressed format for passthrough).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub codec: Option<crate::caps::Codec>,
+    /// Channels.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub channels: Option<u8>,
+    /// Sample rate in Hz.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rate_hz: Option<u32>,
+    /// Bits per sample.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bits: Option<u8>,
+    /// End-to-end latency target in microseconds.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub latency_target_us: Option<u32>,
 }

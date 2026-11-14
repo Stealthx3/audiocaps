@@ -13,5 +13,5 @@
   "default_channel_map": "front-left,front-right",
   "default_sink_name": "alsa_output.usb-QEMU_QEMU_USB_Audio_1-0000_00_02.1_00.0-4-00.analog-stereo",
   "default_source_name": "alsa_input.pci-0000_08_01.0.analog-stereo",
-  "cookie": "68e7:60d7"
+  "cookie": "0415:3c4f"
 }

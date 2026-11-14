@@ -1,0 +1,928 @@
+{
+  "cases": [
+    {
+      "name": "hdmi port unplugged",
+      "facts": {
+        "e.transport": "hdmi_dp",
+        "e.direction": "playback",
+        "e.jack.plugged": false
+      },
+      "fires": [
+        "SINK_NOT_PRESENT"
+      ],
+      "silent": []
+    },
+    {
+      "name": "hdmi port with an empty ELD",
+      "facts": {
+        "e.transport": "hdmi_dp",
+        "e.direction": "playback",
+        "e.sink.present": false
+      },
+      "fires": [
+        "SINK_NOT_PRESENT"
+      ],
+      "silent": []
+    },
+    {
+      "name": "hdmi port plugged",
+      "facts": {
+        "e.transport": "hdmi_dp",
+        "e.direction": "playback",
+        "e.jack.plugged": true,
+        "e.sink.present": true
+      },
+      "fires": [],
+      "silent": [
+        "SINK_NOT_PRESENT"
+      ]
+    },
+    {
+      "name": "analog jack unplugged is not a sink",
+      "facts": {
+        "e.transport": "analog",
+        "e.direction": "playback",
+        "e.jack.plugged": false
+      },
+      "fires": [],
+      "silent": [
+        "SINK_NOT_PRESENT"
+      ]
+    },
+    {
+      "name": "sink swapped",
+      "facts": {
+        "e.sink.changed": true,
+        "e.sink.key": "SAM-0001"
+      },
+      "fires": [
+        "SINK_CHANGED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "same sink",
+      "facts": {
+        "e.sink.changed": false
+      },
+      "fires": [],
+      "silent": [
+        "SINK_CHANGED"
+      ]
+    },
+    {
+      "name": "atmos not passed",
+      "facts": {
+        "e.sink.atmos_codecs": [
+          "eac3"
+        ],
+        "e.server.passthrough": [
+          "ac3",
+          "dts"
+        ]
+      },
+      "fires": [
+        "SINK_ATMOS_NOT_ENABLED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "atmos passed",
+      "facts": {
+        "e.sink.atmos_codecs": [
+          "eac3"
+        ],
+        "e.server.passthrough": [
+          "ac3",
+          "eac3"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "SINK_ATMOS_NOT_ENABLED"
+      ]
+    },
+    {
+      "name": "atmos, passthrough unknown",
+      "facts": {
+        "e.sink.atmos_codecs": [
+          "true_hd"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "SINK_ATMOS_NOT_ENABLED"
+      ]
+    },
+    {
+      "name": "receiver takes more than the TV forwards",
+      "facts": {
+        "e.sink.downstream_codecs": [
+          "lpcm",
+          "true_hd"
+        ],
+        "e.sink.codecs": [
+          "lpcm",
+          "ac3"
+        ]
+      },
+      "fires": [
+        "SINK_ARC_LIMITED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "TV forwards everything",
+      "facts": {
+        "e.sink.downstream_codecs": [
+          "lpcm",
+          "ac3"
+        ],
+        "e.sink.codecs": [
+          "lpcm",
+          "ac3",
+          "dts"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "SINK_ARC_LIMITED"
+      ]
+    },
+    {
+      "name": "eARC likely, no CEC",
+      "facts": {
+        "e.sink.earc_likely": true,
+        "e.sink.downstream_known": false
+      },
+      "fires": [
+        "SINK_DOWNSTREAM_UNKNOWN"
+      ],
+      "silent": []
+    },
+    {
+      "name": "eARC likely, CEC read",
+      "facts": {
+        "e.sink.earc_likely": true,
+        "e.sink.downstream_known": true
+      },
+      "fires": [],
+      "silent": [
+        "SINK_DOWNSTREAM_UNKNOWN"
+      ]
+    },
+    {
+      "name": "stereo TV, no CEC",
+      "facts": {
+        "e.sink.earc_likely": false,
+        "e.sink.downstream_known": false
+      },
+      "fires": [],
+      "silent": [
+        "SINK_DOWNSTREAM_UNKNOWN"
+      ]
+    },
+    {
+      "name": "HBR on known-bad hardware",
+      "facts": {
+        "e.sink.hbr_codecs": [
+          "true_hd"
+        ],
+        "e.host.hbr_known_bad": true
+      },
+      "fires": [
+        "SINK_HBR_RISK"
+      ],
+      "silent": []
+    },
+    {
+      "name": "HBR, no known problems",
+      "facts": {
+        "e.sink.hbr_codecs": [
+          "true_hd"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "SINK_HBR_RISK"
+      ]
+    },
+    {
+      "name": "PCM-only server node",
+      "facts": {
+        "e.sink.compressed": [
+          "ac3",
+          "dts"
+        ],
+        "e.server.present": true,
+        "e.server.passthrough": []
+      },
+      "fires": [
+        "PASSTHROUGH_NOT_ENABLED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "passthrough enabled",
+      "facts": {
+        "e.sink.compressed": [
+          "ac3"
+        ],
+        "e.server.present": true,
+        "e.server.passthrough": [
+          "ac3"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "PASSTHROUGH_NOT_ENABLED"
+      ]
+    },
+    {
+      "name": "PCM-only sink",
+      "facts": {
+        "e.sink.compressed": [],
+        "e.server.present": true,
+        "e.server.passthrough": []
+      },
+      "fires": [],
+      "silent": [
+        "PASSTHROUGH_NOT_ENABLED"
+      ]
+    },
+    {
+      "name": "server without codec detection",
+      "facts": {
+        "e.sink.compressed": [
+          "ac3"
+        ],
+        "e.server.present": true,
+        "e.server.detected_known": false
+      },
+      "fires": [
+        "PASSTHROUGH_UNDETECTED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "server detects codecs",
+      "facts": {
+        "e.sink.compressed": [
+          "ac3"
+        ],
+        "e.server.present": true,
+        "e.server.detected_known": true
+      },
+      "fires": [],
+      "silent": [
+        "PASSTHROUGH_UNDETECTED"
+      ]
+    },
+    {
+      "name": "192 kHz hardware, 48 kHz graph",
+      "facts": {
+        "e.server.present": true,
+        "e.hw.max_rate": 192000,
+        "g.clock.allowed_max": 48000
+      },
+      "fires": [
+        "RATE_CAPPED_BY_SERVER"
+      ],
+      "silent": []
+    },
+    {
+      "name": "graph allows the hardware's rate",
+      "facts": {
+        "e.server.present": true,
+        "e.hw.max_rate": 96000,
+        "g.clock.allowed_max": 96000
+      },
+      "fires": [],
+      "silent": [
+        "RATE_CAPPED_BY_SERVER"
+      ]
+    },
+    {
+      "name": "no server, no graph rate",
+      "facts": {
+        "e.hw.max_rate": 192000
+      },
+      "fires": [],
+      "silent": [
+        "RATE_CAPPED_BY_SERVER"
+      ]
+    },
+    {
+      "name": "8ch sink, stereo profile",
+      "facts": {
+        "e.server.present": true,
+        "e.hw.max_channels": 8,
+        "e.server.max_channels": 2
+      },
+      "fires": [
+        "CHANNELS_DOWNMIXED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "8ch sink, 7.1 profile",
+      "facts": {
+        "e.server.present": true,
+        "e.hw.max_channels": 8,
+        "e.server.max_channels": 8
+      },
+      "fires": [],
+      "silent": [
+        "CHANNELS_DOWNMIXED"
+      ]
+    },
+    {
+      "name": "software volume",
+      "facts": {
+        "e.server.present": true,
+        "e.server.volume_percent": 64,
+        "e.transport": "hdmi_dp"
+      },
+      "fires": [
+        "NOT_BIT_PERFECT"
+      ],
+      "silent": []
+    },
+    {
+      "name": "unity volume",
+      "facts": {
+        "e.server.present": true,
+        "e.server.volume_percent": 100,
+        "e.transport": "hdmi_dp"
+      },
+      "fires": [],
+      "silent": [
+        "NOT_BIT_PERFECT"
+      ]
+    },
+    {
+      "name": "two servers on card 0",
+      "facts": {
+        "g.pulse.native": true,
+        "g.pipewire.alsa_cards": [
+          0,
+          1
+        ],
+        "g.pulse.alsa_cards": [
+          0
+        ]
+      },
+      "fires": [
+        "SERVER_CONFLICT"
+      ],
+      "silent": []
+    },
+    {
+      "name": "pipewire-pulse only",
+      "facts": {
+        "g.pulse.native": false,
+        "g.pipewire.alsa_cards": [
+          0
+        ],
+        "g.pulse.alsa_cards": [
+          0
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "SERVER_CONFLICT"
+      ]
+    },
+    {
+      "name": "native PulseAudio, no PipeWire cards",
+      "facts": {
+        "g.pulse.native": true,
+        "g.pipewire.alsa_cards": [],
+        "g.pulse.alsa_cards": [
+          0
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "SERVER_CONFLICT"
+      ]
+    },
+    {
+      "name": "client older than server",
+      "facts": {
+        "g.client.pipewire_version": "1.2.7",
+        "g.pipewire.version": "1.4.2"
+      },
+      "fires": [
+        "CLIENT_SERVER_SKEW"
+      ],
+      "silent": []
+    },
+    {
+      "name": "client matches server",
+      "facts": {
+        "g.client.pipewire_version": "1.4.2",
+        "g.pipewire.version": "1.4.2"
+      },
+      "fires": [],
+      "silent": [
+        "CLIENT_SERVER_SKEW"
+      ]
+    },
+    {
+      "name": "default goes through dmix",
+      "facts": {
+        "g.routing.playback_kinds": [
+          "empty",
+          "asym",
+          "plug",
+          "softvol",
+          "dmix",
+          "hw"
+        ]
+      },
+      "fires": [
+        "ALSA_PLUGIN_CONVERSION"
+      ],
+      "silent": []
+    },
+    {
+      "name": "default is PipeWire",
+      "facts": {
+        "g.routing.playback_kinds": [
+          "pipewire"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "ALSA_PLUGIN_CONVERSION"
+      ]
+    },
+    {
+      "name": "device held, no server",
+      "facts": {
+        "e.alsa.state": "in_use",
+        "g.server.any": false
+      },
+      "fires": [
+        "DEVICE_BUSY_NO_SERVER"
+      ],
+      "silent": []
+    },
+    {
+      "name": "device held by a server's stream",
+      "facts": {
+        "e.alsa.state": "in_use",
+        "g.server.any": true
+      },
+      "fires": [],
+      "silent": [
+        "DEVICE_BUSY_NO_SERVER"
+      ]
+    },
+    {
+      "name": "sink 8ch, pin 2ch",
+      "facts": {
+        "e.sink.present": true,
+        "e.sink.max_channels": 8,
+        "e.host.max_channels": 2
+      },
+      "fires": [
+        "HOST_LIMITS_SINK"
+      ],
+      "silent": []
+    },
+    {
+      "name": "sink and pin both 8ch",
+      "facts": {
+        "e.sink.present": true,
+        "e.sink.max_channels": 8,
+        "e.host.max_channels": 8,
+        "e.sink.max_rate": 192000,
+        "e.host.max_rate": 192000
+      },
+      "fires": [],
+      "silent": [
+        "HOST_LIMITS_SINK"
+      ]
+    },
+    {
+      "name": "host limits unknown (HDMI)",
+      "facts": {
+        "e.sink.present": true,
+        "e.sink.max_channels": 8
+      },
+      "fires": [],
+      "silent": [
+        "HOST_LIMITS_SINK"
+      ]
+    },
+    {
+      "name": "HBR sink, pin without HBR",
+      "facts": {
+        "e.sink.hbr_codecs": [
+          "dts_hd"
+        ],
+        "e.host.hbr": false
+      },
+      "fires": [
+        "HBR_UNSUPPORTED_PATH"
+      ],
+      "silent": []
+    },
+    {
+      "name": "HBR sink, HBR pin",
+      "facts": {
+        "e.sink.hbr_codecs": [
+          "dts_hd"
+        ],
+        "e.host.hbr": true
+      },
+      "fires": [],
+      "silent": [
+        "HBR_UNSUPPORTED_PATH"
+      ]
+    },
+    {
+      "name": "USB device claims 192 kHz, offers 96 kHz",
+      "facts": {
+        "e.usb.claimed_max_rate": 192000,
+        "e.host.max_rate": 96000,
+        "e.usb.speed": "full"
+      },
+      "fires": [
+        "USB_BANDWIDTH_LIMITED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "USB device offers what it claims",
+      "facts": {
+        "e.usb.claimed_max_rate": 96000,
+        "e.host.max_rate": 96000
+      },
+      "fires": [],
+      "silent": [
+        "USB_BANDWIDTH_LIMITED"
+      ]
+    },
+    {
+      "name": "24-bit device, 16-bit server format",
+      "facts": {
+        "e.server.present": true,
+        "e.hw.max_bits": 24,
+        "e.server.format_bits": 16
+      },
+      "fires": [
+        "BIT_DEPTH_TRUNCATED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "24-bit device, 32-bit server format",
+      "facts": {
+        "e.server.present": true,
+        "e.hw.max_bits": 24,
+        "e.server.format_bits": 32
+      },
+      "fires": [],
+      "silent": [
+        "BIT_DEPTH_TRUNCATED"
+      ]
+    },
+    {
+      "name": "HDA power save on",
+      "facts": {
+        "e.driver.module": "snd_hda_intel",
+        "e.driver.power_save": 1
+      },
+      "fires": [
+        "POWER_SAVE_ACTIVE"
+      ],
+      "silent": []
+    },
+    {
+      "name": "HDA power save off",
+      "facts": {
+        "e.driver.module": "snd_hda_intel",
+        "e.driver.power_save": 0
+      },
+      "fires": [],
+      "silent": [
+        "POWER_SAVE_ACTIVE"
+      ]
+    },
+    {
+      "name": "USB driver",
+      "facts": {
+        "e.driver.module": "snd_usb_audio",
+        "e.driver.power_save": 1
+      },
+      "fires": [],
+      "silent": [
+        "POWER_SAVE_ACTIVE"
+      ]
+    },
+    {
+      "name": "video mode too narrow",
+      "facts": {
+        "e.link.audio_headroom_bps": 1000000,
+        "e.sink.max_bitrate_bps": 24576000
+      },
+      "fires": [
+        "LINK_BANDWIDTH_LIMITED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "video mode wide enough",
+      "facts": {
+        "e.link.audio_headroom_bps": 40000000,
+        "e.sink.max_bitrate_bps": 24576000
+      },
+      "fires": [],
+      "silent": [
+        "LINK_BANDWIDTH_LIMITED"
+      ]
+    },
+    {
+      "name": "HDMI sink on a DP port with HBR",
+      "facts": {
+        "e.link.connector_kind": "dp",
+        "e.link.connection": "hdmi",
+        "e.sink.hbr_codecs": [
+          "true_hd"
+        ]
+      },
+      "fires": [
+        "ADAPTER_IN_PATH"
+      ],
+      "silent": []
+    },
+    {
+      "name": "native HDMI port",
+      "facts": {
+        "e.link.connector_kind": "hdmi",
+        "e.link.connection": "hdmi",
+        "e.sink.hbr_codecs": [
+          "true_hd"
+        ]
+      },
+      "fires": [],
+      "silent": [
+        "ADAPTER_IN_PATH"
+      ]
+    },
+    {
+      "name": "DP monitor",
+      "facts": {
+        "e.link.connector_kind": "dp",
+        "e.link.connection": "displayport",
+        "e.sink.hbr_codecs": []
+      },
+      "fires": [],
+      "silent": [
+        "ADAPTER_IN_PATH"
+      ]
+    },
+    {
+      "name": "LDAC advertised, host lacks it",
+      "facts": {
+        "e.bt.advertised": [
+          "sbc",
+          "aac",
+          "ldac"
+        ],
+        "e.bt.available": [
+          "sbc",
+          "aac"
+        ],
+        "e.bt.negotiated": [
+          "sbc"
+        ],
+        "e.bt.negotiated_rank": 2,
+        "e.bt.best_common_rank": 3
+      },
+      "fires": [
+        "BT_CODEC_UNAVAILABLE",
+        "BT_BITRATE_LIMITED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "LDAC on both ends, negotiated",
+      "facts": {
+        "e.bt.advertised": [
+          "sbc",
+          "ldac"
+        ],
+        "e.bt.available": [
+          "sbc",
+          "ldac"
+        ],
+        "e.bt.negotiated": [
+          "ldac"
+        ],
+        "e.bt.negotiated_rank": 6,
+        "e.bt.best_common_rank": 6,
+        "e.bt.ldac_quality": "hq"
+      },
+      "fires": [],
+      "silent": [
+        "BT_CODEC_UNAVAILABLE",
+        "BT_BITRATE_LIMITED"
+      ]
+    },
+    {
+      "name": "LDAC at mobile quality",
+      "facts": {
+        "e.bt.negotiated_rank": 6,
+        "e.bt.best_common_rank": 6,
+        "e.bt.ldac_quality": "mq"
+      },
+      "fires": [
+        "BT_BITRATE_LIMITED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "SBC-only device",
+      "facts": {
+        "e.bt.advertised": [
+          "sbc"
+        ],
+        "e.bt.available": [
+          "sbc",
+          "aac",
+          "ldac"
+        ],
+        "e.bt.negotiated_rank": 2,
+        "e.bt.best_common_rank": 2
+      },
+      "fires": [],
+      "silent": [
+        "BT_CODEC_UNAVAILABLE",
+        "BT_BITRATE_LIMITED"
+      ]
+    },
+    {
+      "name": "headset profile",
+      "facts": {
+        "e.bt.profile": "hfp_hf"
+      },
+      "fires": [
+        "BT_HEADSET_PROFILE_ACTIVE"
+      ],
+      "silent": []
+    },
+    {
+      "name": "A2DP profile",
+      "facts": {
+        "e.bt.profile": "a2dp_sink"
+      },
+      "fires": [],
+      "silent": [
+        "BT_HEADSET_PROFILE_ACTIVE"
+      ]
+    },
+    {
+      "name": "no realtime",
+      "facts": {
+        "g.realtime.available": false
+      },
+      "fires": [
+        "NO_REALTIME"
+      ],
+      "silent": []
+    },
+    {
+      "name": "realtime available",
+      "facts": {
+        "g.realtime.available": true
+      },
+      "fires": [],
+      "silent": [
+        "NO_REALTIME"
+      ]
+    },
+    {
+      "name": "flatpak without BlueZ",
+      "facts": {
+        "g.sandbox.kind": "flatpak",
+        "g.sandbox.missing": [
+          "--system-talk-name=org.bluez"
+        ],
+        "g.sandbox.fixes": [
+          "flatpak override --user --system-talk-name=org.bluez app"
+        ]
+      },
+      "fires": [
+        "SANDBOX_PERMISSION_MISSING"
+      ],
+      "silent": []
+    },
+    {
+      "name": "flatpak with everything",
+      "facts": {
+        "g.sandbox.kind": "flatpak",
+        "g.sandbox.missing": []
+      },
+      "fires": [],
+      "silent": [
+        "SANDBOX_PERMISSION_MISSING"
+      ]
+    },
+    {
+      "name": "not sandboxed",
+      "facts": {
+        "g.sandbox.kind": "none",
+        "g.sandbox.missing": []
+      },
+      "fires": [],
+      "silent": [
+        "SANDBOX_PERMISSION_MISSING"
+      ]
+    },
+    {
+      "name": "app plays stereo on a 7.1 path",
+      "facts": {
+        "app.channels": 2,
+        "app.rate": 48000,
+        "e.eff.max_channels": 8,
+        "e.eff.max_rate": 192000
+      },
+      "fires": [
+        "APP_FORMAT_BELOW_SINK"
+      ],
+      "silent": []
+    },
+    {
+      "name": "app uses the full path",
+      "facts": {
+        "app.channels": 8,
+        "app.rate": 192000,
+        "e.eff.max_channels": 8,
+        "e.eff.max_rate": 192000
+      },
+      "fires": [],
+      "silent": [
+        "APP_FORMAT_BELOW_SINK"
+      ]
+    },
+    {
+      "name": "no app request",
+      "facts": {
+        "e.eff.max_channels": 8,
+        "e.eff.max_rate": 192000
+      },
+      "fires": [],
+      "silent": [
+        "APP_FORMAT_BELOW_SINK"
+      ]
+    },
+    {
+      "name": "latency over budget",
+      "facts": {
+        "e.path.latency_us": 42000,
+        "app.latency_target_us": 20000
+      },
+      "fires": [
+        "LATENCY_BUDGET_EXCEEDED"
+      ],
+      "silent": []
+    },
+    {
+      "name": "latency within budget",
+      "facts": {
+        "e.path.latency_us": 10000,
+        "app.latency_target_us": 20000
+      },
+      "fires": [],
+      "silent": [
+        "LATENCY_BUDGET_EXCEEDED"
+      ]
+    },
+    {
+      "name": "no latency target",
+      "facts": {
+        "e.path.latency_us": 42000
+      },
+      "fires": [],
+      "silent": [
+        "LATENCY_BUDGET_EXCEEDED"
+      ]
+    },
+    {
+      "name": "analog output below 100% (may be a hardware mixer)",
+      "facts": {
+        "e.server.present": true,
+        "e.transport": "analog",
+        "e.server.volume_percent": 46
+      },
+      "fires": [],
+      "silent": [
+        "NOT_BIT_PERFECT"
+      ]
+    }
+  ]
+}

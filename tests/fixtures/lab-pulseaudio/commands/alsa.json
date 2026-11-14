@@ -6,11 +6,6 @@
     {
       "index": 0,
       "controls": [],
-      "pcms": []
-    },
-    {
-      "index": 1,
-      "controls": [],
       "pcms": [
         {
           "device": 0,
@@ -18,7 +13,52 @@
           "result": {
             "result": "not_opened",
             "reason": "busy",
-            "detail": "owner pid 2778"
+            "detail": "owner pid 2519"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "controls": [
+        {
+          "iface": "card",
+          "name": "Line Out Phantom Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        },
+        {
+          "iface": "card",
+          "name": "Line Phantom Jack",
+          "device": 0,
+          "index": 0,
+          "kind": "boolean",
+          "values": [
+            1
+          ]
+        }
+      ],
+      "pcms": [
+        {
+          "device": 0,
+          "stream": "playback",
+          "result": {
+            "result": "not_opened",
+            "reason": "busy",
+            "detail": "owner pid 2519"
+          }
+        },
+        {
+          "device": 0,
+          "stream": "capture",
+          "result": {
+            "result": "not_opened",
+            "reason": "busy",
+            "detail": "owner pid 2519"
           }
         }
       ]
@@ -54,7 +94,7 @@
           "result": {
             "result": "not_opened",
             "reason": "busy",
-            "detail": "owner pid 2778"
+            "detail": "owner pid 2519"
           }
         },
         {
@@ -63,55 +103,15 @@
           "result": {
             "result": "not_opened",
             "reason": "busy",
-            "detail": "owner pid 2778"
+            "detail": "owner pid 2519"
           }
         }
       ]
     },
     {
-      "index": 3,
-      "controls": [
-        {
-          "iface": "card",
-          "name": "Line Out Phantom Jack",
-          "device": 0,
-          "index": 0,
-          "kind": "boolean",
-          "values": [
-            1
-          ]
-        },
-        {
-          "iface": "card",
-          "name": "Line Phantom Jack",
-          "device": 0,
-          "index": 0,
-          "kind": "boolean",
-          "values": [
-            1
-          ]
-        }
-      ],
-      "pcms": [
-        {
-          "device": 0,
-          "stream": "playback",
-          "result": {
-            "result": "not_opened",
-            "reason": "busy",
-            "detail": "owner pid 2778"
-          }
-        },
-        {
-          "device": 0,
-          "stream": "capture",
-          "result": {
-            "result": "not_opened",
-            "reason": "busy",
-            "detail": "owner pid 2778"
-          }
-        }
-      ]
+      "index": 10,
+      "controls": [],
+      "pcms": []
     }
   ]
 }
