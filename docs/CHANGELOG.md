@@ -96,6 +96,14 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Schema 1.5.0 (additive): route `detected_passthrough`, link `connector`/`connection`,
   `Snapshot.app_request`.
 
+- Software codec check (opt-in, `--software-codecs`): codec providers the app could load
+  (FFmpeg, ALSA's a52 AC-3 encoder plugin, liba52, libdca, GStreamer libav, PipeWire Bluetooth
+  codec plugins), found on disk and never loaded; codec lists marked inferred.
+- Active probe (opt-in, `--active-probe`): about 100 ms of silence per requested format on one
+  idle device (silent PCM, or IEC 61937 pause bursts through `hdmi:`/`iec958:`, whose hooks
+  restore the IEC 958 status); refused on busy or server-managed devices.
+- Schema 1.6.0 (additive): `Snapshot.software_codecs`, `Endpoint.active_probe`.
+
 ### Changed
 
 - Documentation follows the repository structure standard: decision log in

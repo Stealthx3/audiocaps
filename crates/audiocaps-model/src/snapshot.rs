@@ -39,6 +39,9 @@ pub struct Snapshot {
     pub servers: Vec<crate::detail::ServerState>,
     /// Endpoints in scope, sorted by id.
     pub endpoints: Vec<Endpoint>,
+    /// Software codecs the app could load, when the application asked for the check.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub software_codecs: Option<Value<crate::detail::SoftwareCodecs>>,
     /// What the application said it intends to play, when it said so (inputs to findings).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub app_request: Option<crate::detail::AppRequest>,

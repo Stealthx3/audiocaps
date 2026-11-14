@@ -76,6 +76,17 @@
         "$ref": "#/$defs/Endpoint"
       }
     },
+    "software_codecs": {
+      "description": "Software codecs the app could load, when the application asked for the check.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Value39"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "app_request": {
       "description": "What the application said it intends to play, when it said so (inputs to findings).",
       "anyOf": [
@@ -105,7 +116,7 @@
     "layers",
     "endpoints"
   ],
-  "x-audiocaps-schema-version": "1.5.0",
+  "x-audiocaps-schema-version": "1.6.0",
   "$defs": {
     "SnapshotSource": {
       "description": "What a snapshot was taken from.",
@@ -2093,6 +2104,17 @@
             }
           ]
         },
+        "active_probe": {
+          "description": "Active probe result, when the application asked for one on this endpoint.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Value17"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "midi": {
           "description": "MIDI port details, for MIDI endpoints.",
           "anyOf": [
@@ -3670,6 +3692,183 @@
         }
       ]
     },
+    "Value17": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/ActiveProbe"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "ActiveProbe": {
+      "description": "Result of an active probe of one endpoint (opt-in).",
+      "type": "object",
+      "properties": {
+        "device": {
+          "description": "The device name used, e.g. `hdmi:CARD=HDMI,DEV=0`.",
+          "type": "string"
+        },
+        "results": {
+          "description": "One result per requested format.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ActiveResult"
+          }
+        }
+      },
+      "required": [
+        "device",
+        "results"
+      ]
+    },
+    "ActiveResult": {
+      "description": "One format tried by an active probe.",
+      "type": "object",
+      "properties": {
+        "codec": {
+          "description": "The codec tried.",
+          "$ref": "#/$defs/Codec"
+        },
+        "channels": {
+          "description": "Carrier: channels.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "rate_hz": {
+          "description": "Carrier: rate in Hz.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "outcome": {
+          "description": "What happened.",
+          "$ref": "#/$defs/ActiveOutcome"
+        }
+      },
+      "required": [
+        "codec",
+        "channels",
+        "rate_hz",
+        "outcome"
+      ]
+    },
+    "ActiveOutcome": {
+      "description": "Outcome of one active test.",
+      "oneOf": [
+        {
+          "description": "The host path accepted the format and played silence without error. (The sink can't\nreport back, so this confirms the host side.)",
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "const": "accepted"
+            },
+            "played_ms": {
+              "description": "Milliseconds of silence played.",
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "outcome",
+            "played_ms"
+          ]
+        },
+        {
+          "description": "The device refused it.",
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "const": "refused"
+            },
+            "stage": {
+              "description": "Stage: `open`, `hw_params`, `write`.",
+              "type": "string"
+            },
+            "error": {
+              "description": "Error.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "outcome",
+            "stage",
+            "error"
+          ]
+        },
+        {
+          "description": "Not tried.",
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "const": "skipped"
+            },
+            "reason": {
+              "description": "Why.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "outcome",
+            "reason"
+          ]
+        }
+      ]
+    },
     "MidiPort": {
       "description": "A MIDI port.",
       "type": "object",
@@ -3766,7 +3965,7 @@
           "description": "PCM sample formats.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value17"
+              "$ref": "#/$defs/Value18"
             },
             {
               "type": "null"
@@ -3777,7 +3976,7 @@
           "description": "Sample rates.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value18"
+              "$ref": "#/$defs/Value19"
             },
             {
               "type": "null"
@@ -3788,7 +3987,7 @@
           "description": "Channel counts.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value19"
+              "$ref": "#/$defs/Value20"
             },
             {
               "type": "null"
@@ -3799,7 +3998,7 @@
           "description": "Supported channel maps.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value20"
+              "$ref": "#/$defs/Value21"
             },
             {
               "type": "null"
@@ -3821,7 +4020,7 @@
           "description": "Bluetooth codecs.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value21"
+              "$ref": "#/$defs/Value22"
             },
             {
               "type": "null"
@@ -3832,7 +4031,7 @@
           "description": "Latency range in microseconds.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value19"
+              "$ref": "#/$defs/Value20"
             },
             {
               "type": "null"
@@ -3843,7 +4042,7 @@
           "description": "Whether the app can open the device directly (exclusive/bit-perfect access).",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value22"
+              "$ref": "#/$defs/Value23"
             },
             {
               "type": "null"
@@ -3852,7 +4051,7 @@
         }
       }
     },
-    "Value17": {
+    "Value18": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -3976,7 +4175,7 @@
         }
       ]
     },
-    "Value18": {
+    "Value19": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4089,7 +4288,7 @@
         }
       ]
     },
-    "Value19": {
+    "Value20": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4147,7 +4346,7 @@
         }
       ]
     },
-    "Value20": {
+    "Value21": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4224,7 +4423,7 @@
         "positions"
       ]
     },
-    "Value21": {
+    "Value22": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4393,7 +4592,7 @@
         }
       ]
     },
-    "Value22": {
+    "Value23": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4526,7 +4725,7 @@
         }
       ]
     },
-    "Value23": {
+    "Value24": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4643,7 +4842,7 @@
         "hbr"
       ]
     },
-    "Value24": {
+    "Value25": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4811,7 +5010,7 @@
           "description": "Codec pins this endpoint reaches.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value23"
+              "$ref": "#/$defs/Value24"
             },
             {
               "type": "null"
@@ -4822,7 +5021,7 @@
           "description": "USB Audio streaming alternate settings.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value24"
+              "$ref": "#/$defs/Value25"
             },
             {
               "type": "null"
@@ -4831,7 +5030,7 @@
         }
       }
     },
-    "Value25": {
+    "Value26": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4892,7 +5091,7 @@
         }
       ]
     },
-    "Value26": {
+    "Value27": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -4982,7 +5181,7 @@
         },
         "parameters": {
           "description": "Module parameters.",
-          "$ref": "#/$defs/Value25"
+          "$ref": "#/$defs/Value26"
         },
         "power": {
           "description": "Runtime power state of the device, e.g. `active`, `suspended`.",
@@ -4992,7 +5191,7 @@
           "description": "Jack state for this endpoint, when the driver exposes a jack control.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value26"
+              "$ref": "#/$defs/Value27"
             },
             {
               "type": "null"
@@ -5007,7 +5206,7 @@
         "power"
       ]
     },
-    "Value27": {
+    "Value28": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5123,7 +5322,7 @@
         }
       ]
     },
-    "Value28": {
+    "Value29": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5203,7 +5402,7 @@
         "available"
       ]
     },
-    "Value29": {
+    "Value30": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5306,7 +5505,7 @@
         "rate_hz"
       ]
     },
-    "Value30": {
+    "Value31": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5405,7 +5604,7 @@
           "description": "Whether the device is free, in use, or managed by a sound server.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value27"
+              "$ref": "#/$defs/Value28"
             },
             {
               "type": "null"
@@ -5416,7 +5615,7 @@
           "description": "Sub-devices (hardware streams): total and free.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value28"
+              "$ref": "#/$defs/Value29"
             },
             {
               "type": "null"
@@ -5427,7 +5626,7 @@
           "description": "Parameters of the stream currently running, when the device is in use.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value29"
+              "$ref": "#/$defs/Value30"
             },
             {
               "type": "null"
@@ -5438,7 +5637,7 @@
           "description": "Period time range in microseconds.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value19"
+              "$ref": "#/$defs/Value20"
             },
             {
               "type": "null"
@@ -5449,7 +5648,7 @@
           "description": "IEC 958 (S/PDIF, HDMI) channel status, for digital outputs.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value30"
+              "$ref": "#/$defs/Value31"
             },
             {
               "type": "null"
@@ -5492,7 +5691,7 @@
           "description": "Format the server runs the device at now.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value29"
+              "$ref": "#/$defs/Value30"
             },
             {
               "type": "null"
@@ -5503,7 +5702,7 @@
           "description": "Profiles of the owning device, with the active one marked.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value31"
+              "$ref": "#/$defs/Value32"
             },
             {
               "type": "null"
@@ -5514,7 +5713,7 @@
           "description": "Routes (ports) of the owning device in this direction, with the active one marked.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value32"
+              "$ref": "#/$defs/Value33"
             },
             {
               "type": "null"
@@ -5536,7 +5735,7 @@
           "description": "Volume and mute.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value33"
+              "$ref": "#/$defs/Value34"
             },
             {
               "type": "null"
@@ -5557,7 +5756,7 @@
         "media_class"
       ]
     },
-    "Value31": {
+    "Value32": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5648,7 +5847,7 @@
         "active"
       ]
     },
-    "Value32": {
+    "Value33": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5749,7 +5948,7 @@
         "active"
       ]
     },
-    "Value33": {
+    "Value34": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5843,7 +6042,7 @@
         "views"
       ]
     },
-    "Value34": {
+    "Value35": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -5930,7 +6129,7 @@
       "properties": {
         "connected": {
           "description": "Connected.",
-          "$ref": "#/$defs/Value22"
+          "$ref": "#/$defs/Value23"
         },
         "profiles": {
           "description": "Audio profiles the device offers (`a2dp_sink`, `hfp_hf`, `pacs`, …).",
@@ -5944,7 +6143,7 @@
           "description": "The active audio transport, when one is set up.",
           "anyOf": [
             {
-              "$ref": "#/$defs/Value34"
+              "$ref": "#/$defs/Value35"
             },
             {
               "type": "null"
@@ -6031,7 +6230,7 @@
         },
         "latency_us": {
           "description": "End-to-end latency estimate in microseconds.",
-          "$ref": "#/$defs/Value37"
+          "$ref": "#/$defs/Value38"
         }
       },
       "required": [
@@ -6054,19 +6253,19 @@
         },
         "format": {
           "description": "Format carried at this hop.",
-          "$ref": "#/$defs/Value35"
+          "$ref": "#/$defs/Value36"
         },
         "bitrate_bps": {
           "description": "Bit rate carried, in bit/s.",
-          "$ref": "#/$defs/Value36"
+          "$ref": "#/$defs/Value37"
         },
         "ceiling_bps": {
           "description": "Maximum bit rate this hop can carry, in bit/s.",
-          "$ref": "#/$defs/Value36"
+          "$ref": "#/$defs/Value37"
         },
         "latency_us": {
           "description": "Latency added by this hop, in microseconds.",
-          "$ref": "#/$defs/Value37"
+          "$ref": "#/$defs/Value38"
         },
         "losses": {
           "description": "What is lost at this hop.",
@@ -6135,7 +6334,7 @@
         }
       ]
     },
-    "Value35": {
+    "Value36": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -6263,7 +6462,7 @@
         }
       ]
     },
-    "Value36": {
+    "Value37": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -6323,7 +6522,7 @@
         }
       ]
     },
-    "Value37": {
+    "Value38": {
       "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
       "oneOf": [
         {
@@ -6455,6 +6654,147 @@
     "FindingCode": {
       "description": "Stable finding code, e.g. `PASSTHROUGH_NOT_ENABLED`. Codes come from rule packs, so this is a\nstring rather than a closed enum; codes are never reused for a different meaning.",
       "type": "string"
+    },
+    "Value39": {
+      "description": "A reported value: either known, with where it came from and how sure we are, or explicitly\nunknown with the reason. A layer that can't be read is never reported as \"unsupported\".",
+      "oneOf": [
+        {
+          "description": "The value was read or derived.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "known"
+            },
+            "value": {
+              "description": "The value itself.",
+              "$ref": "#/$defs/SoftwareCodecs"
+            },
+            "confidence": {
+              "description": "Measured (read directly) or inferred (derived from tables or quirk data).",
+              "$ref": "#/$defs/Confidence"
+            },
+            "provenance": {
+              "description": "Where and when the value was read.",
+              "$ref": "#/$defs/Provenance"
+            }
+          },
+          "required": [
+            "state",
+            "value",
+            "confidence",
+            "provenance"
+          ]
+        },
+        {
+          "description": "The value could not be determined.",
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "reason": {
+              "description": "Why the value is unknown.",
+              "$ref": "#/$defs/UnknownReason"
+            },
+            "detail": {
+              "description": "Human-readable detail, e.g. the missing permission or the error text.",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "reason"
+          ]
+        }
+      ]
+    },
+    "SoftwareCodecs": {
+      "description": "Software codecs the application could load (opt-in check). Presence is read from the\nlibraries on disk; nothing is loaded, so what each provider decodes or encodes is `inferred`\nfrom what its standard builds include.",
+      "type": "object",
+      "properties": {
+        "providers": {
+          "description": "Providers found.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CodecProvider"
+          }
+        },
+        "decoders": {
+          "description": "Codecs some provider decodes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Codec"
+          }
+        },
+        "encoders": {
+          "description": "Codecs some provider encodes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Codec"
+          }
+        }
+      },
+      "required": [
+        "providers",
+        "decoders",
+        "encoders"
+      ]
+    },
+    "CodecProvider": {
+      "description": "A library that provides codecs.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name, e.g. `ffmpeg`, `alsa-a52`, `pipewire-bluez5-ldac`.",
+          "type": "string"
+        },
+        "library": {
+          "description": "Library path as found.",
+          "type": "string"
+        },
+        "version": {
+          "description": "Version from the soname, when it has one.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decodes": {
+          "description": "Codecs it decodes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Codec"
+          }
+        },
+        "encodes": {
+          "description": "Codecs it encodes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Codec"
+          }
+        },
+        "bluetooth": {
+          "description": "Bluetooth codecs it adds to the host.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BluetoothCodec"
+          }
+        },
+        "kind": {
+          "description": "Use: e.g. `alsa-plugin` (open as an ALSA PCM), `library`, `gstreamer`, `pipewire`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "library",
+        "kind"
+      ]
     },
     "AppRequest": {
       "description": "What the application intends to play, for findings that compare against it.",

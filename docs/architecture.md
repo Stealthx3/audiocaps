@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 7. Updated at every phase gate._
+_Status: end of phase 8. Updated at every phase gate._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
@@ -176,6 +176,20 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
   the sink record, and codec additions/removals mark the sink layer's values `inferred` with a
   `quirk` source.
 
+## Opt-ins (phases 6 and 8)
+
+Off by default; each runs only when `ProbeOptions` asks, and does only what it asked:
+
+- `with_cec()`: CEC queries (phase 6).
+- `with_software_codecs()`: lists library directories for known codec providers (`codecs.rs`);
+  nothing is loaded. A capture without library directories reports `not_exposed`.
+- `with_active_probe(endpoint, codecs)`: `alsa/active.rs`, after the passive backends finish.
+  Live system only; refused when a sound server runs (`managed_by_server`) or the device is open
+  (`busy`). LPCM: digital silence on `hw:` in the requested layout. Compressed: IEC 61937 pause
+  bursts in the codec's carrier layout (2 ch 48 kHz, 2 ch 192 kHz, or HBR 8 ch 192 kHz) through
+  `hdmi:`/`iec958:` with non-audio AES bytes; alsa-lib's hooks restore the previous IEC 958
+  status on close. An accepted result confirms the host side only.
+
 ## Analysis (phase 7)
 
 After assembly, when `effective`, `paths` or `findings` is in scope, the probe loads rule packs
@@ -208,6 +222,11 @@ catalogue and every rule: `docs/rules.md`.
   PCM open. `scripts/gate-alsa.sh` checks that playback on a busy device is never touched.
 - Note: reading `/proc/asound/cardN/codec#M` makes the HDA driver query the codec (it may resume a
   runtime-suspended codec). It does not open a PCM or change any setting; `alsa-info.sh` does the same.
+
+## Limits at the end of phase 8
+
+- Active probes of compressed formats have only been checked to be skipped on analog outputs in
+  the lab; no IEC 958 output was available there, and the production rig runs PipeWire (refused).
 
 ## Limits at the end of phase 7
 

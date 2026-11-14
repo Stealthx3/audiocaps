@@ -156,6 +156,28 @@ pub(crate) fn probe_inner<'a>(
             }));
         }
     }
+    if opts.software_codecs {
+        tasks.push(Box::new(OneShot {
+            backend: Backend::Codecs,
+            run: Some({
+                let root = root.clone();
+                Box::new(move |out: &mut Results| {
+                    out.codecs = Some(Outcome::Read {
+                        value: crate::codecs::scan(&root),
+                        live: matches!(root, SystemRoot::Live),
+                    })
+                })
+            }),
+            on_timeout: Box::new(|out: &mut Results| {
+                out.codecs = Some(Outcome::Unknown {
+                    reason: UnknownReason::Timeout,
+                    detail: "codec check deadline".into(),
+                })
+            }),
+            rx: None,
+            pending: None,
+        }));
+    }
     if scope.layers.includes(&LayerKind::Wireless) {
         tasks.push(Box::new(OneShot {
             backend: Backend::Bluez,
@@ -198,7 +220,51 @@ pub(crate) fn probe_inner<'a>(
         }));
     }
     runtime::run(tasks, opts, &mut res);
+    // The active probe runs after the passive backends: the ALSA range read briefly opens free
+    // devices, and the probe must find the device idle.
+    if let Some(req) = &opts.active_probe {
+        res.active = Some(match crate::alsa::active::run(root, req) {
+            Ok(value) => Outcome::Read { value, live: true },
+            Err((reason, detail)) => Outcome::Unknown { reason, detail },
+        });
+    }
+    let codecs = res.codecs.take();
+    let active = res.active.take();
     let mut snap = crate::assemble::snapshot(root, scope, now, &cards, found, res);
+    let p = |what: &str| audiocaps_model::Provenance {
+        layer: LayerKind::Environment,
+        source: audiocaps_model::Source::derived(what.to_string()),
+        read_at_ms: now,
+    };
+    snap.software_codecs = codecs.map(|o| match o {
+        Outcome::Read { value: Some(v), .. } => {
+            audiocaps_model::Value::inferred(v, p("codec libraries on disk (not loaded)"))
+        }
+        Outcome::Read { value: None, .. } => audiocaps_model::Value::unknown(
+            UnknownReason::NotExposed,
+            Some("no library directory readable (captures don't include them)".into()),
+        ),
+        Outcome::Unknown { reason, detail } => {
+            audiocaps_model::Value::unknown(reason, Some(detail))
+        }
+    });
+    if let (Some(o), Some(req)) = (active, &opts.active_probe)
+        && let Some(e) = snap.endpoints.iter_mut().find(|e| e.id == req.endpoint)
+    {
+        e.active_probe = Some(match o {
+            Outcome::Read { value, .. } => audiocaps_model::Value::measured(
+                value,
+                audiocaps_model::Provenance {
+                    layer: LayerKind::AlsaUserspace,
+                    source: audiocaps_model::Source::api("alsa-lib", "active probe (silence)"),
+                    read_at_ms: now,
+                },
+            ),
+            Outcome::Unknown { reason, detail } => {
+                audiocaps_model::Value::unknown(reason, Some(detail))
+            }
+        });
+    }
     let f = &scope.fields;
     if f.includes(&FieldGroup::Effective)
         || f.includes(&FieldGroup::Paths)
@@ -235,6 +301,10 @@ pub(crate) struct Results {
     pub cec: Option<Outcome<crate::cec::CecDump>>,
     /// Quirk data (sink records).
     pub quirks: Option<audiocaps_rules::quirks::QuirkSet>,
+    /// Software codecs: `None` unless the application opted in.
+    pub codecs: Option<Outcome<Option<audiocaps_model::SoftwareCodecs>>>,
+    /// Active probe: `None` unless the application opted in.
+    pub active: Option<Outcome<audiocaps_model::ActiveProbe>>,
 }
 
 /// What a simple backend produced.
@@ -905,6 +975,12 @@ impl Task<Results> for OneShot<'_> {
                 }
                 if r.cec.is_some() {
                     out.cec = r.cec;
+                }
+                if r.codecs.is_some() {
+                    out.codecs = r.codecs;
+                }
+                if r.active.is_some() {
+                    out.active = r.active;
                 }
             }
             None if timed_out => (self.on_timeout)(out),

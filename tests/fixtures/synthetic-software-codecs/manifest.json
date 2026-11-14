@@ -1,0 +1,38 @@
+{
+  "format": 2,
+  "tool_version": "0.1.0",
+  "captured_at_ms": 1794700000000,
+  "sandbox": {
+    "snap": false,
+    "flatpak": false
+  },
+  "file_count": 10,
+  "commands": [
+    {
+      "name": "alsa",
+      "argv": [],
+      "skipped": "synthetic"
+    },
+    {
+      "name": "pw-dump",
+      "argv": [],
+      "skipped": "pw-dump not installed"
+    },
+    {
+      "name": "pactl-info",
+      "argv": [],
+      "skipped": "pactl not installed"
+    },
+    {
+      "name": "bluez",
+      "argv": [],
+      "skipped": "org.bluez not running; not activating it"
+    }
+  ],
+  "redaction": [
+    "synthetic fixture written by hand; contains no real system data"
+  ],
+  "notes": [
+    "Hand-written: empty library files standing in for FFmpeg 61, ALSA's a52 plugin and PipeWire's AAC and LDAC Bluetooth codecs, for the software codec check."
+  ]
+}
