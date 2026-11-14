@@ -139,6 +139,17 @@ pub struct Route {
     /// Device (node) indices the route belongs to (PipeWire).
     #[serde(default)]
     pub devices: Vec<u32>,
+    /// `iec958.codecs.detected` from the route info (PipeWire), e.g. `["PCM","AC3"]`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detected_codecs: Option<Vec<String>>,
+}
+
+/// Parses a PipeWire route info list (`key, value, key, value, …`) for the detected codecs.
+pub(crate) fn detected_codecs<'a>(pairs: impl Iterator<Item = &'a str>) -> Option<Vec<String>> {
+    let v: Vec<&str> = pairs.collect();
+    v.chunks(2)
+        .find(|kv| kv.len() == 2 && kv[0] == "iec958.codecs.detected")
+        .and_then(|kv| serde_json::from_str::<Vec<String>>(kv[1]).ok())
 }
 
 /// Node direction.

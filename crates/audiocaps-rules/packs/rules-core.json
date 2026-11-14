@@ -1,0 +1,995 @@
+{
+  "format": 1,
+  "pack": "audiocaps-rules-core",
+  "rules": [
+    {
+      "code": "SINK_NOT_PRESENT",
+      "severity": "info",
+      "hop": "sink",
+      "scope": "endpoint",
+      "description": "Jack reports no device, or the ELD is empty or invalid.",
+      "when": {
+        "all": [
+          {
+            "all": [
+              {
+                "eq": [
+                  "e.transport",
+                  "hdmi_dp"
+                ]
+              },
+              {
+                "eq": [
+                  "e.direction",
+                  "playback"
+                ]
+              }
+            ]
+          },
+          {
+            "any": [
+              {
+                "eq": [
+                  "e.jack.plugged",
+                  false
+                ]
+              },
+              {
+                "eq": [
+                  "e.sink.present",
+                  false
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.jack.plugged",
+        "e.sink.present"
+      ],
+      "hint": {
+        "generic": "Nothing is connected to this output, or it sent no audio capabilities: check the cable and that the display or receiver is on and set to this input."
+      }
+    },
+    {
+      "code": "SINK_CHANGED",
+      "severity": "info",
+      "hop": "sink",
+      "scope": "endpoint",
+      "description": "The sink's identity changed since the previous snapshot (device swapped, receiver powered on or off).",
+      "when": {
+        "eq": [
+          "e.sink.changed",
+          true
+        ]
+      },
+      "evidence": [
+        "e.sink.key"
+      ],
+      "hint": {
+        "generic": "The connected device changed (now {e.sink.key}); capabilities were re-read."
+      }
+    },
+    {
+      "code": "SINK_ATMOS_NOT_ENABLED",
+      "severity": "warning",
+      "hop": "sound_server",
+      "scope": "endpoint",
+      "description": "The sink advertises E-AC-3 with JOC or TrueHD with Atmos, but passthrough for them is disabled on the server node.",
+      "when": {
+        "all": [
+          {
+            "nonempty": "e.sink.atmos_codecs"
+          },
+          {
+            "known": "e.server.passthrough"
+          },
+          {
+            "not_subset": [
+              "e.sink.atmos_codecs",
+              "$e.server.passthrough"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.atmos_codecs",
+        "e.server.passthrough"
+      ],
+      "hint": {
+        "generic": "The sink accepts Atmos over {e.sink.atmos_codecs}, but the sound server doesn't pass it through: enable those codecs for this output (pavucontrol \"Advanced\", or WirePlumber device settings)."
+      }
+    },
+    {
+      "code": "SINK_ARC_LIMITED",
+      "severity": "warning",
+      "hop": "sink_chain",
+      "scope": "endpoint",
+      "description": "The device behind the TV advertises more formats over CEC than the TV's own EDID allows.",
+      "when": {
+        "all": [
+          {
+            "nonempty": "e.sink.downstream_codecs"
+          },
+          {
+            "known": "e.sink.codecs"
+          },
+          {
+            "not_subset": [
+              "e.sink.downstream_codecs",
+              "$e.sink.codecs"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.downstream_codecs",
+        "e.sink.codecs"
+      ],
+      "hint": {
+        "generic": "The device behind the display accepts more ({e.sink.downstream_codecs}) than the display passes on ({e.sink.codecs}). Use eARC (not ARC) on the display, enable passthrough in its audio settings, or connect the PC to the receiver directly."
+      }
+    },
+    {
+      "code": "SINK_DOWNSTREAM_UNKNOWN",
+      "severity": "info",
+      "hop": "sink_chain",
+      "scope": "endpoint",
+      "description": "An ARC/eARC setup is likely, but there's no CEC access to confirm the downstream device.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.sink.earc_likely",
+              true
+            ]
+          },
+          {
+            "eq": [
+              "e.sink.downstream_known",
+              false
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.earc_likely",
+        "e.sink.codecs"
+      ],
+      "hint": {
+        "generic": "The display seems to pass audio on to a receiver or soundbar (ARC/eARC), but nothing behind it can be identified without CEC. Formats the display lists may not all reach that device."
+      },
+      "confidence": "inferred"
+    },
+    {
+      "code": "SINK_HBR_RISK",
+      "severity": "info",
+      "hop": "sink",
+      "scope": "endpoint",
+      "description": "TrueHD or DTS-HD MA advertised on hardware with known HBR failures.",
+      "when": {
+        "all": [
+          {
+            "nonempty": "e.sink.hbr_codecs"
+          },
+          {
+            "eq": [
+              "e.host.hbr_known_bad",
+              true
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.hbr_codecs",
+        "e.host.hbr_known_bad"
+      ],
+      "hint": {
+        "generic": "{e.sink.hbr_codecs} need high-bit-rate (HBR) audio, which fails on this hardware in known reports; expect dropouts or silence."
+      },
+      "confidence": "inferred",
+      "inputs_pending": [
+        "e.host.hbr_known_bad (host quirk data)"
+      ]
+    },
+    {
+      "code": "PASSTHROUGH_NOT_ENABLED",
+      "severity": "warning",
+      "hop": "sound_server",
+      "scope": "endpoint",
+      "description": "The ELD lists compressed formats, but the server node allows PCM only.",
+      "when": {
+        "all": [
+          {
+            "nonempty": "e.sink.compressed"
+          },
+          {
+            "eq": [
+              "e.server.present",
+              true
+            ]
+          },
+          {
+            "eq": [
+              "e.server.passthrough",
+              []
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.compressed",
+        "e.server.passthrough"
+      ],
+      "hint": {
+        "generic": "The sink accepts {e.sink.compressed}, but the server node allows PCM only: enable passthrough for those codecs (pavucontrol \"Advanced\", or the WirePlumber iec958Codecs setting)."
+      }
+    },
+    {
+      "code": "PASSTHROUGH_UNDETECTED",
+      "severity": "info",
+      "hop": "sound_server",
+      "scope": "endpoint",
+      "description": "An ELD is present, but the server exposes no detected-codec property.",
+      "when": {
+        "all": [
+          {
+            "nonempty": "e.sink.compressed"
+          },
+          {
+            "eq": [
+              "e.server.present",
+              true
+            ]
+          },
+          {
+            "eq": [
+              "e.server.detected_known",
+              false
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.compressed",
+        "e.server.apis"
+      ],
+      "hint": {
+        "generic": "The server doesn't publish which codecs it detected from the sink (older PipeWire or PulseAudio), so passthrough must be set by hand.",
+        "debian": "Upgrade PipeWire (1.0 or later detects codecs from the ELD) or set passthrough formats by hand.",
+        "fedora": "Upgrade PipeWire (1.0 or later detects codecs from the ELD) or set passthrough formats by hand."
+      }
+    },
+    {
+      "code": "RATE_CAPPED_BY_SERVER",
+      "severity": "info",
+      "hop": "sound_server",
+      "scope": "endpoint",
+      "description": "The hardware allows higher rates, but the server's allowed rates force resampling.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.server.present",
+              true
+            ]
+          },
+          {
+            "gt": [
+              "e.hw.max_rate",
+              "$g.clock.allowed_max"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.hw.max_rate",
+        "g.clock.allowed_rates"
+      ],
+      "hint": {
+        "generic": "The hardware takes up to {e.hw.max_rate} Hz but PipeWire only runs at {g.clock.allowed_rates}: higher-rate audio is resampled. Add rates to default.clock.allowed-rates in a pipewire.conf.d drop-in."
+      }
+    },
+    {
+      "code": "CHANNELS_DOWNMIXED",
+      "severity": "warning",
+      "hop": "sound_server",
+      "scope": "endpoint",
+      "description": "The hardware or sink supports more channels than the active profile carries.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.server.present",
+              true
+            ]
+          },
+          {
+            "gt": [
+              "e.hw.max_channels",
+              "$e.server.max_channels"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.hw.max_channels",
+        "e.server.max_channels",
+        "e.server.profile"
+      ],
+      "hint": {
+        "generic": "The output takes {e.hw.max_channels} channels but the active profile ({e.server.profile}) carries {e.server.max_channels}: choose a surround profile for this device."
+      }
+    },
+    {
+      "code": "NOT_BIT_PERFECT",
+      "severity": "info",
+      "hop": "sound_server",
+      "scope": "endpoint",
+      "description": "Volume, EQ, a filter chain or format conversion alters samples on the path (software volume on a digital output).",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.server.present",
+              true
+            ]
+          },
+          {
+            "any": [
+              {
+                "eq": [
+                  "e.transport",
+                  "hdmi_dp"
+                ]
+              },
+              {
+                "eq": [
+                  "e.transport",
+                  "spdif"
+                ]
+              }
+            ]
+          },
+          {
+            "ne": [
+              "e.server.volume_percent",
+              100
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.server.volume_percent"
+      ],
+      "hint": {
+        "generic": "Software volume at {e.server.volume_percent}% changes the samples: set it to 100% and use the receiver's volume for bit-perfect playback."
+      },
+      "confidence": "inferred"
+    },
+    {
+      "code": "SERVER_CONFLICT",
+      "severity": "error",
+      "hop": "sound_server",
+      "scope": "system",
+      "description": "Two servers claim one card, or standalone JACK holds a card PipeWire expects.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "g.pulse.native",
+              true
+            ]
+          },
+          {
+            "nonempty": "g.pipewire.alsa_cards"
+          },
+          {
+            "intersects": [
+              "g.pipewire.alsa_cards",
+              "$g.pulse.alsa_cards"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "g.pipewire.alsa_cards",
+        "g.pulse.alsa_cards"
+      ],
+      "hint": {
+        "generic": "PipeWire and a native PulseAudio both manage the same sound cards: run one of them (usually PipeWire with pipewire-pulse) and disable the other.",
+        "debian": "Run PipeWire with pipewire-pulse: install pipewire-pulse and wireplumber, then systemctl --user mask pulseaudio.socket pulseaudio.service.",
+        "fedora": "Use pipewire-pulseaudio (Fedora's default) and remove the pulseaudio package.",
+        "arch": "Install pipewire-pulse (it replaces pulseaudio) and remove pulseaudio."
+      }
+    },
+    {
+      "code": "CLIENT_SERVER_SKEW",
+      "severity": "info",
+      "hop": "application",
+      "scope": "system",
+      "description": "The app's client library version differs from the host server's (common in sandboxes).",
+      "when": {
+        "all": [
+          {
+            "known": "g.client.pipewire_version"
+          },
+          {
+            "known": "g.pipewire.version"
+          },
+          {
+            "ne": [
+              "g.client.pipewire_version",
+              "$g.pipewire.version"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "g.client.pipewire_version",
+        "g.pipewire.version"
+      ],
+      "hint": {
+        "generic": "The app's PipeWire library ({g.client.pipewire_version}) differs from the host's server ({g.pipewire.version}); update the app's runtime."
+      },
+      "inputs_pending": [
+        "g.client.pipewire_version"
+      ]
+    },
+    {
+      "code": "ALSA_PLUGIN_CONVERSION",
+      "severity": "info",
+      "hop": "alsa",
+      "scope": "system",
+      "description": "The default device routes through dmix, plug or softvol conversions.",
+      "when": {
+        "intersects": [
+          "g.routing.playback_kinds",
+          [
+            "plug",
+            "dmix",
+            "softvol",
+            "rate",
+            "route",
+            "linear"
+          ]
+        ]
+      },
+      "evidence": [
+        "g.routing.playback_kinds"
+      ],
+      "hint": {
+        "generic": "The ALSA default device goes through {g.routing.playback_kinds}: apps using it get converted, mixed or software-volume audio. Open hw:CARD,DEV directly for bit-perfect output."
+      }
+    },
+    {
+      "code": "DEVICE_BUSY_NO_SERVER",
+      "severity": "warning",
+      "hop": "alsa",
+      "scope": "endpoint",
+      "description": "Another process holds the hardware device directly; read-only values are used instead.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.alsa.state",
+              "in_use"
+            ]
+          },
+          {
+            "eq": [
+              "g.server.any",
+              false
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.alsa.state"
+      ],
+      "hint": {
+        "generic": "Another program holds this device directly, so it can't be opened and its ranges come from /proc; close that program or route it through a sound server."
+      }
+    },
+    {
+      "code": "HOST_LIMITS_SINK",
+      "severity": "warning",
+      "hop": "driver_host",
+      "scope": "endpoint",
+      "description": "The sink accepts more than the host pin or device can send.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.sink.present",
+              true
+            ]
+          },
+          {
+            "any": [
+              {
+                "gt": [
+                  "e.sink.max_channels",
+                  "$e.host.max_channels"
+                ]
+              },
+              {
+                "gt": [
+                  "e.sink.max_rate",
+                  "$e.host.max_rate"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.max_channels",
+        "e.host.max_channels",
+        "e.sink.max_rate",
+        "e.host.max_rate"
+      ],
+      "hint": {
+        "generic": "The sink accepts more ({e.sink.max_channels} ch, {e.sink.max_rate} Hz) than this output can send ({e.host.max_channels} ch, {e.host.max_rate} Hz)."
+      }
+    },
+    {
+      "code": "HBR_UNSUPPORTED_PATH",
+      "severity": "warning",
+      "hop": "driver_host",
+      "scope": "endpoint",
+      "description": "An HBR format is advertised but the pin or driver can't carry it.",
+      "when": {
+        "all": [
+          {
+            "nonempty": "e.sink.hbr_codecs"
+          },
+          {
+            "eq": [
+              "e.host.hbr",
+              false
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.sink.hbr_codecs",
+        "e.host.hbr"
+      ],
+      "hint": {
+        "generic": "The sink takes {e.sink.hbr_codecs}, which need high-bit-rate audio, but this output's pin can't carry it: those formats can't be passed through."
+      }
+    },
+    {
+      "code": "USB_BANDWIDTH_LIMITED",
+      "severity": "info",
+      "hop": "driver_host",
+      "scope": "endpoint",
+      "description": "USB class or bus speed caps rate or channels below the device's claims.",
+      "when": {
+        "all": [
+          {
+            "known": "e.usb.claimed_max_rate"
+          },
+          {
+            "gt": [
+              "e.usb.claimed_max_rate",
+              "$e.host.max_rate"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.usb.speed",
+        "e.usb.claimed_max_rate",
+        "e.host.max_rate"
+      ],
+      "hint": {
+        "generic": "The USB device claims {e.usb.claimed_max_rate} Hz but offers {e.host.max_rate} Hz at {e.usb.speed} speed: use a high-speed USB port without a hub."
+      },
+      "inputs_pending": [
+        "e.usb.claimed_max_rate (descriptor clock ranges)"
+      ]
+    },
+    {
+      "code": "BIT_DEPTH_TRUNCATED",
+      "severity": "info",
+      "hop": "whole_path",
+      "scope": "endpoint",
+      "description": "Bit depth drops somewhere on the path.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.server.present",
+              true
+            ]
+          },
+          {
+            "gt": [
+              "e.hw.max_bits",
+              "$e.server.format_bits"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.hw.max_bits",
+        "e.server.format_bits"
+      ],
+      "hint": {
+        "generic": "The device takes {e.hw.max_bits}-bit audio but the server runs it at {e.server.format_bits}-bit."
+      }
+    },
+    {
+      "code": "POWER_SAVE_ACTIVE",
+      "severity": "info",
+      "hop": "driver_host",
+      "scope": "endpoint",
+      "description": "Codec power saving is on (wake-up delay, clicks).",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.driver.module",
+              "snd_hda_intel"
+            ]
+          },
+          {
+            "gt": [
+              "e.driver.power_save",
+              0
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.driver.power_save"
+      ],
+      "hint": {
+        "generic": "HDA codec power saving is on ({e.driver.power_save} s): expect a short delay or a click when playback starts. Set the snd_hda_intel power_save option to 0 to turn it off."
+      },
+      "once": true
+    },
+    {
+      "code": "LINK_BANDWIDTH_LIMITED",
+      "severity": "warning",
+      "hop": "link",
+      "scope": "endpoint",
+      "description": "The active video mode leaves too little room for the requested audio.",
+      "when": {
+        "all": [
+          {
+            "known": "e.link.audio_headroom_bps"
+          },
+          {
+            "lt": [
+              "e.link.audio_headroom_bps",
+              "$e.sink.max_bitrate_bps"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.link.audio_headroom_bps"
+      ],
+      "hint": {
+        "generic": "The current video mode leaves too little room for this audio format: pick a higher-bandwidth mode or a lower audio format."
+      },
+      "inputs_pending": [
+        "e.link.audio_headroom_bps (video timing)"
+      ]
+    },
+    {
+      "code": "ADAPTER_IN_PATH",
+      "severity": "info",
+      "hop": "link",
+      "scope": "endpoint",
+      "description": "A DP-to-HDMI adapter or dock is detected on an HBR path.",
+      "when": {
+        "all": [
+          {
+            "eq": [
+              "e.link.connector_kind",
+              "dp"
+            ]
+          },
+          {
+            "eq": [
+              "e.link.connection",
+              "hdmi"
+            ]
+          },
+          {
+            "nonempty": "e.sink.hbr_codecs"
+          }
+        ]
+      },
+      "evidence": [
+        "e.link.connector_kind",
+        "e.link.connection",
+        "e.sink.hbr_codecs"
+      ],
+      "hint": {
+        "generic": "An HDMI sink on a DisplayPort output means an adapter or dock is in the path; many drop high-bit-rate audio ({e.sink.hbr_codecs})."
+      },
+      "confidence": "inferred"
+    },
+    {
+      "code": "BT_CODEC_UNAVAILABLE",
+      "severity": "warning",
+      "hop": "bluetooth_link",
+      "scope": "endpoint",
+      "description": "The device advertises LDAC or aptX, but the codec isn't enabled or its plugin isn't installed.",
+      "when": {
+        "any": [
+          {
+            "all": [
+              {
+                "contains": [
+                  "e.bt.advertised",
+                  "ldac"
+                ]
+              },
+              {
+                "known": "e.bt.available"
+              },
+              {
+                "not": {
+                  "contains": [
+                    "e.bt.available",
+                    "ldac"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "contains": [
+                  "e.bt.advertised",
+                  "apt_x"
+                ]
+              },
+              {
+                "known": "e.bt.available"
+              },
+              {
+                "not": {
+                  "contains": [
+                    "e.bt.available",
+                    "apt_x"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "contains": [
+                  "e.bt.advertised",
+                  "apt_x_hd"
+                ]
+              },
+              {
+                "known": "e.bt.available"
+              },
+              {
+                "not": {
+                  "contains": [
+                    "e.bt.available",
+                    "apt_x_hd"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.bt.advertised",
+        "e.bt.available"
+      ],
+      "hint": {
+        "generic": "The device supports {e.bt.advertised} but the host offers only {e.bt.available}: install the missing codec plugin for PipeWire.",
+        "debian": "Install libldac and libfreeaptx0 (PipeWire's spa-0.2-bluetooth then offers LDAC and aptX).",
+        "fedora": "Install the LDAC and aptX codecs: pipewire-codec-aptx (RPM Fusion) and libldac.",
+        "arch": "Install libldac and libfreeaptx."
+      }
+    },
+    {
+      "code": "BT_BITRATE_LIMITED",
+      "severity": "warning",
+      "hop": "bluetooth_link",
+      "scope": "endpoint",
+      "description": "The negotiated codec or quality mode is below what both ends support.",
+      "when": {
+        "any": [
+          {
+            "lt": [
+              "e.bt.negotiated_rank",
+              "$e.bt.best_common_rank"
+            ]
+          },
+          {
+            "all": [
+              {
+                "known": "e.bt.ldac_quality"
+              },
+              {
+                "ne": [
+                  "e.bt.ldac_quality",
+                  "hq"
+                ]
+              },
+              {
+                "ne": [
+                  "e.bt.ldac_quality",
+                  "auto"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.bt.negotiated",
+        "e.bt.advertised",
+        "e.bt.available",
+        "e.bt.ldac_quality"
+      ],
+      "hint": {
+        "generic": "{e.bt.negotiated} is in use although both ends support a better codec ({e.bt.available}); pick it in the device's profile settings."
+      }
+    },
+    {
+      "code": "BT_HEADSET_PROFILE_ACTIVE",
+      "severity": "warning",
+      "hop": "bluetooth_link",
+      "scope": "endpoint",
+      "description": "The headset profile is active, dropping playback to voice quality.",
+      "when": {
+        "any": [
+          {
+            "eq": [
+              "e.bt.profile",
+              "hfp_hf"
+            ]
+          },
+          {
+            "eq": [
+              "e.bt.profile",
+              "hfp_ag"
+            ]
+          },
+          {
+            "eq": [
+              "e.bt.profile",
+              "hsp_hs"
+            ]
+          },
+          {
+            "eq": [
+              "e.bt.profile",
+              "hsp_ag"
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "e.bt.profile"
+      ],
+      "hint": {
+        "generic": "The headset profile ({e.bt.profile}) is active, so playback is voice quality: switch the device to A2DP (high fidelity playback) when not on a call."
+      }
+    },
+    {
+      "code": "NO_REALTIME",
+      "severity": "info",
+      "hop": "whole_path",
+      "scope": "system",
+      "description": "No realtime scheduling is available.",
+      "when": {
+        "eq": [
+          "g.realtime.available",
+          false
+        ]
+      },
+      "evidence": [
+        "g.realtime.available"
+      ],
+      "hint": {
+        "generic": "No realtime scheduling (rtkit, portal or RLIMIT_RTPRIO): expect dropouts under load."
+      },
+      "inputs_pending": [
+        "g.realtime.available"
+      ]
+    },
+    {
+      "code": "SANDBOX_PERMISSION_MISSING",
+      "severity": "warning",
+      "hop": "application",
+      "scope": "system",
+      "description": "A layer is hidden because a Flatpak permission or Snap plug is missing; names the exact fix.",
+      "when": {
+        "nonempty": "g.sandbox.missing"
+      },
+      "evidence": [
+        "g.sandbox.kind",
+        "g.sandbox.missing"
+      ],
+      "hint": {
+        "generic": "The sandbox hides parts of the audio system ({g.sandbox.missing}): {g.sandbox.fixes}"
+      }
+    },
+    {
+      "code": "APP_FORMAT_BELOW_SINK",
+      "severity": "info",
+      "hop": "application",
+      "scope": "endpoint",
+      "description": "The app requests less than the path can deliver.",
+      "when": {
+        "any": [
+          {
+            "all": [
+              {
+                "known": "app.channels"
+              },
+              {
+                "lt": [
+                  "app.channels",
+                  "$e.eff.max_channels"
+                ]
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "known": "app.rate"
+              },
+              {
+                "lt": [
+                  "app.rate",
+                  "$e.eff.max_rate"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "evidence": [
+        "app.channels",
+        "e.eff.max_channels",
+        "app.rate",
+        "e.eff.max_rate"
+      ],
+      "hint": {
+        "generic": "The app plays {app.channels} ch at {app.rate} Hz, but this path delivers up to {e.eff.max_channels} ch at {e.eff.max_rate} Hz."
+      }
+    },
+    {
+      "code": "LATENCY_BUDGET_EXCEEDED",
+      "severity": "warning",
+      "hop": "whole_path",
+      "scope": "endpoint",
+      "description": "The end-to-end latency estimate misses an app-supplied target.",
+      "when": {
+        "gt": [
+          "e.path.latency_us",
+          "$app.latency_target_us"
+        ]
+      },
+      "evidence": [
+        "e.path.latency_us",
+        "app.latency_target_us"
+      ],
+      "hint": {
+        "generic": "The estimated end-to-end latency ({e.path.latency_us} µs) misses the app's target ({app.latency_target_us} µs): lower the server quantum or use a direct path."
+      }
+    }
+  ]
+}

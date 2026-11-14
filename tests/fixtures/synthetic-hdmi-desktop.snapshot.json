@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "generation": 1,
   "taken_at_ms": 1794000000000,
   "source": {
@@ -404,6 +404,15 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
       ]
     },
     {
@@ -599,6 +608,87 @@
             "detail": "not a wireless endpoint"
           },
           "caps": {}
+        }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=PCH,DEV=0",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "analog",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
         }
       ]
     },
@@ -801,6 +891,87 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=PCH,DEV=1",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "spdif",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -1001,6 +1172,87 @@
             "detail": "not a wireless endpoint"
           },
           "caps": {}
+        }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=3",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
         }
       ]
     },
@@ -1203,7 +1455,140 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "partial"
+          },
+          "caps": {}
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=HDMI,DEV=7",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "hdmidp",
+              "format": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "bitrate_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
+    }
+  ],
+  "findings": [
+    {
+      "code": "SINK_NOT_PRESENT",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm3p",
+      "access_path": "alsa_direct",
+      "hop": "sink",
+      "evidence": [
+        {
+          "label": "e.sink.present",
+          "value": false,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794000000000
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "Nothing is connected to this output, or it sent no audio capabilities: check the cable and that the display or receiver is on and set to this input."
+      }
+    },
+    {
+      "code": "SINK_NOT_PRESENT",
+      "severity": "info",
+      "endpoint": "alsa:card1/pcm7p",
+      "access_path": "alsa_direct",
+      "hop": "sink",
+      "evidence": [
+        {
+          "label": "e.sink.present",
+          "value": false,
+          "provenance": {
+            "layer": "sink_chain",
+            "source": {
+              "kind": "derived",
+              "from": "rule engine facts"
+            },
+            "read_at_ms": 1794000000000
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "Nothing is connected to this output, or it sent no audio capabilities: check the cable and that the display or receiver is on and set to this input."
+      }
     }
   ]
 }

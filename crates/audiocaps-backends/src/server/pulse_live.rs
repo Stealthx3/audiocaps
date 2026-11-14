@@ -229,6 +229,7 @@ impl PulseSession {
                         },
                         active: false,
                         devices: vec![],
+                        detected_codecs: None,
                     });
                 }
                 for k in super::KEPT_PROPS {

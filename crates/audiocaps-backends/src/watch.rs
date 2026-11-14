@@ -247,7 +247,8 @@ fn run(
         matches!(root, SystemRoot::Live) && scope.layers.includes(&LayerKind::SoundServer);
     let probe = |src: &mut Sources, causes: &[Cause]| {
         let pre = src.prefilled(causes);
-        let mut snap = probe_inner(&root, &scope, &opts, pre);
+        let previous = shared.latest();
+        let mut snap = probe_inner(&root, &scope, &opts, pre, previous.as_deref());
         snap.generation = shared.next_generation();
         shared.publish(snap)
     };
