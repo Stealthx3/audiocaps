@@ -903,10 +903,7 @@
       ],
       "hint": {
         "generic": "No realtime scheduling (rtkit, portal or RLIMIT_RTPRIO): expect dropouts under load."
-      },
-      "inputs_pending": [
-        "g.realtime.available"
-      ]
+      }
     },
     {
       "code": "SANDBOX_PERMISSION_MISSING",

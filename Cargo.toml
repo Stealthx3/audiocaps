@@ -32,7 +32,7 @@ jack = { version = "0.14", default-features = false, features = ["dynamic_loadin
 zbus = "6.2"
 zruntime = "0.2"
 cec_linux = "0.2"
-nix = { version = "0.31", default-features = false, features = ["inotify", "poll"] }
+nix = { version = "0.31", default-features = false, features = ["inotify", "poll", "resource"] }
 
 [workspace.lints.rust]
 unsafe_code = "deny"

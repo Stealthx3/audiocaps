@@ -69,6 +69,7 @@ pub(crate) fn snapshot(
                 kernel: timeout(),
                 sandbox: timeout(),
                 servers: vec![],
+                realtime: None,
             })
         })
     } else {
@@ -94,7 +95,7 @@ pub(crate) fn snapshot(
         ctx.wireless_environment(&mut e);
         e
     });
-    let mut snapshot = Snapshot {
+    Snapshot {
         schema_version: SCHEMA_VERSION.to_string(),
         generation: 1,
         taken_at_ms: now,
@@ -109,9 +110,7 @@ pub(crate) fn snapshot(
         software_codecs: None,
         app_request: None,
         findings: vec![],
-    };
-    snapshot.redact(&RedactionPolicy::default());
-    snapshot
+    }
 }
 
 type Chains = (alsa_conf::Chain, alsa_conf::Chain);

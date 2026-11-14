@@ -59,6 +59,7 @@ pub(crate) fn environment(root: &SystemRoot, now: u64) -> EnvironmentInfo {
         kernel,
         sandbox,
         servers: servers(root, now),
+        realtime: matches!(root, SystemRoot::Live).then(|| crate::realtime::read(now)),
     }
 }
 
