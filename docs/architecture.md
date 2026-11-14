@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 6. Updated at every phase gate._
+_Status: end of phase 7. Updated at every phase gate._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
@@ -44,7 +44,7 @@ the CLI or the FFI crate.
 | `audiocaps-model` | Every exported type: `ProbeScope`, `Snapshot`, `Endpoint`, `LayerCapabilities`, `CapabilitySet`, `EffectiveSet`, `PathReport`/`Hop`, `Finding`, `Value<T>` with `Provenance` and `Confidence`, `Sensitive` and `RedactionPolicy`. Generates the JSON schema. | Do I/O, or assume Linux (Linux identifiers appear only as data). |
 | `audiocaps-parse` | Pure parsers over bytes/text: raw ELD and kernel ELD text, EDID/CTA-861 (SADs, speaker allocation, HDMI/HDMI Forum VSDBs), HDA codec dumps, USB Audio Class descriptors, procfs (cards, pcm, PCM `info`/`status`, USB `stream#`, `hw_params`, raw MIDI, sequencer clients), alsa-lib configuration (syntax with includes and quoted keys; resolves a PCM name such as `default` through its plugin chain, including the lazily loaded per-card definitions), os-release, EDID serial redaction. Maps SADs to model `CodecCapability`. Each parser has a cargo-fuzz target in `fuzz/` (separate workspace, never shipped) and is checked against the captures in `tests/captures.rs`. | Do I/O; panic on any input. |
 | `audiocaps-backends` | `SystemRoot` (live `/` or a fixture tree), the capture `Manifest` format, the `Runtime` (probe thread, per-backend deadlines, snapshot generations and diffs), `probe`/`probe_with`, and the backends: `alsa` (alsa-lib reader and its serializable dump), `sysfs` (codecs, USB streams, driver, PCM state, MIDI), `server` (PipeWire and PulseAudio clients, and parsers for `pw-dump` / `pactl -f json`), `environment`, and `watch` (change events). `servers` decides passively whether a sound server manages the cards. | Read outside the scope; open `/dev` nodes through `SystemRoot`; open a PCM a server manages or that is in use; write any control; run commands (only the CLI's capture does). |
-| `audiocaps-rules` | Quirk packs (`quirks`: bundled JSON pack, overrides by id, matching by PNP id, product, model name or CEC vendor) and, from phase 7, rule packs that turn snapshots into findings. No I/O: callers pass pack text. | Fetch anything from the network. |
+| `audiocaps-rules` | Quirk packs (`quirks`), effective sets and path reports (`paths`), facts from snapshots (`facts`) and the declarative rule engine with the bundled starter pack (`engine`); `analyze(snapshot, previous, rules)`. No I/O: callers pass pack text. See `docs/rules.md`. | Fetch anything from the network; run code from packs. |
 | `audiocaps-ffi` | The C ABI and cbindgen header (phase 9). Only crate allowed `unsafe`. | Contain logic beyond marshalling. |
 | `audiocaps-cli` | `capture`, `import`, `check-redaction`, `replay`, `probe` (through the runtime; `--endpoint`, `--repeat`), `watch`, `alsa-dump`, `server-dump`, `schema`. Owns command execution and text/JSON redaction for captures. | Be linked by applications. |
 
@@ -176,6 +176,14 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
   the sink record, and codec additions/removals mark the sink layer's values `inferred` with a
   `quirk` source.
 
+## Analysis (phase 7)
+
+After assembly, when `effective`, `paths` or `findings` is in scope, the probe loads rule packs
+(bundled, `/usr/share/audiocaps/rules.d`, `/etc/audiocaps/rules.d`, app directories) and calls
+`audiocaps_rules::analyze`: effective sets and path reports per access path, then facts and
+rules. The runtime and watches pass the previous snapshot, for `SINK_CHANGED`. Details, the fact
+catalogue and every rule: `docs/rules.md`.
+
 ## Passive guarantees
 
 - Readers never open device nodes (`SystemRoot` refuses `/dev`).
@@ -200,6 +208,13 @@ Golden snapshots live next to each fixture as `tests/fixtures/<name>.snapshot.js
   PCM open. `scripts/gate-alsa.sh` checks that playback on a busy device is never touched.
 - Note: reading `/proc/asound/cardN/codec#M` makes the HDA driver query the codec (it may resume a
   runtime-suspended codec). It does not open a PCM or change any setting; `alsa-info.sh` does the same.
+
+## Limits at the end of phase 7
+
+- Five starter rules wait for inputs the library doesn't read yet (see `docs/rules.md`):
+  host HBR quirk data, the app's client library version, USB descriptor clock ranges, video
+  timing and realtime scheduling.
+- JACK isn't an access path in effective sets or path reports yet.
 
 ## Limits at the end of phase 6
 

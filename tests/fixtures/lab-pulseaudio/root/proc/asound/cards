@@ -1,8 +1,8 @@
- 0 [VirMIDI        ]: VirMIDI - VirMIDI
-                      Virtual MIDI Card 1
- 1 [Audio          ]: USB-Audio - QEMU USB Audio
+ 0 [Audio          ]: USB-Audio - QEMU USB Audio
                       QEMU QEMU USB Audio at usb-0000:02:00.0-4, full speed
- 2 [Intel_1        ]: HDA-Intel - HDA Intel
+ 1 [Intel_1        ]: HDA-Intel - HDA Intel
                       HDA Intel at 0xfea10000 irq 62
- 3 [Intel          ]: HDA-Intel - HDA Intel
+ 2 [Intel          ]: HDA-Intel - HDA Intel
                       HDA Intel at 0xfca00000 irq 63
+10 [VirMIDI        ]: VirMIDI - VirMIDI
+                      Virtual MIDI Card 1

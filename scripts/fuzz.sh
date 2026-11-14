@@ -9,7 +9,7 @@
 set -uo pipefail
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 cd "$(dirname "$0")/.."
-TARGETS=(eld edid hda_codec usb_descriptors procfs alsa_conf bt_codec)
+TARGETS=(eld edid hda_codec usb_descriptors procfs alsa_conf bt_codec rule_pack)
 F=fuzz
 
 seed_files() { # target dir pattern...
@@ -29,6 +29,7 @@ case "${1:-}" in
     seed_files hda_codec -name 'codec#*'
     seed_files usb_descriptors -name descriptors
     mkdir -p "$F/corpus/bt_codec"; printf '\xff\x2d\x01\x00\x00\xaa\x00\x3c\x07' > "$F/corpus/bt_codec/seed-ldac"; printf '\x00\xff\xff\x02\x35' > "$F/corpus/bt_codec/seed-sbc"
+    mkdir -p "$F/corpus/rule_pack"; for p in crates/audiocaps-rules/packs/*.json; do cp "$p" "$F/corpus/rule_pack/seed-$(basename "$p")"; done
     seed_files alsa_conf -name 'alsa-config*' -o -name 'asound.conf' -o -name '*.conf' -path '*alsa*'
     mkdir -p "$F/corpus/procfs"
     i=0

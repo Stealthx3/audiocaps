@@ -65,10 +65,10 @@ Open items (not phase tasks):
 
 ## Phase 7 — Path reports and rule engine
 
-- [ ] **7.1** Effective sets per access path
-- [ ] **7.2** Path reports: per-hop bit rate, bottleneck, latency
-- [ ] **7.3** Declarative rule engine and starter rule pack
-- [ ] **7.4** Gate: each starter rule fires only when it should
+- [x] **7.1** Effective sets per access path
+- [x] **7.2** Path reports: per-hop bit rate, bottleneck, latency
+- [x] **7.3** Declarative rule engine and starter rule pack
+- [x] **7.4** Gate: each starter rule fires only when it should
 
 ## Phase 8 — Software codecs, active probes
 
