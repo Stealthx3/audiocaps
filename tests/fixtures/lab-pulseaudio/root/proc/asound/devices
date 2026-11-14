@@ -1,15 +1,15 @@
   1:        : sequencer
-  2: [ 0- 0]: raw midi
-  3: [ 0- 1]: raw midi
-  4: [ 0]   : control
-  5: [ 1- 0]: digital audio playback
-  6: [ 1]   : control
-  7: [ 3- 0]: digital audio playback
-  8: [ 3- 0]: digital audio capture
-  9: [ 3- 0]: hardware dependent
- 10: [ 3]   : control
- 11: [ 2- 0]: digital audio playback
- 12: [ 2- 0]: digital audio capture
- 13: [ 2- 0]: hardware dependent
- 14: [ 2]   : control
+  2: [10- 0]: raw midi
+  3: [10- 1]: raw midi
+  4: [10]   : control
+  5: [ 0- 0]: digital audio playback
+  6: [ 0]   : control
+  7: [ 2- 0]: digital audio playback
+  8: [ 2- 0]: digital audio capture
+  9: [ 2- 0]: hardware dependent
+ 10: [ 2]   : control
+ 11: [ 1- 0]: digital audio playback
+ 12: [ 1- 0]: digital audio capture
+ 13: [ 1- 0]: hardware dependent
+ 14: [ 1]   : control
  33:        : timer

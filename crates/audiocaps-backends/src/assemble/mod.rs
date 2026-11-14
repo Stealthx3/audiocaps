@@ -106,6 +106,7 @@ pub(crate) fn snapshot(
         routing,
         servers,
         endpoints,
+        app_request: None,
         findings: vec![],
     };
     snapshot.redact(&RedactionPolicy::default());
@@ -118,10 +119,16 @@ static ROUTING_CACHE: std::sync::Mutex<Option<(u64, Chains)>> = std::sync::Mutex
 
 /// Resolves the `default` chains, cached by configuration text and cards (parsing the
 /// configuration and the per-card files is the slowest part of a probe).
-fn resolve_cached(text: &str, cards: &[CardRef], root: &SystemRoot) -> Result<Chains, String> {
+fn resolve_cached(
+    text: &str,
+    cards: &[CardRef],
+    root: &SystemRoot,
+    pulse_running: bool,
+) -> Result<Chains, (UnknownReason, String)> {
     use std::hash::{Hash, Hasher};
     let mut h = std::collections::hash_map::DefaultHasher::new();
     text.hash(&mut h);
+    pulse_running.hash(&mut h);
     for c in cards {
         (c.index, &c.id, &c.driver, &c.name).hash(&mut h);
     }
@@ -135,9 +142,20 @@ fn resolve_cached(text: &str, cards: &[CardRef], root: &SystemRoot) -> Result<Ch
     {
         return Ok(c.clone());
     }
-    let mut tree = alsa_conf::parse(text).map_err(|e| format!("{e:?}"))?;
+    let mut tree =
+        alsa_conf::parse(text).map_err(|e| (UnknownReason::ParseError, format!("{e:?}")))?;
     // alsa-lib loads the per-card definitions lazily; build them from the same files.
     let loader = |p: &str| root.read_string(p).ok();
+    // Hooks still in the loaded tree (e.g. PulseAudio's pulse_load_if_running).
+    let pending = alsa_conf::apply_hooks(&mut tree, &loader, pulse_running);
+    if let Some(why) = pending.first() {
+        return Err((
+            UnknownReason::NotExposed,
+            format!(
+                "the default device depends on a configuration hook that can't be evaluated here: {why}"
+            ),
+        ));
+    }
     alsa_conf::load_cards(&mut tree, cards, &loader);
     let chains = (
         alsa_conf::resolve_pcm(&tree, "default", Stream::Playback, cards),
@@ -347,10 +365,18 @@ impl Ctx<'_> {
                 name: c.name.clone(),
             })
             .collect();
-        let chains = match resolve_cached(text, &cards, self.root) {
+        // The pulse hook loads its file when a PulseAudio API server answers.
+        let pulse_running = matches!(self.res.pulse, ServerResult::Read { .. })
+            || self
+                .res
+                .alsa
+                .as_ref()
+                .and_then(|d| d.managing_server.as_deref())
+                == Some("pulseaudio");
+        let chains = match resolve_cached(text, &cards, self.root, pulse_running) {
             Ok(c) => c,
-            Err(e) => {
-                let v = Value::unknown(UnknownReason::ParseError, Some(e));
+            Err((reason, e)) => {
+                let v = Value::unknown(reason, Some(e));
                 return Routing {
                     default_playback: v.clone(),
                     default_capture: v,
@@ -1511,9 +1537,24 @@ impl<'a> HostView<'a> {
             .iter()
             .flat_map(|(f, codec, cs)| cs.iter().map(move |n| (*f, *codec, *n)))
             .collect();
+        // An HDMI/DP converter's own channel count and rates don't limit the link: the driver
+        // programs the channel count (up to 8) and HBR. The sink chain states the real limits.
+        let hdmi_conv = !convs.is_empty() && {
+            let pins = self.pins(dir);
+            !pins.is_empty() && pins.iter().all(|(_, p)| p.hdmi() || p.display_port())
+        };
+        if hdmi_conv || (convs.is_empty() && self.hdmi_codec().is_some()) {
+            return (
+                c,
+                unknown_layer(
+                    UnknownReason::NotExposed,
+                    "HDMI/DP converters don't state the link's channel and rate limits; see the sink chain",
+                ),
+            );
+        }
         let Some((file, codec, node)) = convs.first().copied() else {
             let why = if self.hdmi_codec().is_some() {
-                "HDMI PCMs are bound to converters at runtime; per-pin caps arrive with the sink chain in phase 6"
+                "HDMI PCMs are bound to converters at runtime"
             } else if self.data.codecs.is_empty() {
                 "no codec dump or USB stream file for this card"
             } else {

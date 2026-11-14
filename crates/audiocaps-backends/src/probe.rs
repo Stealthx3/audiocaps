@@ -41,7 +41,7 @@ pub fn probe(root: &SystemRoot, scope: &ProbeScope) -> Snapshot {
 
 /// Probes `root` within `scope`, running the backends with the deadlines in `opts`.
 pub fn probe_with(root: &SystemRoot, scope: &ProbeScope, opts: &ProbeOptions) -> Snapshot {
-    probe_inner(root, scope, opts, Prefilled::default())
+    probe_inner(root, scope, opts, Prefilled::default(), None)
 }
 
 /// Server state a caller already holds (the watch keeps live sessions): those backends don't
@@ -59,6 +59,7 @@ pub(crate) fn probe_inner<'a>(
     scope: &ProbeScope,
     opts: &ProbeOptions,
     prefilled: Prefilled<'a>,
+    previous: Option<&Snapshot>,
 ) -> Snapshot {
     let now = root.now_ms();
     let needs_cards =
@@ -132,7 +133,11 @@ pub(crate) fn probe_inner<'a>(
         }
     }
     if sink_wanted(scope) {
-        res.quirks = Some(load_quirks(root, &opts.quirk_dirs));
+        res.quirks = Some(load_packs::<audiocaps_rules::quirks::QuirkSet>(
+            root,
+            "quirks",
+            &opts.quirk_dirs,
+        ));
         if opts.cec {
             tasks.push(Box::new(OneShot {
                 backend: Backend::Cec,
@@ -193,7 +198,17 @@ pub(crate) fn probe_inner<'a>(
         }));
     }
     runtime::run(tasks, opts, &mut res);
-    crate::assemble::snapshot(root, scope, now, &cards, found, res)
+    let mut snap = crate::assemble::snapshot(root, scope, now, &cards, found, res);
+    let f = &scope.fields;
+    if f.includes(&FieldGroup::Effective)
+        || f.includes(&FieldGroup::Paths)
+        || f.includes(&FieldGroup::Findings)
+    {
+        snap.app_request = opts.app.clone();
+        let rules = load_packs::<audiocaps_rules::RuleSet>(root, "rules", &opts.rule_dirs);
+        audiocaps_rules::analyze(&mut snap, previous, &rules);
+    }
+    snap
 }
 
 /// Results the backend tasks hand over.
@@ -959,18 +974,15 @@ fn read_cec(root: &SystemRoot) -> Outcome<crate::cec::CecDump> {
     }
 }
 
-/// System quirk directories, read through the probed root.
-const QUIRK_DIRS: [&str; 2] = ["/usr/share/audiocaps/quirks.d", "/etc/audiocaps/quirks.d"];
-
-/// The bundled quirk pack, then system packs, then the application's.
-fn load_quirks(
-    root: &SystemRoot,
-    app_dirs: &[std::path::PathBuf],
-) -> audiocaps_rules::quirks::QuirkSet {
-    let mut texts: Vec<(String, String)> =
-        vec![("bundled".into(), audiocaps_rules::quirks::BUNDLED.into())];
-    for d in QUIRK_DIRS {
-        let Ok(entries) = root.read_dir(d) else {
+/// Loads the bundled rule pack, then system packs (`/usr/share/audiocaps/<kind>.d`,
+/// `/etc/audiocaps/<kind>.d`), then the application's directories.
+fn load_packs<T: PackSet>(root: &SystemRoot, kind: &str, app_dirs: &[std::path::PathBuf]) -> T {
+    let mut texts: Vec<(String, String)> = vec![("bundled".into(), T::BUNDLED.into())];
+    for d in [
+        format!("/usr/share/audiocaps/{kind}.d"),
+        format!("/etc/audiocaps/{kind}.d"),
+    ] {
+        let Ok(entries) = root.read_dir(&d) else {
             continue;
         };
         for e in entries.iter().filter(|e| e.name.ends_with(".json")) {
@@ -996,7 +1008,26 @@ fn load_quirks(
             }
         }
     }
-    audiocaps_rules::quirks::QuirkSet::load(texts.iter().map(|(o, t)| (o.clone(), t.as_str())))
+    T::load_texts(&texts)
+}
+
+trait PackSet {
+    const BUNDLED: &'static str;
+    fn load_texts(texts: &[(String, String)]) -> Self;
+}
+
+impl PackSet for audiocaps_rules::RuleSet {
+    const BUNDLED: &'static str = audiocaps_rules::engine::BUNDLED;
+    fn load_texts(texts: &[(String, String)]) -> Self {
+        Self::load(texts.iter().map(|(o, t)| (o.clone(), t.as_str())))
+    }
+}
+
+impl PackSet for audiocaps_rules::quirks::QuirkSet {
+    const BUNDLED: &'static str = audiocaps_rules::quirks::BUNDLED;
+    fn load_texts(texts: &[(String, String)]) -> Self {
+        Self::load(texts.iter().map(|(o, t)| (o.clone(), t.as_str())))
+    }
 }
 
 fn read_jack(root: &SystemRoot) -> Outcome<crate::jack::JackDump> {

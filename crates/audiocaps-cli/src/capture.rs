@@ -509,6 +509,18 @@ pub fn capture(opts: &Options) -> io::Result<PathBuf> {
     st.copy_tree(Path::new("/proc/asound"), 5);
     // alsa-lib's per-card and PCM definitions, used to resolve the default device's plugin chain.
     st.copy(Path::new("/usr/share/alsa/alsa.conf"));
+    // Files hooks load (pulse-alsa.conf and the like) sit next to it.
+    if let Ok(rd) = fs::read_dir("/usr/share/alsa") {
+        let mut v: Vec<_> = rd
+            .flatten()
+            .map(|e| e.path())
+            .filter(|p| p.extension().is_some_and(|x| x == "conf") && p.is_file())
+            .collect();
+        v.sort();
+        for p in v {
+            st.copy(&p);
+        }
+    }
     st.copy_tree(Path::new("/usr/share/alsa/cards"), 1);
     st.copy_tree(Path::new("/usr/share/alsa/pcm"), 1);
     for f in [

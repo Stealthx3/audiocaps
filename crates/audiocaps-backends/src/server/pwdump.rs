@@ -184,6 +184,10 @@ fn device(o: &Value) -> Option<Device> {
                 .as_array()
                 .map(|a| a.iter().filter_map(as_u32).collect())
                 .unwrap_or_default(),
+            // info: [count, key, value, key, value, …]
+            detected_codecs: e["info"]
+                .as_array()
+                .and_then(|a| super::detected_codecs(a.iter().skip(1).filter_map(Value::as_str))),
         });
     }
     copy_props(p, &mut dev.props);
