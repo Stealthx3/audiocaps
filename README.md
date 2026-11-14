@@ -6,8 +6,6 @@
 **100% complete** · 46 of 46 tasks · All phases complete · [Full progress page →](https://stealthx3.github.io/audiocaps/)
 <!-- progress:end -->
 
-> "AudioCaps" is a working name; the final name is still to be decided.
-
 AudioCaps is a library that applications bundle to learn exactly what audio the
 system can deliver, and where anything is lost on the way. It covers the whole
 path, from the connected TV or AV receiver back through host hardware, kernel

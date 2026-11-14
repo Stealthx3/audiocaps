@@ -36,10 +36,8 @@ and libpulse dynamically; libjack is loaded lazily when present.
 
 ## Before tagging (decisions for Micaiah)
 
-1. **Final library name.** The plan still lists "final library name, after a collision check"
-   as open. The name is baked into the soname, the header, the `ac_` prefix, the CLI and the
-   schema file name. Renaming after 1.0 means a new soname and breaks every consumer. Either
-   confirm "AudioCaps" for 1.0, or rename first.
+1. **Final library name: settled.** Micaiah confirmed "AudioCaps" on 2026-11-14. The soname
+   `libaudiocaps.so.1`, the header, the `ac_` prefix and the CLI keep their names.
 2. **Sandbox gate on the HTPC.** The plan names the HTPC as the rig that runs the sandbox release
    gate on real hardware. The gate ran in lab guests with emulated HDA and CEC. Running the
    Flatpak and the snap on the HTPC needs a one-time exception for each test.
