@@ -6,7 +6,7 @@ file, `docs/DECISIONS.md`, `docs/USAGE-PLAN.md` and the full plan in
 
 ## What this is
 
-AudioCaps (working name) is a library that applications bundle to learn what
+AudioCaps is a library that applications bundle to learn what
 audio the system can really deliver, and where anything is lost on the way:
 from the TV or AV receiver (EDID/ELD, CEC) back through host hardware, kernel
 drivers, ALSA, the sound server (PipeWire, WirePlumber, PulseAudio, JACK) and
