@@ -219,6 +219,9 @@ pub fn global(s: &Snapshot) -> Facts {
             }
             Sandbox::None => json!([]),
         });
+        if let Some(available) = env.realtime.as_ref().and_then(|r| r.available) {
+            f.set("g.realtime.available", json!(available));
+        }
         f.set_value("g.sandbox.fixes", &env.sandbox, |sb| match sb {
             Sandbox::Flatpak { missing, .. } | Sandbox::Snap { missing, .. } => {
                 json!(missing.iter().map(|g| &g.fix).collect::<Vec<_>>())

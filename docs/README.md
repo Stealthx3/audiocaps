@@ -8,11 +8,12 @@
 | [architecture.md](architecture.md) | Crate boundaries, key types and passive guarantees as built |
 | [USAGE-PLAN.md](USAGE-PLAN.md) | How Claude routes models, agents and tools for this project |
 | [LAB.md](LAB.md) | The libvirt lab guests used to build and test |
+| [consumers.md](consumers.md) | Using the C API from C, C++, Python and .NET; the mpv option mapping |
+| [rules.md](rules.md) | Facts, the rule language and every bundled rule |
+| [../packaging/README.md](../packaging/README.md) | Flatpak and Snap permission templates and the sandbox gate results |
 | [standards/](standards/) | Shared working standards that apply to this project |
 | `progress/` | Generated progress page (GitHub Pages) and README badge |
 | `postmortem/` | Session journal, and the post-mortem at project end |
 | `plan/` | Local review copies of the development plan, local notes and the kickoff prompt. Git-ignored by design |
 
-Architecture notes, the JSON schema reference, consumer guides (C, C++, Python,
-.NET, mpv mapping) and Flatpak/Snap packaging templates are added here as the
-roadmap phases deliver them.
+The JSON schema reference is in [../schema/README.md](../schema/README.md).

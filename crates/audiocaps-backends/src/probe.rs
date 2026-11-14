@@ -212,6 +212,19 @@ pub(crate) fn probe_inner<'a>(
             pending: None,
         }));
     }
+    if scope.layers.includes(&LayerKind::Environment) && matches!(root, SystemRoot::Live) {
+        tasks.push(Box::new(OneShot {
+            backend: Backend::Environment,
+            run: Some(Box::new(move |out: &mut Results| {
+                out.realtime = Some(crate::realtime::read(now))
+            })),
+            on_timeout: Box::new(move |out: &mut Results| {
+                out.realtime = Some(crate::realtime::timed_out(now))
+            }),
+            rx: None,
+            pending: None,
+        }));
+    }
     if scope.layers.includes(&LayerKind::Environment) {
         tasks.push(Box::new(EnvTask {
             root,
@@ -274,6 +287,8 @@ pub(crate) fn probe_inner<'a>(
         let rules = load_packs::<audiocaps_rules::RuleSet>(root, "rules", &opts.rule_dirs);
         audiocaps_rules::analyze(&mut snap, previous, &rules);
     }
+    // Sensitive values are redacted unless the application opted out.
+    snap.redact(&opts.redaction.clone().unwrap_or_default());
     snap
 }
 
@@ -289,6 +304,8 @@ pub(crate) struct Results {
     pub alsa_timed_out: bool,
     pub environment: Option<EnvironmentInfo>,
     pub env_timed_out: bool,
+    /// Realtime availability (live system only), merged into the environment.
+    pub realtime: Option<audiocaps_model::Realtime>,
     pub pipewire: ServerResult,
     pub pulse: ServerResult,
     /// BlueZ: `None` when not in scope.
@@ -844,6 +861,31 @@ impl<'a> ServerTask<'a> {
     }
 }
 
+/// A failed connection. In a strict snap the sockets are visible whatever the plugs, and
+/// AppArmor refuses the connection when the plug isn't connected: that's a permission gap.
+fn refused(kind: ServerKind, e: String) -> ServerResult {
+    let snap = std::env::var("SNAP_NAME").ok();
+    // Not "Connection refused": that is a stale socket of a stopped server, not AppArmor.
+    let denied = ["Creation failed", "Access denied", "Permission denied"]
+        .iter()
+        .any(|m| e.contains(m));
+    match snap {
+        Some(name) if denied => {
+            let plug = match kind {
+                ServerKind::PipeWire => "pipewire",
+                ServerKind::PulseAudio => "audio-playback",
+            };
+            ServerResult::Skipped {
+                reason: UnknownReason::NotGranted,
+                detail: format!(
+                    "the snap's confinement refused the connection ({e}); snap connect {name}:{plug}"
+                ),
+            }
+        }
+        _ => ServerResult::Failed(e),
+    }
+}
+
 impl Task<Results> for ServerTask<'_> {
     fn backend(&self) -> Backend {
         match self.kind {
@@ -863,24 +905,25 @@ impl Task<Results> for ServerTask<'_> {
         }
         let step = match &mut self.session {
             Session::None => {
-                let allowed = match self.kind {
-                    ServerKind::PipeWire => presence::pipewire(self.root),
-                    ServerKind::PulseAudio => presence::pulse(self.root),
-                };
-                if let Err(skip) = allowed {
-                    self.result = Some(ServerResult::Skipped {
-                        reason: skip.reason,
-                        detail: skip.detail,
-                    });
-                    return true;
-                }
                 let connected = match self.kind {
-                    ServerKind::PipeWire => PwSession::connect().map(Session::Pw),
-                    ServerKind::PulseAudio => PulseSession::connect().map(Session::Pulse),
+                    ServerKind::PipeWire => presence::pipewire(self.root)
+                        .map(|socket| PwSession::connect(&socket).map(Session::Pw)),
+                    ServerKind::PulseAudio => presence::pulse(self.root)
+                        .map(|server| PulseSession::connect(server.as_deref()).map(Session::Pulse)),
+                };
+                let connected = match connected {
+                    Ok(c) => c,
+                    Err(skip) => {
+                        self.result = Some(ServerResult::Skipped {
+                            reason: skip.reason,
+                            detail: skip.detail,
+                        });
+                        return true;
+                    }
                 };
                 match connected {
                     Ok(s) => self.session = s,
-                    Err(e) => self.result = Some(ServerResult::Failed(e)),
+                    Err(e) => self.result = Some(refused(self.kind, e)),
                 }
                 return self.result.is_some();
             }
@@ -896,7 +939,7 @@ impl Task<Results> for ServerTask<'_> {
                 })
             }
             Ok(None) => {}
-            Err(e) => self.result = Some(ServerResult::Failed(e)),
+            Err(e) => self.result = Some(refused(self.kind, e)),
         }
         self.result.is_some()
     }
@@ -981,6 +1024,9 @@ impl Task<Results> for OneShot<'_> {
                 }
                 if r.active.is_some() {
                     out.active = r.active;
+                }
+                if r.realtime.is_some() {
+                    out.realtime = r.realtime;
                 }
             }
             None if timed_out => (self.on_timeout)(out),

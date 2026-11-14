@@ -132,17 +132,20 @@ fn flatpak_without_audio_names_the_required_fix() {
 }
 
 #[test]
-fn snap_without_hardware_observe_and_jack_state() {
+fn snap_plugs_not_guessed_from_a_capture_and_jack_state() {
     let s = snap("synthetic-snap-jack");
     let Sandbox::Snap { missing, .. } = sandbox(&s) else {
         panic!("snap")
     };
-    let hw = missing
-        .iter()
-        .find(|g| g.permission == "hardware-observe")
-        .expect("hardware-observe gap");
-    assert!(hw.layers.contains(&LayerKind::HostHardware));
-    assert!(hw.fix.contains("snap connect") && hw.fix.ends_with(":hardware-observe"));
+    // Plugs are judged by what AppArmor lets the live process read (the sandbox gate checks
+    // that); a capture holds no confinement, so nothing is claimed missing.
+    assert!(
+        missing
+            .iter()
+            .all(|g| !["hardware-observe", "alsa", "kernel-module-observe"]
+                .contains(&g.permission.as_str())),
+        "{missing:?}"
+    );
     let jack = s
         .servers
         .iter()

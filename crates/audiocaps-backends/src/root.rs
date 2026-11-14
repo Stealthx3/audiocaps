@@ -166,6 +166,19 @@ impl SystemRoot {
         }
     }
 
+    /// Whether `path` is a Unix socket (following symlinks). Fixtures hold no sockets, so there it
+    /// means the path exists (captures record socket paths as placeholders).
+    pub fn is_socket(&self, path: &str) -> bool {
+        use std::os::unix::fs::FileTypeExt;
+        match self {
+            Self::Live => relative(path)
+                .ok()
+                .and_then(|r| fs::metadata(Path::new("/").join(r)).ok())
+                .is_some_and(|m| m.file_type().is_socket()),
+            Self::Fixture(_) => self.exists(path),
+        }
+    }
+
     /// Lists a directory, sorted by name. Entry kinds are not followed through symlinks.
     pub fn read_dir(&self, path: &str) -> io::Result<Vec<DirEntry>> {
         let dir = match self {

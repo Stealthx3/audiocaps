@@ -78,7 +78,7 @@ Open items (not phase tasks):
 
 ## Phase 9 — C ABI, docs, packaging
 
-- [ ] **9.1** C ABI with cbindgen header, events by callback or pollable fd
-- [ ] **9.2** Consumer docs: C, C++, Python, .NET, mpv mapping
-- [ ] **9.3** Flatpak and Snap permission templates
-- [ ] **9.4** Gate: doc examples pass; sandbox release gate passes
+- [x] **9.1** C ABI with cbindgen header, events by callback or pollable fd
+- [x] **9.2** Consumer docs: C, C++, Python, .NET, mpv mapping
+- [x] **9.3** Flatpak and Snap permission templates
+- [x] **9.4** Gate: doc examples pass; sandbox release gate passes

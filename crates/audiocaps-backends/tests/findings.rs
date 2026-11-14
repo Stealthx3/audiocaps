@@ -84,7 +84,8 @@ fn every_fixture_fires_exactly_what_it_should() {
     expect(
         "synthetic-snap-jack",
         o(),
-        &[("SANDBOX_PERMISSION_MISSING", 1)],
+        // Snap plugs are judged on the live system only (see tests/gaps.rs).
+        &[],
     );
     expect("synthetic-hdmi-desktop", o(), &[("SINK_NOT_PRESENT", 2)]);
     // Without CEC the receiver can't be seen; with it, the TV is shown to drop TrueHD.
