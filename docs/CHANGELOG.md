@@ -103,6 +103,15 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   idle device (silent PCM, or IEC 61937 pause bursts through `hdmi:`/`iec958:`, whose hooks
   restore the IEC 958 status); refused on busy or server-managed devices.
 - Schema 1.6.0 (additive): `Snapshot.software_codecs`, `Endpoint.active_probe`.
+- C API: `libaudiocaps.so.1` and the generated header `include/audiocaps.h`. Opaque context,
+  snapshot and watch handles; JSON scope and options; `ac_can_play` (yes, no or unknown with the
+  reason); watches by callback thread or pollable fd plus dispatch.
+- Probe option `redaction`: redaction stays on by default; apps can opt out (`"redact": false`).
+- Consumer guide (`docs/consumers.md`) with C, C++, Python (ctypes) and .NET (P/Invoke) examples
+  that print identical output, and an mpv option mapping.
+- Realtime availability in the environment layer (`RLIMIT_RTPRIO`, rtkit, the Realtime portal),
+  read passively; the `NO_REALTIME` finding now fires.
+- Schema 1.7.0 (additive): `EnvironmentInfo.realtime`.
 
 ### Changed
 

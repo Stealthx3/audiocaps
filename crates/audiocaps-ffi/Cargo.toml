@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 [package]
 name = "audiocaps-ffi"
-description = "AudioCaps C ABI; the shared library apps bundle (phase 9)"
+description = "AudioCaps C ABI; the shared library apps bundle"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -11,10 +11,15 @@ publish.workspace = true
 
 [lib]
 name = "audiocaps"
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 audiocaps-model.workspace = true
 audiocaps-backends.workspace = true
+audiocaps-rules.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+nix = { workspace = true, features = ["fs"] }
 
 [lints]
 workspace = true

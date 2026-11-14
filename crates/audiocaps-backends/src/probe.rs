@@ -274,6 +274,8 @@ pub(crate) fn probe_inner<'a>(
         let rules = load_packs::<audiocaps_rules::RuleSet>(root, "rules", &opts.rule_dirs);
         audiocaps_rules::analyze(&mut snap, previous, &rules);
     }
+    // Sensitive values are redacted unless the application opted out.
+    snap.redact(&opts.redaction.clone().unwrap_or_default());
     snap
 }
 
