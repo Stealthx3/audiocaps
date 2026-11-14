@@ -677,6 +677,15 @@ fn route(v: &Value) -> Option<Route> {
         available: availability(o, ss::SPA_PARAM_ROUTE_available),
         active: false,
         devices,
+        detected_codecs: match prop(o, ss::SPA_PARAM_ROUTE_info) {
+            Some(Value::Struct(fields)) => {
+                super::detected_codecs(fields.iter().skip(1).filter_map(|f| match f {
+                    Value::String(s) => Some(s.as_str()),
+                    _ => None,
+                }))
+            }
+            _ => None,
+        },
     })
 }
 

@@ -96,6 +96,7 @@ pub fn parse(info: &Value, list: Option<&Value>) -> Option<ServerDump> {
                     available: port_available(pt["availability"].as_str()),
                     active: active_ports.iter().any(|(c, p)| *c == id && p == name),
                     devices: vec![],
+                    detected_codecs: None,
                 });
             }
         }

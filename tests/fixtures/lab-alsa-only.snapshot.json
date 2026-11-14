@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "generation": 1,
   "taken_at_ms": 1794362483081,
   "source": {
@@ -772,6 +772,71 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            }
+          }
+        }
       ]
     },
     {
@@ -1288,6 +1353,209 @@
             "detail": "not a wireless endpoint"
           },
           "caps": {}
+        }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 96000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=Intel_1,DEV=0",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 96000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "analog",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 96000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
         }
       ]
     },
@@ -1806,6 +2074,71 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            }
+          }
+        }
       ]
     },
     {
@@ -2323,6 +2656,209 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  16000,
+                  22050,
+                  32000,
+                  44100,
+                  48000,
+                  88200,
+                  96000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 96000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=Intel,DEV=0",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 96000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "analog",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 96000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 3072000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -2798,6 +3334,212 @@
           },
           "caps": {}
         }
+      ],
+      "effective": [
+        {
+          "access_path": "alsa_direct",
+          "availability": {
+            "state": "read"
+          },
+          "caps": {
+            "sample_formats": {
+              "state": "known",
+              "value": [
+                "s16_le"
+              ],
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "rates": {
+              "state": "known",
+              "value": {
+                "kind": "discrete",
+                "rates_hz": [
+                  48000
+                ]
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            },
+            "channels": {
+              "state": "known",
+              "value": {
+                "min": 2,
+                "max": 2
+              },
+              "confidence": "inferred",
+              "provenance": {
+                "layer": "environment",
+                "source": {
+                  "kind": "derived",
+                  "from": "intersection of the path's layers"
+                },
+                "read_at_ms": 1794362483081
+              }
+            }
+          }
+        }
+      ],
+      "paths": [
+        {
+          "access_path": "alsa_direct",
+          "hops": [
+            {
+              "kind": "application",
+              "label": "application",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 1536000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "alsa",
+              "label": "hw:CARD=Audio,DEV=0",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 1536000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            },
+            {
+              "kind": "driver_host",
+              "label": "usb",
+              "format": {
+                "state": "known",
+                "value": {
+                  "codec": "lpcm",
+                  "rate_hz": 48000,
+                  "channels": 2
+                },
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "bitrate_bps": {
+                "state": "known",
+                "value": 1536000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "ceiling_bps": {
+                "state": "known",
+                "value": 12000000,
+                "confidence": "inferred",
+                "provenance": {
+                  "layer": "environment",
+                  "source": {
+                    "kind": "derived",
+                    "from": "path report"
+                  },
+                  "read_at_ms": 1794362483081
+                }
+              },
+              "latency_us": {
+                "state": "unknown",
+                "reason": "not_exposed"
+              }
+            }
+          ],
+          "latency_us": {
+            "state": "unknown",
+            "reason": "not_exposed",
+            "detail": "no hop states its latency"
+          }
+        }
       ]
     },
     {
@@ -3195,6 +3937,63 @@
           }
         }
       ]
+    }
+  ],
+  "findings": [
+    {
+      "code": "ALSA_PLUGIN_CONVERSION",
+      "severity": "info",
+      "hop": "alsa",
+      "evidence": [
+        {
+          "label": "g.routing.playback_kinds",
+          "value": [
+            "empty",
+            "asym",
+            "plug",
+            "softvol",
+            "dmix",
+            "hw"
+          ],
+          "provenance": {
+            "layer": "alsa_userspace",
+            "source": {
+              "kind": "command",
+              "name": "alsa"
+            },
+            "read_at_ms": 1794362483081
+          }
+        }
+      ],
+      "confidence": "inferred",
+      "hint": {
+        "text": "The ALSA default device goes through empty, asym, plug, softvol, dmix, hw: apps using it get converted, mixed or software-volume audio. Open hw:CARD,DEV directly for bit-perfect output."
+      }
+    },
+    {
+      "code": "POWER_SAVE_ACTIVE",
+      "severity": "info",
+      "endpoint": "alsa:card0/pcm0c",
+      "access_path": "alsa_direct",
+      "hop": "driver_host",
+      "evidence": [
+        {
+          "label": "e.driver.power_save",
+          "value": 10,
+          "provenance": {
+            "layer": "kernel_driver",
+            "source": {
+              "kind": "file",
+              "path": "/sys/module/snd_hda_intel/parameters"
+            },
+            "read_at_ms": 1794362483081
+          }
+        }
+      ],
+      "confidence": "measured",
+      "hint": {
+        "text": "HDA codec power saving is on (10 s): expect a short delay or a click when playback starts. Set the snd_hda_intel power_save option to 0 to turn it off."
+      }
     }
   ]
 }

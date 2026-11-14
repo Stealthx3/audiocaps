@@ -66,6 +66,10 @@ pub struct ProbeOptions {
     /// Extra quirk-pack directories from the application's bundle; they override the bundled
     /// pack and the system directories.
     pub quirk_dirs: Vec<std::path::PathBuf>,
+    /// Extra rule-pack directories from the application's bundle (override by code).
+    pub rule_dirs: Vec<std::path::PathBuf>,
+    /// What the application intends to play (for findings that compare against it).
+    pub app: Option<audiocaps_model::AppRequest>,
 }
 
 impl Default for ProbeOptions {
@@ -75,6 +79,8 @@ impl Default for ProbeOptions {
             deadlines: vec![],
             cec: false,
             quirk_dirs: vec![],
+            rule_dirs: vec![],
+            app: None,
         }
     }
 }
@@ -87,6 +93,8 @@ impl ProbeOptions {
             deadlines: vec![],
             cec: false,
             quirk_dirs: vec![],
+            rule_dirs: vec![],
+            app: None,
         }
     }
 
@@ -98,6 +106,18 @@ impl ProbeOptions {
         {
             self.deadlines.push((Backend::Cec, Duration::from_secs(5)));
         }
+        self
+    }
+
+    /// Adds an application rule-pack directory.
+    pub fn with_rule_dir(mut self, dir: impl Into<std::path::PathBuf>) -> Self {
+        self.rule_dirs.push(dir.into());
+        self
+    }
+
+    /// Says what the application intends to play.
+    pub fn with_app(mut self, app: audiocaps_model::AppRequest) -> Self {
+        self.app = Some(app);
         self
     }
 
@@ -246,12 +266,21 @@ impl Runtime {
     pub fn new(root: SystemRoot) -> std::io::Result<Self> {
         let (tx, rx) = mpsc::channel::<Request>();
         let thread_root = root.clone();
+        let shared = Arc::new(Shared::default());
+        let thread_shared = shared.clone();
         let worker = thread::Builder::new()
             .name("audiocaps-probe".into())
             .spawn(move || {
                 let root = thread_root;
                 for req in rx {
-                    let mut snap = crate::probe::probe_with(&root, &req.scope, &req.opts);
+                    let previous = thread_shared.latest();
+                    let mut snap = crate::probe::probe_inner(
+                        &root,
+                        &req.scope,
+                        &req.opts,
+                        crate::probe::Prefilled::default(),
+                        previous.as_deref(),
+                    );
                     snap.generation = req.generation;
                     // The caller may have given up; a late result is dropped.
                     let _ = req.reply.send(snap);
@@ -259,7 +288,7 @@ impl Runtime {
             })?;
         Ok(Self {
             tx: Some(tx),
-            shared: Arc::new(Shared::default()),
+            shared,
             root,
             worker: Some(worker),
         })
@@ -362,6 +391,7 @@ fn timed_out(scope: &ProbeScope, generation: u64, why: &str) -> Snapshot {
         routing: None,
         servers: vec![],
         endpoints: vec![],
+        app_request: None,
         findings: vec![],
     }
 }

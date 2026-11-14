@@ -560,6 +560,10 @@ impl Ctx<'_> {
                                     description: r.description.clone(),
                                     available: r.available,
                                     active: r.active,
+                                    detected_passthrough: r
+                                        .detected_codecs
+                                        .as_ref()
+                                        .map(|v| v.iter().filter_map(|c| codec(c)).collect()),
                                 })
                                 .collect(),
                             p("EnumRoute"),

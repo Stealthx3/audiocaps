@@ -13,7 +13,7 @@ use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
 use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 6)
+audiocaps — AudioCaps command-line tool (phase 7)
 
 USAGE:
   audiocaps capture [--out DIR] [--label NAME] [--cec]
@@ -27,12 +27,15 @@ USAGE:
       Re-apply the redaction rules to an extracted fixture (after a rule change).
   audiocaps replay <fixture-dir>
       Probe a fixture with the full scope and print the snapshot as JSON.
-  audiocaps probe [--endpoint ID]... [--unbounded] [--repeat N] [--quiet] [--cec] [--quirk-dir DIR]...
+  audiocaps probe [--endpoint ID]... [--unbounded] [--repeat N] [--quiet] [--cec]
+                  [--quirk-dir DIR]... [--rule-dir DIR]... [--app-channels N] [--app-rate HZ]
+                  [--app-endpoint ID] [--app-bits N] [--latency-target-us US]
       Probe the live system through the runtime (per-backend deadlines, 150 ms default) and
       print the last snapshot as JSON. --endpoint limits the scope to those endpoints;
       --repeat probes N times and prints each probe's time to stderr; --quiet skips the JSON.
-      --cec opts in to CEC queries (sends query messages on HDMI-CEC); --quirk-dir adds an
-      application quirk-pack directory.
+      --cec opts in to CEC queries (sends query messages on HDMI-CEC); --quirk-dir and
+      --rule-dir add application pack directories; --app-channels, --app-rate, --app-bits and
+      --latency-target-us describe what the app will play (inputs to findings).
   audiocaps watch [--endpoint ID]... [--count N]
       Watch the live system and print one line per update: what triggered it, what changed and
       the time from the event to the new snapshot. Stops after N updates (default: never).
@@ -131,6 +134,29 @@ fn cmd_probe(args: &[String]) -> Result<(), String> {
             "--cec" => opts = opts.with_cec(),
             "--quirk-dir" => {
                 opts = opts.with_quirk_dir(it.next().ok_or("--quirk-dir needs a directory")?)
+            }
+            "--rule-dir" => {
+                opts = opts.with_rule_dir(it.next().ok_or("--rule-dir needs a directory")?)
+            }
+            "--app-endpoint" => {
+                let id = it.next().ok_or("--app-endpoint needs an id")?;
+                let mut app = opts.app.clone().unwrap_or_default();
+                app.endpoint = Some(EndpointId(id.clone()));
+                opts = opts.with_app(app);
+            }
+            "--app-channels" | "--app-rate" | "--app-bits" | "--latency-target-us" => {
+                let v: u32 = it
+                    .next()
+                    .and_then(|n| n.parse().ok())
+                    .ok_or(format!("{a} needs a number"))?;
+                let mut app = opts.app.clone().unwrap_or_default();
+                match a.as_str() {
+                    "--app-channels" => app.channels = u8::try_from(v).ok(),
+                    "--app-rate" => app.rate_hz = Some(v),
+                    "--app-bits" => app.bits = u8::try_from(v).ok(),
+                    _ => app.latency_target_us = Some(v),
+                }
+                opts = opts.with_app(app);
             }
             other => return Err(format!("unknown option {other}")),
         }

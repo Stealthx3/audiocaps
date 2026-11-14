@@ -76,6 +76,17 @@
         "$ref": "#/$defs/Endpoint"
       }
     },
+    "app_request": {
+      "description": "What the application said it intends to play, when it said so (inputs to findings).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppRequest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "findings": {
       "description": "Findings, when in scope.",
       "type": "array",
@@ -94,7 +105,7 @@
     "layers",
     "endpoints"
   ],
-  "x-audiocaps-schema-version": "1.4.0",
+  "x-audiocaps-schema-version": "1.5.0",
   "$defs": {
     "SnapshotSource": {
       "description": "What a snapshot was taken from.",
@@ -3293,6 +3304,20 @@
       "description": "HDMI link limits and latency stated by a sink.",
       "type": "object",
       "properties": {
+        "connector": {
+          "description": "The GPU connector, e.g. `card1-HDMI-A-2`, `card0-DP-1`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "connection": {
+          "description": "What the sink says the link is (`hdmi`, `displayport`), from the ELD.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "physical_address": {
           "description": "CEC physical address as a 16-bit number (`0x1000` is input 1 of the root display).",
           "type": [
@@ -5706,6 +5731,16 @@
         "active": {
           "description": "The active route.",
           "type": "boolean"
+        },
+        "detected_passthrough": {
+          "description": "Compressed formats the server detected on this route from the sink (PipeWire\n`iec958.codecs.detected`), when it publishes them.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/Codec"
+          }
         }
       },
       "required": [
@@ -6420,6 +6455,72 @@
     "FindingCode": {
       "description": "Stable finding code, e.g. `PASSTHROUGH_NOT_ENABLED`. Codes come from rule packs, so this is a\nstring rather than a closed enum; codes are never reused for a different meaning.",
       "type": "string"
+    },
+    "AppRequest": {
+      "description": "What the application intends to play, for findings that compare against it.",
+      "type": "object",
+      "properties": {
+        "endpoint": {
+          "description": "The endpoint the app plays to; app findings are about it alone. Without it they apply to\nevery endpoint in scope.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EndpointId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codec": {
+          "description": "Codec the app plays (LPCM or a compressed format for passthrough).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Codec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "channels": {
+          "description": "Channels.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "rate_hz": {
+          "description": "Sample rate in Hz.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "bits": {
+          "description": "Bits per sample.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "latency_target_us": {
+          "description": "End-to-end latency target in microseconds.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        }
+      }
     },
     "Finding": {
       "description": "A diagnostic finding.",
