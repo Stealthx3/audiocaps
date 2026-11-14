@@ -1,10 +1,22 @@
 # Changelog
 
 All notable changes to this project are documented here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project will
-use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html). The version covers the C ABI
+(`libaudiocaps.so.1`, `AC_ABI_VERSION`) and the snapshot schema (`schema_version`, additive
+within v1).
 
 ## [Unreleased]
+
+## [1.0.0] - release candidate (date set when tagged)
+
+First release for Linux. AudioCaps reports what audio the system can really deliver, from the
+TV or receiver back through the host hardware, drivers, ALSA, the sound server and the sandbox
+to the application, and where anything is lost on the way. It runs fully in-process inside
+Flatpak and Snap, is passive by default, and probes only what the application asks for.
+
+Ships as `libaudiocaps.so.1` with the C header `audiocaps.h` (C ABI 1), the `audiocaps`
+command-line tool and snapshot schema 1.7.0.
 
 ### Added
 

@@ -13,9 +13,11 @@ use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
 use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 9)
+audiocaps — AudioCaps command-line tool
 
 USAGE:
+  audiocaps --version
+      Print the tool version and the snapshot schema version.
   audiocaps capture [--out DIR] [--label NAME] [--cec]
       Save a redacted, passive capture of this system as a .tar.gz (default DIR: ./captures).
       --cec also records the CEC bus (opt-in: sends query messages on HDMI-CEC).
@@ -70,6 +72,14 @@ fn main() -> ExitCode {
         Some("replay") if args.len() == 2 => SystemRoot::fixture(&args[1])
             .map_err(|e| e.to_string())
             .map(|r| print_snapshot(&r)),
+        Some("--version" | "-V") => {
+            println!(
+                "audiocaps {} (snapshot schema {})",
+                env!("CARGO_PKG_VERSION"),
+                audiocaps_model::SCHEMA_VERSION
+            );
+            Ok(())
+        }
         Some("probe") => cmd_probe(&args[1..]),
         Some("alsa-dump") => {
             let d = audiocaps_backends::alsa::live::dump_all(&SystemRoot::Live);

@@ -52,7 +52,7 @@ that is already playing.
 
 ## Features
 
-All features below are built for Linux 1.0 (the 1.0 release itself is still pending); the progress page above shows what is done.
+All features below are built for Linux 1.0. The 1.0.0 release candidate is being prepared; see [docs/RELEASE.md](docs/RELEASE.md).
 
 - Scoped probing with immutable, lock-free snapshots and change events
 - Endpoints for HDMI/DP, analog, S/PDIF, USB, Bluetooth, network and virtual sinks; capture; MIDI
