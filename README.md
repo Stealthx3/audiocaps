@@ -6,8 +6,6 @@
 **100% complete** · 46 of 46 tasks · All phases complete · [Full progress page →](https://stealthx3.github.io/audiocaps/)
 <!-- progress:end -->
 
-> "AudioCaps" is a working name; the final name is still to be decided.
-
 AudioCaps is a library that applications bundle to learn exactly what audio the
 system can deliver, and where anything is lost on the way. It covers the whole
 path, from the connected TV or AV receiver back through host hardware, kernel
@@ -52,7 +50,7 @@ that is already playing.
 
 ## Features
 
-All features below are built for Linux 1.0 (the 1.0 release itself is still pending); the progress page above shows what is done.
+All features below are built for Linux 1.0. The 1.0.0 release candidate is being prepared; see [docs/RELEASE.md](docs/RELEASE.md).
 
 - Scoped probing with immutable, lock-free snapshots and change events
 - Endpoints for HDMI/DP, analog, S/PDIF, USB, Bluetooth, network and virtual sinks; capture; MIDI

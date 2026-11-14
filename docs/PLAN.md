@@ -8,7 +8,6 @@ Open items (not phase tasks):
 
 - Confirm whether the TV-to-receiver link runs as eARC or plain ARC.
 - Buy a UAC2 USB DAC for testing, or accept fixture-only USB coverage.
-- Final library name, after a collision check.
 
 ## Phase 1 — Scaffold, model, schema
 

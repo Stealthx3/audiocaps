@@ -1,6 +1,6 @@
 # Architecture (as built)
 
-_Status: end of phase 9. Updated at every phase gate._
+_Status: 1.0.0 release candidate (end of phase 9). Updated at every phase gate and release._
 
 AudioCaps is one Rust workspace that builds a single shared library (`libaudiocaps.so`, from
 `audiocaps-ffi`) and a command-line tool (`audiocaps`, from `audiocaps-cli`). No Rust crate is
