@@ -91,6 +91,7 @@ pub(crate) fn snapshot(
         vec![]
     };
     let environment = environment.map(|mut e| {
+        e.realtime = ctx.res.realtime.clone();
         ctx.live_presence(&mut e);
         ctx.wireless_environment(&mut e);
         e
@@ -276,6 +277,32 @@ impl Ctx<'_> {
     /// On the live system, server presence comes from the server backends that ran.
     fn live_presence(&self, env: &mut audiocaps_model::EnvironmentInfo) {
         use audiocaps_model::{ServerInfo, ServerPresence, SoundServer};
+        // A snap's plugs are inferred from visible sockets; a refused connection overrides that.
+        if let Value::Known {
+            value: audiocaps_model::Sandbox::Snap { connected, missing },
+            ..
+        } = &mut env.sandbox
+        {
+            for (r, plug, required) in [
+                (&self.res.pipewire, "pipewire", false),
+                (&self.res.pulse, "audio-playback", true),
+            ] {
+                if let ServerResult::Skipped {
+                    reason: UnknownReason::NotGranted,
+                    ..
+                } = r
+                {
+                    connected.retain(|c| c != plug);
+                    if !missing.iter().any(|g| g.permission == plug) {
+                        missing.push(crate::sandbox::snap_gap(
+                            plug,
+                            vec![LayerKind::SoundServer],
+                            required,
+                        ));
+                    }
+                }
+            }
+        }
         let mut live = vec![];
         for (r, api) in [
             (&self.res.pipewire, SoundServer::PipeWire),

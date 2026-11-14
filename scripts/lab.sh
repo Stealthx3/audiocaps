@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # lab.sh — VM Lab Standard v1.2. Manage libvirt lab guests for this project.
-# Usage: scripts/lab.sh <doctor|up|view|ip|ssh|exec|push|run|pull|snap|revert|snaps|down|destroy|list> [args]
+# Usage: scripts/lab.sh <doctor|up|view|ip|ssh|exec|push|run|pull|put|snap|revert|snaps|down|destroy|list> [args]
 #   up [role]            create/start lab-<project>-<role> (default role: main)
 #   view [role]          open the guest's console in Virtual Machine Manager
 #   exec [-r role] CMD   run CMD in guest (in $LAB_DEST), mirrored to the live console
 #   run  [-r role] CMD   push working tree, then exec CMD
-#   push [role] / pull GUEST_PATH HOST_DIR [role]
+#   push [role] / pull GUEST_PATH HOST_DIR [role] / put HOST_PATH GUEST_DIR [role]
 #   snap NAME [role] / revert NAME [role] / snaps [role]
 #   down [role] / destroy role / list
 set -euo pipefail
@@ -222,6 +222,13 @@ cmd_pull() {
   rsync -az -e "ssh ${SSH_OPTS[*]}" "$LAB_USER@$ip:$src" "$dst/"
 }
 
+cmd_put() {
+  local src="${1:?host path}" dst="${2:?guest dir}" n; n="$(name_of "${3:-main}")"; guard "$n"
+  local ip; ip="$(ip_of "$n")" || die "no IP for $n"
+  ssh "${SSH_OPTS[@]}" "$LAB_USER@$ip" "mkdir -p '$dst'"
+  rsync -az -e "ssh ${SSH_OPTS[*]}" "$src" "$LAB_USER@$ip:$dst/"
+}
+
 cmd_snap()   { local s="${1:?name}" n; n="$(name_of "${2:-main}")"; guard "$n"; [[ "$s" =~ ^[a-z0-9-]+$ ]] || die "bad snapshot name"; V snapshot-create-as "$n" "$s" --atomic >/dev/null; echo "snapshot: $s"; }
 cmd_revert() { local s="${1:?name}" n; n="$(name_of "${2:-main}")"; guard "$n"; V snapshot-revert "$n" "$s" --running; wait_ssh "$n"; echo "reverted: $n -> $s"; }
 cmd_snaps()  { local n; n="$(name_of "${1:-main}")"; guard "$n"; V snapshot-list "$n" --name; }
@@ -254,6 +261,6 @@ cmd_list() { V list --all | awk '$2 ~ /^lab-/'; }
 
 c="${1:-}"; shift || true
 case "$c" in
-  doctor|up|view|ip|ssh|exec|push|run|pull|snap|revert|snaps|down|destroy|list) "cmd_$c" "$@" ;;
+  doctor|up|view|ip|ssh|exec|push|run|pull|put|snap|revert|snaps|down|destroy|list) "cmd_$c" "$@" ;;
   *) sed -n '2,12p' "$0"; exit 2 ;;
 esac

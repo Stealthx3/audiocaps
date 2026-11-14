@@ -45,6 +45,9 @@ pub const AC_WATCH_THREAD: u32 = 1;
 /// from [`ac_watch_fd`] for readability.
 pub const AC_WATCH_DISPATCH: u32 = 0;
 
+/// Dispatch mode keeps at most this many undelivered updates.
+const MAX_PENDING: usize = 32;
+
 /// `ac_can_play` answers.
 pub const AC_YES: c_int = 1;
 /// The path can't carry the format.
@@ -244,7 +247,7 @@ pub extern "C" fn ac_abi_version() -> u32 {
     AC_ABI_VERSION
 }
 
-/// The JSON schema version snapshots follow, e.g. `"1.6.0"` (static string).
+/// The JSON schema version snapshots follow, e.g. `"1.7.0"` (static string).
 #[unsafe(no_mangle)]
 pub extern "C" fn ac_schema_version() -> *const c_char {
     static V: std::sync::OnceLock<CString> = std::sync::OnceLock::new();
@@ -574,6 +577,10 @@ pub unsafe extern "C" fn ac_watch_new(
             return std::ptr::null_mut();
         }
     };
+    if mode != AC_WATCH_THREAD && mode != AC_WATCH_DISPATCH {
+        set_error(format!("unknown watch mode {mode}"));
+        return std::ptr::null_mut();
+    }
     let stop = Arc::new(AtomicBool::new(false));
     let pending = Arc::new(Pending {
         queue: Mutex::new(VecDeque::new()),
@@ -603,10 +610,14 @@ pub unsafe extern "C" fn ac_watch_new(
                     .unwrap_or_default();
                 match &write {
                     Some(w) => {
-                        pq.queue
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .push_back((ev.snapshot, diff));
+                        let mut q = pq.queue.lock().unwrap_or_else(|e| e.into_inner());
+                        // An app that stops dispatching keeps at most MAX_PENDING updates; the
+                        // oldest go first (each diff names its from/to generations).
+                        while q.len() >= MAX_PENDING {
+                            q.pop_front();
+                        }
+                        q.push_back((ev.snapshot, diff));
+                        drop(q);
                         let _ = nix::unistd::write(w, &[1u8]);
                     }
                     None => {
@@ -681,8 +692,9 @@ pub unsafe extern "C" fn ac_watch_dispatch(w: *mut AcWatch) -> c_int {
     c_int::try_from(n).unwrap_or(c_int::MAX)
 }
 
-/// Stops and frees a watch. In thread mode, waits for a running callback to return. NULL is
-/// ignored.
+/// Stops and frees a watch. Waits for a running callback to return and for an in-flight
+/// re-probe to finish (bounded by the probe deadlines; unbounded with `"deadline_ms": 0`), so
+/// free a watch with deadlines off a UI thread. NULL is ignored.
 ///
 /// # Safety
 /// `w` must be NULL or a watch from this library, freed once, not from inside its callback.

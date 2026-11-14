@@ -43,7 +43,7 @@
       "availability": {
         "state": "unknown",
         "reason": "not_exposed",
-        "detail": "/sys/class/sound: No such file or directory (os error 2); missing hardware-observe: snap connect <snap>:hardware-observe"
+        "detail": "/sys/class/sound: No such file or directory (os error 2)"
       }
     },
     {
@@ -51,7 +51,7 @@
       "availability": {
         "state": "unknown",
         "reason": "not_exposed",
-        "detail": "/sys/module: No such file or directory (os error 2); missing hardware-observe: snap connect <snap>:hardware-observe"
+        "detail": "/sys/module: No such file or directory (os error 2)"
       }
     },
     {
@@ -119,18 +119,7 @@
     "sandbox": {
       "state": "known",
       "value": {
-        "kind": "snap",
-        "missing": [
-          {
-            "permission": "hardware-observe",
-            "layers": [
-              "host_hardware",
-              "kernel_driver"
-            ],
-            "fix": "snap connect <snap>:hardware-observe",
-            "required": false
-          }
-        ]
+        "kind": "snap"
       },
       "confidence": "inferred",
       "provenance": {
@@ -260,44 +249,5 @@
       }
     }
   ],
-  "endpoints": [],
-  "findings": [
-    {
-      "code": "SANDBOX_PERMISSION_MISSING",
-      "severity": "warning",
-      "hop": "application",
-      "evidence": [
-        {
-          "label": "g.sandbox.kind",
-          "value": "snap",
-          "provenance": {
-            "layer": "environment",
-            "source": {
-              "kind": "derived",
-              "from": "SNAP_NAME and the sockets, devices and files the snap can reach"
-            },
-            "read_at_ms": 1794500000000
-          }
-        },
-        {
-          "label": "g.sandbox.missing",
-          "value": [
-            "hardware-observe"
-          ],
-          "provenance": {
-            "layer": "environment",
-            "source": {
-              "kind": "derived",
-              "from": "SNAP_NAME and the sockets, devices and files the snap can reach"
-            },
-            "read_at_ms": 1794500000000
-          }
-        }
-      ],
-      "confidence": "inferred",
-      "hint": {
-        "text": "The sandbox hides parts of the audio system (hardware-observe): snap connect <snap>:hardware-observe"
-      }
-    }
-  ]
+  "endpoints": []
 }

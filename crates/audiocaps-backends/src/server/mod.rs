@@ -291,8 +291,8 @@ pub fn read_live(
     let slice = std::time::Duration::from_millis(5);
     match kind {
         ServerKind::PipeWire => {
-            presence::pipewire(root).map_err(|s| s.detail)?;
-            let mut s = pw_live::PwSession::connect()?;
+            let socket = presence::pipewire(root).map_err(|s| s.detail)?;
+            let mut s = pw_live::PwSession::connect(&socket)?;
             while !s.step(slice)? {
                 if std::time::Instant::now() > deadline {
                     return Err("timed out".into());
@@ -301,8 +301,8 @@ pub fn read_live(
             Ok(s.dump())
         }
         ServerKind::PulseAudio => {
-            presence::pulse(root).map_err(|s| s.detail)?;
-            let mut s = pulse_live::PulseSession::connect()?;
+            let server = presence::pulse(root).map_err(|s| s.detail)?;
+            let mut s = pulse_live::PulseSession::connect(server.as_deref())?;
             while !s.step(slice)? {
                 if std::time::Instant::now() > deadline {
                     return Err("timed out".into());

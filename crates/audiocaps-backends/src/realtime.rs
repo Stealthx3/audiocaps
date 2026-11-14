@@ -5,17 +5,12 @@
 //! or the `audio` group), rtkit (the system-bus broker PipeWire and PulseAudio use) and the
 //! xdg-desktop-portal Realtime interface (the way in from Flatpak and Snap). Nothing is changed:
 //! rtkit is checked by name ownership and activatability, never started, and no thread is made
-//! realtime. D-Bus reads run on a helper thread with a short deadline so a stuck bus can't hold the
-//! probe.
-
-use std::sync::mpsc;
-use std::time::Duration;
+//! realtime. The probe runs this as a one-shot backend on a helper thread (like BlueZ), so a
+//! stuck bus can't hold up the other backends; past the deadline the result is dropped.
 
 use audiocaps_model::{
     LayerKind, Provenance, Realtime, RealtimeMethod, Source, UnknownReason, Value,
 };
-
-const BUS_DEADLINE: Duration = Duration::from_millis(120);
 
 fn prov(source: Source, at: u64) -> Provenance {
     Provenance {
@@ -79,6 +74,30 @@ fn denied(e: &zbus::Error) -> UnknownReason {
     }
 }
 
+/// Reads one `i32` property with `Properties.Get` (rtkit has no `GetAll`, so no property cache).
+async fn get_i32(
+    conn: &zbus::Connection,
+    service: &'static str,
+    path: &'static str,
+    interface: &'static str,
+    property: &str,
+) -> zbus::Result<i32> {
+    // Setters record errors; `build` reports the first one.
+    let proxy: zbus::Proxy<'_> = zbus::proxy::Builder::new(conn)
+        .destination(service)
+        .path(path)
+        .interface(interface)
+        .cache_properties(zbus::proxy::CacheProperties::No)
+        .build()
+        .await?;
+    proxy.get_property::<i32>(property).await
+}
+
+/// Inside Flatpak the system bus goes through a proxy that hides names the app wasn't granted.
+fn in_flatpak() -> bool {
+    std::path::Path::new("/.flatpak-info").exists()
+}
+
 const RTKIT: &str = "org.freedesktop.RealtimeKit1";
 const RTKIT_PATH: &str = "/org/freedesktop/RealtimeKit1";
 const PORTAL: &str = "org.freedesktop.portal.Desktop";
@@ -105,6 +124,15 @@ async fn rtkit(now: u64) -> RealtimeMethod {
     match dbus.name_has_owner(name).await {
         Ok(true) => {}
         Ok(false) => {
+            if in_flatpak() {
+                return unknown(
+                    "rtkit",
+                    UnknownReason::NotGranted,
+                    "the Flatpak bus proxy hides rtkit; sandboxed apps get realtime through the \
+                     Realtime portal"
+                        .into(),
+                );
+            }
             // Activatable counts: the first MakeThreadRealtime call starts it. We don't.
             let activatable = dbus
                 .list_activatable_names()
@@ -127,11 +155,7 @@ async fn rtkit(now: u64) -> RealtimeMethod {
         }
         Err(e) => return unknown("rtkit", denied(&e.into()), "NameHasOwner".into()),
     }
-    let proxy = match zbus::Proxy::new(&conn, RTKIT, RTKIT_PATH, RTKIT).await {
-        Ok(p) => p,
-        Err(e) => return unknown("rtkit", denied(&e), e.to_string()),
-    };
-    match proxy.get_property::<i32>("MaxRealtimePriority").await {
+    match get_i32(&conn, RTKIT, RTKIT_PATH, RTKIT, "MaxRealtimePriority").await {
         Ok(p) => RealtimeMethod {
             method: "rtkit".into(),
             grants: Value::measured(
@@ -164,22 +188,35 @@ async fn portal(now: u64) -> RealtimeMethod {
     match dbus.name_has_owner(name).await {
         Ok(true) => {}
         Ok(false) => {
-            return RealtimeMethod {
-                method: "portal".into(),
-                grants: Value::measured(
-                    false,
-                    prov(Source::api("org.freedesktop.DBus", "NameHasOwner"), now),
-                ),
-                max_priority: None,
+            let activatable = dbus
+                .list_activatable_names()
+                .await
+                .map(|v| v.iter().any(|n| n.as_str() == PORTAL))
+                .unwrap_or(false);
+            return if activatable {
+                // Its Realtime interface can only be read once it runs; it isn't started for us.
+                unknown(
+                    "portal",
+                    UnknownReason::ServiceNotRunning,
+                    "xdg-desktop-portal is activatable but not running; not started".into(),
+                )
+            } else {
+                RealtimeMethod {
+                    method: "portal".into(),
+                    grants: Value::measured(
+                        false,
+                        prov(
+                            Source::api("org.freedesktop.DBus", "ListActivatableNames"),
+                            now,
+                        ),
+                    ),
+                    max_priority: None,
+                }
             };
         }
         Err(e) => return unknown("portal", denied(&e.into()), "NameHasOwner".into()),
     }
-    let proxy = match zbus::Proxy::new(&conn, PORTAL, PORTAL_PATH, PORTAL_RT).await {
-        Ok(p) => p,
-        Err(e) => return unknown("portal", denied(&e), e.to_string()),
-    };
-    match proxy.get_property::<i32>("MaxRealtimePriority").await {
+    match get_i32(&conn, PORTAL, PORTAL_PATH, PORTAL_RT, "MaxRealtimePriority").await {
         Ok(p) => RealtimeMethod {
             method: "portal".into(),
             grants: Value::measured(
@@ -208,30 +245,27 @@ async fn portal(now: u64) -> RealtimeMethod {
     }
 }
 
-/// Reads every method. Live system only.
+/// Reads every method (blocking; run on a helper thread). Live system only.
 pub(crate) fn read(now: u64) -> Realtime {
     let mut methods = vec![rlimit(now)];
-    let (tx, rx) = mpsc::channel();
-    let spawned = std::thread::Builder::new()
-        .name("audiocaps-realtime".into())
-        .spawn(move || {
-            let r = zruntime::block_on(async { (rtkit(now).await, portal(now).await) });
-            let _ = tx.send(r);
-        });
-    match spawned
-        .ok()
-        .and_then(|_| rx.recv_timeout(BUS_DEADLINE).ok())
-    {
-        Some((r, p)) => methods.extend([r, p]),
-        None => {
-            for m in ["rtkit", "portal"] {
-                methods.push(unknown(
-                    m,
-                    UnknownReason::Timeout,
-                    "D-Bus didn't answer in time".into(),
-                ));
-            }
-        }
+    let (r, p) = zruntime::block_on(async { (rtkit(now).await, portal(now).await) });
+    methods.extend([r, p]);
+    Realtime {
+        available: summarize(&methods),
+        methods,
+    }
+}
+
+/// The result when the backend missed its deadline: the rlimit (no I/O) and the bus methods
+/// unknown.
+pub(crate) fn timed_out(now: u64) -> Realtime {
+    let mut methods = vec![rlimit(now)];
+    for m in ["rtkit", "portal"] {
+        methods.push(unknown(
+            m,
+            UnknownReason::Timeout,
+            "D-Bus didn't answer in time".into(),
+        ));
     }
     Realtime {
         available: summarize(&methods),

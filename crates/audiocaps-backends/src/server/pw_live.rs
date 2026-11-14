@@ -71,12 +71,16 @@ pub struct PwSession {
 }
 
 impl PwSession {
-    /// Connects to the daemon. Call only after [`super::presence::pipewire`] allowed it.
-    pub fn connect() -> Result<Self, String> {
+    /// Connects to the daemon at `socket`. Call only after [`super::presence::pipewire`] allowed
+    /// it.
+    pub fn connect(socket: &str) -> Result<Self, String> {
         INIT.call_once(pw::init);
         let mainloop = pw::main_loop::MainLoopRc::new(None).map_err(|e| e.to_string())?;
         let context = pw::context::ContextRc::new(&mainloop, None).map_err(|e| e.to_string())?;
-        let core = context.connect_rc(None).map_err(|e| e.to_string())?;
+        // An absolute remote.name is used as the socket path (the snap case: not under
+        // XDG_RUNTIME_DIR).
+        let props = pw::properties::properties! { "remote.name" => socket };
+        let core = context.connect_rc(Some(props)).map_err(|e| e.to_string())?;
         let registry = core.get_registry_rc().map_err(|e| e.to_string())?;
         let state = Rc::new(RefCell::new(State::default()));
 

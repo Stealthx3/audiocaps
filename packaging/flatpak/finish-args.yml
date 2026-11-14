@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+# AudioCaps permission template for Flatpak apps. Copy the finish-args your app needs into its
+# manifest. Each one is optional except the sound socket: AudioCaps never fails without a
+# permission, it reports the hidden layers as `unknown` (reason `not_granted`) and names the
+# missing permission and the fix (SANDBOX_PERMISSION_MISSING).
+#
+# Verified by scripts/gate-sandbox.sh (results in packaging/README.md).
+finish-args:
+  # Required for any audio. PulseAudio API, or pipewire-pulse on PipeWire systems. The library
+  # reads sinks, ports, formats and the server's ALSA cards through it.
+  - --socket=pulseaudio
+  # Native PipeWire: nodes, devices, profiles, routes and negotiated formats beyond what the
+  # PulseAudio API exposes. WirePlumber limits what sandboxed clients see (see the README).
+  - --filesystem=xdg-run/pipewire-0:ro
+  # Bluetooth codecs and transports from BlueZ (read only; the library never pairs or connects).
+  - --system-talk-name=org.bluez
+  # Direct ALSA access (alsa_direct path, hw: ranges) and the CEC opt-in (/dev/cec*). Grants all
+  # device nodes, so add it only if the app plays to ALSA directly or uses CEC.
+  # - --device=all
+  # JACK through jackd's shared memory (pipewire-jack works with the PipeWire socket above).
+  # - --device=shm
