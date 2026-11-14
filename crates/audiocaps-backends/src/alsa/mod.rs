@@ -9,5 +9,6 @@
 //!   and channel maps, and closes it again without installing any parameters. Control devices are
 //!   read, never written.
 
+pub mod active;
 pub mod dump;
 pub mod live;

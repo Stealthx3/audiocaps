@@ -16,6 +16,7 @@ pub mod alsa;
 mod assemble;
 pub mod bluez;
 pub mod cec;
+pub mod codecs;
 mod environment;
 pub mod jack;
 pub mod manifest;

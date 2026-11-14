@@ -687,6 +687,7 @@ impl Ctx<'_> {
                 }),
                 correlation,
                 sink: None,
+                active_probe: None,
                 midi: None,
                 layers,
                 effective: vec![],

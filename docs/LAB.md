@@ -38,6 +38,9 @@ while `capture` runs if needed.
 - The QEMU USB Audio device blocks live snapshots: shut the VM down before `lab.sh snap`.
 - Import captures in the build VM and re-bless goldens in the same `lab.sh run`, then sync back at once; clear the host fixture directory first (sync-back doesn't delete).
 
+## Opt-in checks (phase 8)
+- `scripts/gate-optin.sh default codecs active refuse` from `phase7` with no server running (`refuse` starts PipeWire, so run it last). Real codec libraries for the `codecs` check: `apt-get install libavcodec61 libasound2-plugins libspa-0.2-bluetooth gstreamer1.0-libav`.
+
 ## Rule checks (phase 7)
 - `scripts/gate-rules.sh <check>...` from `phase7`: `busy` (no server), `rate` and `latency` (after `capture-stack.sh pipewire`), `routing` (after `capture-stack.sh pulseaudio`).
 
