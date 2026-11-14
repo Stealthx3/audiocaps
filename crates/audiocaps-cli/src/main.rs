@@ -13,7 +13,7 @@ use audiocaps_backends::{ProbeOptions, Runtime, SystemRoot, probe};
 use audiocaps_model::{EndpointId, ProbeScope};
 
 const USAGE: &str = "\
-audiocaps — AudioCaps command-line tool (phase 7)
+audiocaps — AudioCaps command-line tool (phase 8)
 
 USAGE:
   audiocaps capture [--out DIR] [--label NAME] [--cec]
@@ -30,12 +30,17 @@ USAGE:
   audiocaps probe [--endpoint ID]... [--unbounded] [--repeat N] [--quiet] [--cec]
                   [--quirk-dir DIR]... [--rule-dir DIR]... [--app-channels N] [--app-rate HZ]
                   [--app-endpoint ID] [--app-bits N] [--latency-target-us US]
+                  [--software-codecs] [--active-probe ID --active-codecs LIST
+                   [--active-channels N] [--active-rate HZ]]
       Probe the live system through the runtime (per-backend deadlines, 150 ms default) and
       print the last snapshot as JSON. --endpoint limits the scope to those endpoints;
       --repeat probes N times and prints each probe's time to stderr; --quiet skips the JSON.
       --cec opts in to CEC queries (sends query messages on HDMI-CEC); --quirk-dir and
       --rule-dir add application pack directories; --app-channels, --app-rate, --app-bits and
       --latency-target-us describe what the app will play (inputs to findings).
+      Opt-ins: --software-codecs lists codec libraries the app could load; --active-probe plays
+      ~100 ms of silence per format to one idle device (never while a server runs), e.g.
+      --active-probe alsa:card0/pcm3p --active-codecs lpcm,ac3,true_hd.
   audiocaps watch [--endpoint ID]... [--count N]
       Watch the live system and print one line per update: what triggered it, what changed and
       the time from the event to the new snapshot. Stops after N updates (default: never).
@@ -137,6 +142,43 @@ fn cmd_probe(args: &[String]) -> Result<(), String> {
             }
             "--rule-dir" => {
                 opts = opts.with_rule_dir(it.next().ok_or("--rule-dir needs a directory")?)
+            }
+            "--software-codecs" => opts = opts.with_software_codecs(),
+            "--active-probe" => {
+                let id = it.next().ok_or("--active-probe needs an endpoint id")?;
+                let mut r =
+                    opts.active_probe
+                        .clone()
+                        .unwrap_or(audiocaps_model::ActiveProbeRequest {
+                            endpoint: EndpointId(String::new()),
+                            codecs: vec![],
+                            channels: None,
+                            rate_hz: None,
+                        });
+                r.endpoint = EndpointId(id.clone());
+                opts = opts.with_active_probe(r);
+            }
+            "--active-codecs" | "--active-channels" | "--active-rate" => {
+                let v = it.next().ok_or(format!("{a} needs a value"))?;
+                let Some(mut r) = opts.active_probe.clone() else {
+                    return Err(format!("{a} needs --active-probe first"));
+                };
+                match a.as_str() {
+                    "--active-codecs" => {
+                        r.codecs = v
+                            .split(',')
+                            .map(|c| {
+                                serde_json::from_value(serde_json::Value::String(
+                                    c.trim().to_string(),
+                                ))
+                                .map_err(|_| format!("unknown codec {c}"))
+                            })
+                            .collect::<Result<_, _>>()?
+                    }
+                    "--active-channels" => r.channels = v.parse().ok(),
+                    _ => r.rate_hz = v.parse().ok(),
+                }
+                opts.active_probe = Some(r);
             }
             "--app-endpoint" => {
                 let id = it.next().ok_or("--app-endpoint needs an id")?;

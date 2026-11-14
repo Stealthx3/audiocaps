@@ -52,6 +52,10 @@ pub enum Backend {
     Jack,
     /// CEC bus (opt-in).
     Cec,
+    /// Software codec check (opt-in).
+    Codecs,
+    /// Active probe (opt-in).
+    Active,
 }
 
 /// Probe options.
@@ -70,6 +74,10 @@ pub struct ProbeOptions {
     pub rule_dirs: Vec<std::path::PathBuf>,
     /// What the application intends to play (for findings that compare against it).
     pub app: Option<audiocaps_model::AppRequest>,
+    /// Opt-in: check which codec libraries the app could load.
+    pub software_codecs: bool,
+    /// Opt-in: play silence to one idle device to confirm formats.
+    pub active_probe: Option<audiocaps_model::ActiveProbeRequest>,
 }
 
 impl Default for ProbeOptions {
@@ -81,6 +89,8 @@ impl Default for ProbeOptions {
             quirk_dirs: vec![],
             rule_dirs: vec![],
             app: None,
+            software_codecs: false,
+            active_probe: None,
         }
     }
 }
@@ -95,6 +105,8 @@ impl ProbeOptions {
             quirk_dirs: vec![],
             rule_dirs: vec![],
             app: None,
+            software_codecs: false,
+            active_probe: None,
         }
     }
 
@@ -105,6 +117,24 @@ impl ProbeOptions {
             && !self.deadlines.iter().any(|(b, _)| *b == Backend::Cec)
         {
             self.deadlines.push((Backend::Cec, Duration::from_secs(5)));
+        }
+        self
+    }
+
+    /// Opts in to the software codec check.
+    pub fn with_software_codecs(mut self) -> Self {
+        self.software_codecs = true;
+        self
+    }
+
+    /// Opts in to an active probe of one endpoint (3 s deadline unless set).
+    pub fn with_active_probe(mut self, req: audiocaps_model::ActiveProbeRequest) -> Self {
+        self.active_probe = Some(req);
+        if self.default_deadline.is_some()
+            && !self.deadlines.iter().any(|(b, _)| *b == Backend::Active)
+        {
+            self.deadlines
+                .push((Backend::Active, Duration::from_secs(3)));
         }
         self
     }
@@ -154,9 +184,13 @@ impl ProbeOptions {
             Backend::Bluez,
             Backend::Jack,
             Backend::Cec,
+            Backend::Codecs,
+            Backend::Active,
         ]
         .iter()
         .filter(|b| **b != Backend::Cec || self.cec)
+        .filter(|b| **b != Backend::Codecs || self.software_codecs)
+        .filter(|b| **b != Backend::Active || self.active_probe.is_some())
         .map(|b| self.deadline(*b))
         .try_fold(Duration::ZERO, |acc, d| d.map(|d| acc.max(d)))
     }
@@ -391,6 +425,7 @@ fn timed_out(scope: &ProbeScope, generation: u64, why: &str) -> Snapshot {
         routing: None,
         servers: vec![],
         endpoints: vec![],
+        software_codecs: None,
         app_request: None,
         findings: vec![],
     }

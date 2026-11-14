@@ -87,6 +87,9 @@ pub struct Endpoint {
     /// The connected sink, for HDMI/DP and similar links.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sink: Option<SinkRecord>,
+    /// Active probe result, when the application asked for one on this endpoint.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub active_probe: Option<Value<crate::detail::ActiveProbe>>,
     /// MIDI port details, for MIDI endpoints.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub midi: Option<MidiPort>,
