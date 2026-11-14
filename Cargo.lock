@@ -69,7 +69,7 @@ dependencies = [
 
 [[package]]
 name = "audiocaps-backends"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "alsa",
  "audiocaps-model",
@@ -90,7 +90,7 @@ dependencies = [
 
 [[package]]
 name = "audiocaps-cli"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "audiocaps-backends",
  "audiocaps-model",
@@ -106,7 +106,7 @@ dependencies = [
 
 [[package]]
 name = "audiocaps-ffi"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "audiocaps-backends",
  "audiocaps-model",
@@ -118,7 +118,7 @@ dependencies = [
 
 [[package]]
 name = "audiocaps-model"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "expect-test",
  "schemars",
@@ -129,14 +129,14 @@ dependencies = [
 
 [[package]]
 name = "audiocaps-parse"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "audiocaps-model",
 ]
 
 [[package]]
 name = "audiocaps-rules"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "audiocaps-model",
  "serde",
