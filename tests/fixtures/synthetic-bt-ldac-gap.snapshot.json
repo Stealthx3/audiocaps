@@ -226,7 +226,7 @@
   ],
   "endpoints": [
     {
-      "id": "node:bluez_output.bt-3582af60.1",
+      "id": "node:bluez_output.bt-0bb98259.1",
       "class": "bluetooth",
       "direction": "playback",
       "transport": {
@@ -266,7 +266,7 @@
             "kind": "bluez_device",
             "address": {
               "kind": "bluetooth_address",
-              "redacted": "sha256:3582af60bbeaf050"
+              "redacted": "sha256:0bb982591cdcb4e6"
             }
           },
           "confidence": "measured"
@@ -274,7 +274,7 @@
         {
           "id": {
             "kind": "pipewire_node",
-            "name": "bluez_output.bt-3582af60.1"
+            "name": "bluez_output.bt-0bb98259.1"
           },
           "confidence": "measured"
         }
@@ -398,7 +398,7 @@
             "views": [
               {
                 "server": "pipe_wire",
-                "object": "bluez_output.bt-3582af60.1",
+                "object": "bluez_output.bt-0bb98259.1",
                 "media_class": "Audio/Sink",
                 "state": {
                   "state": "known",
@@ -693,7 +693,7 @@
             },
             {
               "kind": "sound_server",
-              "label": "bluez_output.bt-3582af60.1",
+              "label": "bluez_output.bt-0bb98259.1",
               "format": {
                 "state": "known",
                 "value": {
@@ -742,7 +742,7 @@
             },
             {
               "kind": "alsa",
-              "label": "node:bluez_output.bt-3582af60.1",
+              "label": "node:bluez_output.bt-0bb98259.1",
               "format": {
                 "state": "known",
                 "value": {
@@ -838,7 +838,7 @@
     {
       "code": "BT_BITRATE_LIMITED",
       "severity": "warning",
-      "endpoint": "node:bluez_output.bt-3582af60.1",
+      "endpoint": "node:bluez_output.bt-0bb98259.1",
       "access_path": "pipe_wire",
       "hop": "bluetooth_link",
       "evidence": [
@@ -897,7 +897,7 @@
     {
       "code": "BT_CODEC_UNAVAILABLE",
       "severity": "warning",
-      "endpoint": "node:bluez_output.bt-3582af60.1",
+      "endpoint": "node:bluez_output.bt-0bb98259.1",
       "access_path": "pipe_wire",
       "hop": "bluetooth_link",
       "evidence": [

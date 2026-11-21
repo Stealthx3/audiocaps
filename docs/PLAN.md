@@ -1,7 +1,7 @@
 # AudioCaps — Roadmap to Linux 1.0
 
 Public task list for the nine gated phases. The full design lives in the development plan (kept
-outside git); this file only tracks progress. Each phase ends at a gate that Stealthx3 reviews before the
+outside git); this file only tracks progress. Each phase ends at a gate that the maintainer reviews before the
 next phase starts. Ticks land in the same commit as the work.
 
 Open items (not phase tasks):

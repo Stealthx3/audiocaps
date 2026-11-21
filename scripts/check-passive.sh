@@ -7,7 +7,7 @@
 #     with O_NONBLOCK;
 #   - nothing else under /dev/snd (seq, timer, hwdep, midi) may be opened.
 # Prints the command's output on success.
-# Usage (in a guest, or on real hardware with Stealthx3's OK):
+# Usage (in a guest, or on real hardware with the maintainer's OK):
 #   bash scripts/check-passive.sh <label>                 # capture
 #   PASSIVE_CMD='audiocaps probe --live' bash scripts/check-passive.sh   # any other command
 set -euo pipefail

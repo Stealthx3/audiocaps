@@ -2,14 +2,17 @@
 //! Redaction of captured text and JSON before anything is written to disk.
 //!
 //! Rules (also recorded in each capture's manifest):
-//! - MAC / Bluetooth addresses (`:`, `_` or `-` separated) → stable pseudo address `02:..` from a hash
+//! - MAC / Bluetooth addresses (`:`, `_` or `-` separated) → documentation addresses
+//!   `00:00:5E:00:53:xx` (RFC 7042), numbered in order of first appearance within one capture
 //! - IPv4 addresses other than loopback and 0.0.0.0 → `redacted-ipv4`; IPv6 with `::` → `redacted-ipv6`
 //! - The host name and user name of the capturing machine → `redacted-host`, `redacted-user`
-//! - JSON keys containing `serial` → `redacted-serial-<hash>`; machine/session ids → `redacted`
+//! - JSON keys containing `serial` → `redacted-serial-<hash>`; machine and session ids
+//!   (`machine-id`, `machine_id`, `session-id`, `session_id`) → `redacted`
 //! - Bluetooth device names and aliases → `redacted-name`
 //! - EDID serial number fields (see `audiocaps_parse::edid`)
 
-use std::sync::LazyLock;
+use std::collections::HashMap;
+use std::sync::{Arc, LazyLock, Mutex};
 
 use regex::Regex;
 use serde_json::Value as Json;
@@ -43,13 +46,25 @@ fn mac_spans(s: &str) -> Vec<(usize, usize)> {
         .collect()
 }
 
+/// Whether a MAC-like match is in the documentation range `00:00:5E:00:53:xx` (any separator).
+fn is_doc_mac(m: &str) -> bool {
+    m.len() == 17
+        && m[..15]
+            .replace(['_', '-'], ":")
+            .eq_ignore_ascii_case("00:00:5e:00:53:")
+}
+
 /// Identity of the capturing machine, replaced wherever it appears.
 #[derive(Debug, Clone, Default)]
 pub struct Redactor {
     host: Option<Regex>,
     user: Option<Regex>,
-    /// Leave `02:…` pseudo addresses alone (when re-redacting an already redacted fixture).
+    /// Leave documentation addresses alone (when re-redacting an already redacted fixture).
     keep_pseudo: bool,
+    /// Addresses seen so far, in order: each gets the next documentation address. Numbering
+    /// instead of hashing keeps one device stable within a capture without making it linkable
+    /// across captures.
+    seen: Arc<Mutex<HashMap<String, u8>>>,
 }
 
 fn word(s: &str) -> Option<Regex> {
@@ -64,7 +79,7 @@ fn short_hash(s: &str) -> String {
 
 /// The rules, one line each, for the manifest.
 pub const RULES: &[&str] = &[
-    "MAC and Bluetooth addresses replaced by stable pseudo addresses (02:..)",
+    "MAC and Bluetooth addresses replaced by documentation addresses (00:00:5E:00:53:xx), numbered per capture",
     "IPv4 (except loopback) and IPv6 addresses replaced",
     "host name and user name of the capturing machine replaced",
     "JSON values under keys containing 'serial' hashed; machine and session ids removed",
@@ -80,6 +95,7 @@ impl Redactor {
             host: host.and_then(word),
             user: user.and_then(word),
             keep_pseudo: false,
+            seen: Arc::default(),
         }
     }
 
@@ -97,15 +113,17 @@ impl Redactor {
         for (a, z) in mac_spans(s) {
             let m = &s[a..z];
             out.push_str(&s[last..a]);
-            if self.keep_pseudo && m.starts_with("02") {
+            if self.keep_pseudo && is_doc_mac(m) {
                 out.push_str(m);
             } else {
                 let sep = &m[2..3];
-                let h = Sha256::digest(m.replace(['_', '-'], ":").to_ascii_lowercase().as_bytes());
-                let parts: Vec<String> = std::iter::once("02".to_string())
-                    .chain(h.iter().take(5).map(|b| format!("{b:02X}")))
-                    .collect();
-                out.push_str(&parts.join(sep));
+                let key = m.replace(['_', '-'], ":").to_ascii_lowercase();
+                let n = {
+                    let mut seen = self.seen.lock().unwrap_or_else(|e| e.into_inner());
+                    let next = seen.len() as u8; // wraps after 256 devices; never reached in practice
+                    *seen.entry(key).or_insert(next)
+                };
+                out.push_str(&["00", "00", "5E", "00", "53", &format!("{n:02X}")].join(sep));
             }
             last = z;
         }
@@ -171,7 +189,9 @@ impl Redactor {
             return;
         }
         if kl.contains("machine-id")
+            || kl.contains("machine_id")
             || kl.contains("session-id")
+            || kl.contains("session_id")
             || kl == "host_name"
             || kl == "user_name"
         {
@@ -213,7 +233,7 @@ pub fn leaks(text: &str) -> Vec<String> {
     let mut out: Vec<String> = mac_spans(text)
         .into_iter()
         .map(|(a, z)| &text[a..z])
-        .filter(|m| !m.starts_with("02"))
+        .filter(|m| !is_doc_mac(m))
         .map(|m| format!("mac {m}"))
         .collect();
     out.extend(
@@ -232,11 +252,11 @@ mod tests {
     #[test]
     fn macs_are_stable_pseudo_addresses() {
         let r = Redactor::default();
-        let a = r.text("dev 00:00:5E:00:53:13 and bluez_card.00_00_5E_00_53_13");
-        assert!(!a.contains("00:00:5E"));
-        assert!(!a.contains("00_00_5E"));
+        let a = r.text("dev AA:BB:CC:00:00:01 and bluez_card.AA_BB_CC_00_00_01");
+        assert!(!a.contains("AA:BB:CC"));
+        assert!(!a.contains("AA_BB_CC"));
         let colon = a.split_whitespace().nth(1).unwrap();
-        assert!(colon.starts_with("02:"));
+        assert_eq!(colon, "00:00:5E:00:53:00");
         // Same address, different separators, same pseudo address.
         assert!(a.contains(&colon.replace(':', "_")));
         assert!(leaks(&a).is_empty());
@@ -245,28 +265,40 @@ mod tests {
     #[test]
     fn addresses_after_underscores_and_in_keys() {
         let r = Redactor::default();
-        let mut v: Json = serde_json::json!({"/org/bluez/hci0/dev_00_00_5E_00_53_13": {"x": "dev_00_00_5E_00_53_13"}});
+        let mut v: Json = serde_json::json!({"/org/bluez/hci0/dev_AA_BB_CC_00_00_01": {"x": "dev_AA_BB_CC_00_00_01"}});
         r.json(&mut v);
         let s = v.to_string();
-        assert!(!s.contains("00_00_5E"), "{s}");
+        assert!(!s.contains("AA_BB_CC"), "{s}");
         assert!(leaks(&s).is_empty());
-        assert_eq!(leaks("path dev_00_00_5E_00_53_13").len(), 1);
+        assert_eq!(leaks("path dev_AA_BB_CC_00_00_01").len(), 1);
         // Not an address: part of a longer hex/colon run.
-        assert!(leaks("00:00:5e:00:53:13:77").is_empty());
+        assert!(leaks("aa:bb:cc:00:00:01:77").is_empty());
+    }
+
+    #[test]
+    fn addresses_are_numbered_per_capture() {
+        let r = Redactor::default();
+        let t = r.text("AA:BB:CC:00:00:02 AA:BB:CC:00:00:03 aa-bb-cc-00-00-02");
+        assert_eq!(t, "00:00:5E:00:53:00 00:00:5E:00:53:01 00-00-5E-00-53-00");
+        // A new capture starts again: nothing links devices across captures.
+        assert_eq!(
+            Redactor::default().text("AA:BB:CC:00:00:03"),
+            "00:00:5E:00:53:00"
+        );
     }
 
     #[test]
     fn re_redaction_keeps_pseudo_addresses() {
-        let once = Redactor::default().text("a 00:00:5E:00:53:13");
+        let once = Redactor::default().text("a AA:BB:CC:00:00:01");
         let twice = Redactor::for_redacted_fixture().text(&once);
         assert_eq!(once, twice);
     }
 
     #[test]
     fn ips_host_user() {
-        let r = Redactor::new(Some("Stealthx3-desk"), Some("alex"));
-        let t =
-            r.text("raop 192.0.2.12 on Stealthx3-desk by alex; lo 127.0.0.1; fe80::200:5eff:fe00:5300");
+        let r = Redactor::new(Some("studio-desk"), Some("alex"));
+        let t = r
+            .text("raop 192.0.2.12 on studio-desk by alex; lo 127.0.0.1; fe80::200:5eff:fe00:5300"); // pii-scan: allow (test input)
         assert_eq!(
             t,
             "raop redacted-ipv4 on redacted-host by redacted-user; lo 127.0.0.1; redacted-ipv6"
@@ -278,8 +310,8 @@ mod tests {
         let r = Redactor::default();
         let mut v: Json = serde_json::json!([
             {"info": {"props": {"device.serial": "ABC123", "device.name": "alsa_card.pci"}}},
-            {"info": {"props": {"api.bluez5.address": "00:00:5E:00:53:13", "device.description": "Alex's WH-1000XM4"}}},
-            {"/org/bluez/hci0/dev_00_00_5E_00_53_13": {"org.bluez.Device1": {"Name": {"type": "s", "data": "Alex phone"}}}}
+            {"info": {"props": {"api.bluez5.address": "AA:BB:CC:00:00:01", "device.description": "Alex's WH-1000XM4"}}},
+            {"/org/bluez/hci0/dev_AA_BB_CC_00_00_01": {"org.bluez.Device1": {"Name": {"type": "s", "data": "Alex phone"}}}}
         ]);
         r.json(&mut v);
         let s = v.to_string();
@@ -291,8 +323,24 @@ mod tests {
     }
 
     #[test]
+    fn machine_and_session_ids_removed() {
+        let r = Redactor::default();
+        let mut v: Json = serde_json::json!({
+            "application.process.machine_id": "0123456789abcdef0123456789abcdef",
+            "application.process.session_id": "4",
+            "machine-id": "fedcba9876543210fedcba9876543210"
+        });
+        r.json(&mut v);
+        let s = v.to_string();
+        assert!(!s.contains("0123456789abcdef"), "{s}");
+        assert!(!s.contains("fedcba98"), "{s}");
+        assert!(!s.contains(r#""4""#), "{s}");
+    }
+
+    #[test]
     fn leak_scan_flags_real_addresses() {
-        assert_eq!(leaks("x 00:00:5e:00:53:13 y 198.51.100.4").len(), 2);
+        assert_eq!(leaks("x AA:BB:CC:00:00:01 y 198.51.100.4").len(), 2);
+        assert!(leaks("x 00:00:5E:00:53:07").is_empty());
         assert!(leaks("version 0000:00:1f.3 1.4.2").is_empty());
     }
 }

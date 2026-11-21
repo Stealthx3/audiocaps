@@ -19,7 +19,7 @@ check "cargo deny check" cargo deny check
 check "fuzz targets build" bash -c 'cd fuzz && cargo fuzz build -O'
 check "cargo deny check (fuzz)" bash -c 'cd fuzz && cargo deny check'
 # Verbatim copies of shared ai-assets scripts are exempt (they must not be edited per project).
-VERBATIM='scripts/(lab\.sh|progress\.mjs|repo-check\.mjs|phone-alerts\.mjs|postmortem\.mjs)$'
+VERBATIM='scripts/(lab\.sh|progress\.mjs|repo-check\.mjs|phone-alerts\.mjs|postmortem\.mjs|pii-scan\.mjs)$'
 spdx_missing="$(find crates scripts -type f \( -name '*.rs' -o -name '*.sh' -o -name '*.mjs' -o -name '*.toml' \) -print | grep -Ev "$VERBATIM" | xargs grep -L 'SPDX-License-Identifier: LGPL-2.1-or-later' || true)"
 spdx_missing="$spdx_missing$(for f in Cargo.toml deny.toml rust-toolchain.toml rustfmt.toml clippy.toml; do grep -q 'SPDX-License-Identifier' "$f" || echo "$f"; done)"
 if [ -z "$spdx_missing" ]; then echo "ok   SPDX headers"; else echo "FAIL SPDX headers"; echo "$spdx_missing"; fail=1; fi

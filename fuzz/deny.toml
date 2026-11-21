@@ -3,7 +3,7 @@
 # decision 2026-11-09). The harness is never shipped.
 # Permissive licenses compatible with LGPL-2.1-or-later are allowed. "MIT OR Apache-2.0" crates
 # pass because MIT is allowed (taken under MIT). Apache-2.0-only, GPL-only, unknown or unlisted
-# licenses fail the check so Stealthx3 can review them (CLAUDE.md, "License").
+# licenses fail the check so the maintainer can review them (CLAUDE.md, "License").
 
 [graph]
 all-features = true

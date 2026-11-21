@@ -870,8 +870,8 @@
         "application.process.host": "redacted-host",
         "application.process.binary": "pactl",
         "application.language": "C",
-        "application.process.machine_id": "d98c72cc3f854a06b18b1c1df6e1fb97",
-        "application.process.session_id": "8"
+        "application.process.machine_id": "redacted",
+        "application.process.session_id": "redacted"
       }
     }
   ],

@@ -40,7 +40,7 @@ Candidates to watch: fixture redaction check, capture diffing, fuzz summary.
 | P1-S1 | Standards, repo, Pages, lab VM | M | standards committed on main |
 | P1-S2 | Workspace, deny, model, schema | L (opus) | schema v1 committed |
 | P1-S3 | SystemRoot, capture tool, replay | M | capture + snapshot tests green |
-| P1-S4 | Five captures, docs, gate | M | gate summary to Stealthx3 |
+| P1-S4 | Five captures, docs, gate | M | gate summary to the maintainer |
 Later phases: one or two sessions per roadmap phase; never two L sessions back to back.
 
 ## Context (E)

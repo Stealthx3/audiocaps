@@ -10,7 +10,7 @@
 <circle cx="20" cy="15" r="6" fill="#ff5f56"/><circle cx="40" cy="15" r="6" fill="#ffbd2e"/><circle cx="60" cy="15" r="6" fill="#27c93f"/>
 <text class="t m" x="330" y="20">audiocaps — mockup</text>
 <text class="t" x="20" y="58"><tspan class="p">$ </tspan>audiocaps report --endpoint hdmi:card1/pcm3 --path pipewire</text>
-<text class="t h" x="20" y="88">Endpoint  HDMI 1 · Denon AVR-S660H (via ARC/eARC on TV)        sink key 7f3a…</text>
+<text class="t h" x="20" y="88">Endpoint  HDMI 1 · Example AVR-1000 (via ARC/eARC on TV)        sink key 7f3a…</text>
 <text class="t" x="20" y="112">Sink      PCM 8ch 32–192 kHz 16/20/24-bit · AC-3 · E-AC-3 · DTS · DTS-HD MA · TrueHD</text>
 <text class="t h" x="20" y="142">Hop                 Format / budget                 Status</text>
 <text class="t" x="20" y="166">application         TrueHD (requested)              <tspan class="ok">ok</tspan></text>
