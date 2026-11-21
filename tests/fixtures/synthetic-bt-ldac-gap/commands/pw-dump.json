@@ -15,10 +15,10 @@
     "type": "PipeWire:Interface:Device",
     "info": {
       "props": {
-        "device.name": "bluez_card.02_00_00_5E_00_53_00",
+        "device.name": "bluez_card.00_00_5E_00_53_00",
         "device.api": "bluez5",
         "media.class": "Audio/Device",
-        "api.bluez5.address": "02:00:00:5E:00:53:00"
+        "api.bluez5.address": "00:00:5E:00:53:00"
       },
       "params": {
         "EnumProfile": [
@@ -65,12 +65,12 @@
       "state": "idle",
       "props": {
         "media.class": "Audio/Sink",
-        "node.name": "bluez_output.02_00_00_5E_00_53_00.1",
+        "node.name": "bluez_output.00_00_5E_00_53_00.1",
         "node.description": "Headphones",
         "device.id": 70,
         "device.api": "bluez5",
         "factory.name": "api.bluez5.a2dp.sink",
-        "api.bluez5.address": "02:00:00:5E:00:53:00",
+        "api.bluez5.address": "00:00:5E:00:53:00",
         "api.bluez5.codec": "sbc",
         "api.bluez5.profile": "a2dp-sink"
       },

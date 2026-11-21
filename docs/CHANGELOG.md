@@ -8,6 +8,19 @@ within v1).
 
 ## [Unreleased]
 
+### Fixed
+
+- `audiocaps capture` redaction missed PipeWire's `application.process.machine_id` and
+  `session_id` properties (underscore spelling), so the machine id reached the capture. Both are
+  now replaced with `redacted`.
+
+### Changed
+
+- Capture redaction replaces MAC and Bluetooth addresses with documentation addresses
+  (`00:00:5E:00:53:xx`, RFC 7042), numbered in order of appearance within each capture, instead
+  of `02:…` addresses hashed from the real ones. A device keeps one address within a capture,
+  and nothing links it across captures. The bundled fixtures use the new scheme.
+
 ## [1.0.0] - 2026-11-14
 
 First release for Linux. AudioCaps reports what audio the system can really deliver, from the

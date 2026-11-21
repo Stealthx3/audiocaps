@@ -34,9 +34,9 @@ and libpulse dynamically; libjack is loaded lazily when present.
 | Secret and address scan of the history (`scripts/scan-history.sh`) | clean |
 | Four core goals through one API (identification, host hardware, software layers, path diagnostics) | met in fixtures and the lab; on real hardware through the HTPC capture (fixture `htpc`) and the phase 6 HTPC run |
 
-## Before tagging (decisions for Stealthx3)
+## Before tagging (decisions for the maintainer)
 
-1. **Final library name: settled.** Stealthx3 confirmed "AudioCaps" on 2026-11-14. The soname
+1. **Final library name: settled.** The maintainer confirmed "AudioCaps" on 2026-11-14. The soname
    `libaudiocaps.so.1`, the header, the `ac_` prefix and the CLI keep their names.
 2. **Sandbox gate on the HTPC.** The plan names the HTPC as the rig that runs the sandbox release
    gate on real hardware. The gate ran in lab guests with emulated HDA and CEC. Running the

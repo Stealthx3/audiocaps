@@ -13,7 +13,7 @@
         "org.bluez.Adapter1": {
           "Address": {
             "type": "s",
-            "data": "02:00:00:5E:00:53:00"
+            "data": "00:00:5E:00:53:00"
           },
           "AddressType": {
             "type": "s",
@@ -173,12 +173,12 @@
           }
         }
       },
-      "/org/bluez/hci0/dev_02_00_00_5E_00_53_01": {
+      "/org/bluez/hci0/dev_00_00_5E_00_53_01": {
         "org.freedesktop.DBus.Introspectable": {},
         "org.bluez.Device1": {
           "Address": {
             "type": "s",
-            "data": "02:00:00:5E:00:53:01"
+            "data": "00:00:5E:00:53:01"
           },
           "AddressType": {
             "type": "s",
@@ -271,12 +271,12 @@
           }
         }
       },
-      "/org/bluez/hci0/dev_02_00_00_5E_00_53_02": {
+      "/org/bluez/hci0/dev_00_00_5E_00_53_02": {
         "org.freedesktop.DBus.Introspectable": {},
         "org.bluez.Device1": {
           "Address": {
             "type": "s",
-            "data": "02:00:00:5E:00:53:02"
+            "data": "00:00:5E:00:53:02"
           },
           "AddressType": {
             "type": "s",

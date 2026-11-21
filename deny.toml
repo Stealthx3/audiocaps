@@ -2,7 +2,7 @@
 # cargo-deny configuration: license gate for LGPL-2.1-or-later.
 # Permissive licenses compatible with LGPL-2.1-or-later are allowed. "MIT OR Apache-2.0" crates
 # pass because MIT is allowed (taken under MIT). Apache-2.0-only, GPL-only, unknown or unlisted
-# licenses fail the check so Stealthx3 can review them (CLAUDE.md, "License").
+# licenses fail the check so the maintainer can review them (CLAUDE.md, "License").
 
 [graph]
 all-features = true
@@ -25,7 +25,7 @@ confidence-threshold = 0.93
 # Our own crates (publish = false) are LGPL-2.1-or-later.
 private = { ignore = true }
 # Build-time only, never linked into the library: bindgen's libclang loader and system-deps'
-# target parser, pulled in by the pipewire crates (approved by Stealthx3, 2026-11-11).
+# target parser, pulled in by the pipewire crates (approved by the maintainer, 2026-11-11).
 exceptions = [
     { name = "clang-sys", allow = ["Apache-2.0"] },
     { name = "target-lexicon", allow = ["Apache-2.0 WITH LLVM-exception"] },

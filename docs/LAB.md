@@ -62,10 +62,10 @@ while `capture` runs if needed.
 - Watch: `scripts/lab.sh view`
 
 ## Host exceptions
-- Real-hardware tests need a one-time OK from Stealthx3 per test (decision 2026-11-08).
-- 2026-11-08 — workstation capture: static `dist/audiocaps` run once on the host under `strace` via `scripts/check-passive.sh` (approved by Stealthx3; passed, 1672 opens, none in /dev/snd).
-- 2026-11-12 — HTPC gate 6.5: release build from lab-audiocaps-main copied to /tmp over SSH, `capture --cec` and `probe --cec`, files removed (approved by Stealthx3; no CEC adapter on the HTPC; no strace there).
-- 2026-11-08 — HTPC capture: run once over SSH from the host, binary in /tmp and removed afterwards (approved by Stealthx3; no strace installed there, so passivity rests on the code path and the VM/workstation traces).
+- Real-hardware tests need a one-time OK from the maintainer per test (decision 2026-11-08).
+- 2026-11-08 — workstation capture: static `dist/audiocaps` run once on the host under `strace` via `scripts/check-passive.sh` (approved by the maintainer; passed, 1672 opens, none in /dev/snd).
+- 2026-11-12 — HTPC gate 6.5: release build from lab-audiocaps-main copied to /tmp over SSH, `capture --cec` and `probe --cec`, files removed (approved by the maintainer; no CEC adapter on the HTPC; no strace there).
+- 2026-11-08 — HTPC capture: run once over SSH from the host, binary in /tmp and removed afterwards (approved by the maintainer; no strace installed there, so passivity rests on the code path and the VM/workstation traces).
 
 ## Log
 - 2026-11-08 — doctor OK; Debian 13 base present.

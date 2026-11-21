@@ -21,7 +21,7 @@ OS-neutral core.
 - **License:** LGPL-2.1-or-later. Every source file carries
   `SPDX-License-Identifier: LGPL-2.1-or-later`. Dependencies must be compatible;
   dual MIT/Apache-2.0 crates are taken under MIT. Apache-2.0-only, GPL-only or
-  unknown licenses need Stealthx3's approval.
+  unknown licenses need the maintainer's approval.
 - **Sandboxes:** must work fully in-process inside Flatpak and Snap. No host
   service or daemon. A layer that can't be read is `unknown` with a reason,
   never "unsupported".
@@ -48,12 +48,12 @@ OS-neutral core.
 
 - **Phases and gates.** Work follows the roadmap in the plan (9 phases to Linux
   1.0). Finish a phase on its own branch, meet its gate, then stop: summarize
-  what was built and how the gate was verified, and wait for Stealthx3's approval
+  what was built and how the gate was verified, and wait for the maintainer's approval
   before starting the next phase.
 - **Ask before:** reopening a settled decision, adding a dependency with a new
   license family, installing system packages on the host, touching the host's
   audio configuration, or anything irreversible.
-- **Notify:** when a gate is reached or a decision needs Stealthx3, send a phone
+- **Notify:** when a gate is reached or a decision needs the maintainer, send a phone
   push notification if a notification tool is available, otherwise say so
   prominently at the end of the response.
 - **Dev and test environment:** build and test inside libvirt/KVM VMs or LXC
@@ -63,12 +63,19 @@ OS-neutral core.
 - **Standards:** copies of the shared ai-assets standards live in
   `docs/standards/` and apply to this project: REPO-STRUCTURE-STANDARD.md,
   PROGRESS-BAR-STANDARD.md, PHONE-ALERTS-STANDARD.md, VM-LAB-STANDARD.md,
-  TOKEN-USAGE-OPTIMIZATION-STANDARD.md, POST-MORTEM-STANDARD.md (masters in
-  `/path/to/Business/Development/ai-assets`). If one conflicts with this
-  file, ask.
+  TOKEN-USAGE-OPTIMIZATION-STANDARD.md, POST-MORTEM-STANDARD.md,
+  PII-REDACTION-STANDARD.md (masters in the shared ai-assets folder). If one
+  conflicts with this file, ask.
+- **PII:** see PII-REDACTION-STANDARD. Nothing may identify the maintainer or
+  the test machines: write placeholders from the start, and run
+  `node scripts/pii-scan.mjs scan` before every push, tag, release or published
+  page (commit hooks run it on staged files). Real values live only in the
+  private identity file outside the repo; public identity is `Stealthx3` with
+  its GitHub no-reply address. Fixtures use `00:00:5E:00:53:xx` MACs and
+  documentation IPs.
 - Build/test only via `scripts/lab.sh` (see `docs/LAB.md`). Guests are
   watchable in virt-manager. Real-hardware tests on the host need a one-time
-  exception from Stealthx3 per test.
+  exception from the maintainer per test.
 - Phone alerts: see PHONE-ALERTS-STANDARD; hooks installed, check with
   `node scripts/phone-alerts.mjs check`.
 - Progress: tick `docs/PLAN.md` in the same commit as the work, then run
